@@ -1,0 +1,186 @@
+:root{font-family:Arial,Helvetica,sans-serif;color:#f8f7f2;background:#101110;font-synthesis:none}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0}a{color:inherit;text-decoration:none}button,input,select{font:inherit}.header{min-height:88px;display:flex;align-items:center;justify-content:space-between;padding:12px clamp(20px,5vw,90px);gap:20px;background:#111312}.brand{display:flex;gap:14px;align-items:center}.brand strong{display:block;letter-spacing:.18em;font-size:15px}.brand small{display:block;letter-spacing:.18em;font-size:9px;margin-top:6px;color:#b7ad99}.logo-slot{width:54px;height:54px;border:1px dashed #b69b68;color:#c9b384;font-size:10px;display:grid;place-content:center;text-align:center;line-height:1.4}.header nav{display:flex;gap:27px;font-size:12px;color:#ddd}.header nav a:hover,.header nav a:focus{color:#d8b77b}.top-cta,.submit{background:#bd9b61;color:#141411;padding:15px 23px;font-weight:700;font-size:12px;border:0;cursor:pointer}.hero{position:relative;min-height:680px;background:linear-gradient(115deg,#1c2224 0%,#202827 40%,#35352c 75%,#111 100%)}.hero:before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 66% 40%,#aa8d6040,transparent 45%),linear-gradient(90deg,#0b1010d9,#0d10105c 60%,#0b1010a8)}.hero-inner{position:relative;max-width:1450px;margin:auto;display:grid;grid-template-columns:1.2fr 420px;gap:6vw;align-items:center;padding:95px 5vw}.eyebrow{letter-spacing:.23em;font-size:11px;font-weight:700;color:#c3a16d}.intro h1{font-family:Georgia,serif;font-size:clamp(49px,5.3vw,88px);line-height:1.05;font-weight:400;letter-spacing:-.04em;margin:30px 0}.intro h1 em,.section h2 em,.corporate h2 em{color:#c6a574;font-weight:400}.lead{font-size:17px;line-height:1.9;max-width:610px;color:#e1e1dc}.promises{display:flex;gap:25px;flex-wrap:wrap;margin-top:55px;color:#d6c7ad;font-size:12px}.booking{background:#121514ee;border:1px solid #8c7b5a70;padding:30px;box-shadow:0 24px 80px #0008}.booking h2{font-family:Georgia,serif;font-size:29px;font-weight:400;margin:10px 0 24px}.tabs{display:flex;border-bottom:1px solid #3d403e;margin-bottom:20px}.tabs button{flex:1;padding:12px 3px;color:#bdbdb8;background:none;border:0;border-bottom:2px solid transparent;font-size:11px;cursor:pointer}.tabs button.selected{color:#dfc18a;border-bottom-color:#c8a46b}.booking label{display:block;font-size:11px;color:#e3dfd6;margin:15px 0}.booking input,.booking select{display:block;width:100%;background:#222624;color:white;border:1px solid #4a4b45;padding:12px;margin-top:8px;border-radius:0;min-width:0;color-scheme:dark}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.submit{width:100%;margin-top:10px;display:flex;justify-content:space-between}.booking-note,.disclaimer{font-size:11px;color:#aaa9a3;line-height:1.6}.booking-note{text-align:center}#form-result{margin-top:15px;border:1px solid #b99b69;padding:15px;line-height:1.6;font-size:13px}.section{padding:95px clamp(20px,5vw,90px);max-width:1600px;margin:auto}.section h2,.corporate h2{font:normal clamp(35px,4vw,60px)/1.15 Georgia,serif;margin:20px 0 42px}.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}.cards article{min-width:0}.visual{height:230px;display:flex;align-items:flex-end;padding:20px;background:linear-gradient(135deg,#3c403d,#151c1b);border-bottom:2px solid #b79b68}.visual span{font:30px Georgia,serif;color:#bda276}.aviation{background:linear-gradient(140deg,#424b4d,#1a2427)}.chauffeur{background:linear-gradient(140deg,#474840,#191b1a)}.yacht{background:linear-gradient(140deg,#3b525a,#1a2228)}.events{background:linear-gradient(140deg,#50463e,#201c1b)}.cards h3,.fleet h3{font:normal 23px Georgia,serif;margin-bottom:8px}.cards p,.fleet p{font-size:13px;color:#aaa;line-height:1.7}.fleet{border-top:1px solid #333}.fleet-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:15px}.fleet-grid article{min-height:200px;background:#1c1f1d;border:1px solid #343a34;padding:30px 22px}.fleet-grid article span{font-size:10px;letter-spacing:.2em;color:#c6a574}.corporate{background:#262a27;display:flex;justify-content:space-between;align-items:center;gap:40px;padding:85px 6vw}.corporate p:not(.eyebrow){color:#c7c7bf;max-width:650px;line-height:1.8}.corporate a{border:1px solid #c3a16d;color:#c3a16d;padding:20px 25px;white-space:nowrap}footer{padding:35px 6vw;display:flex;align-items:center;gap:25px;flex-wrap:wrap;font-size:12px;color:#aaa}footer strong{color:#eee;letter-spacing:.14em}footer small{width:100%}@media(max-width:1100px){.header nav{display:none}.hero-inner{grid-template-columns:1fr 390px;gap:25px}.cards,.fleet-grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:760px){.header{min-height:75px}.brand strong{font-size:11px}.brand small{font-size:8px}.top-cta{padding:12px}.hero-inner{grid-template-columns:1fr;padding:65px 20px}.intro h1{font-size:55px}.promises{margin-top:28px}.booking{max-width:540px;width:100%;padding:23px}.section{padding:65px 20px}.cards,.fleet-grid{grid-template-columns:1fr 1fr}.visual{height:160px}.corporate{display:block;padding:65px 20px}.corporate a{display:inline-block;margin-top:15px}}@media(max-width:470px){.intro h1{font-size:45px}.cards,.fleet-grid{grid-template-columns:1fr}.visual{height:190px}.header{padding:10px}.logo-slot{width:44px;height:44px}.top-cta{font-size:11px}}
+.official-logo{display:block;width:54px;height:54px;object-fit:contain;background:#fff;border-radius:50%;padding:3px;flex-shrink:0}@media(max-width:470px){.official-logo{width:44px;height:44px}}
+
+/* Full business name and responsive header */
+.header{width:100%;min-width:0;gap:clamp(12px,2vw,30px)}.brand{min-width:0;flex-shrink:0}.brand>span:last-child{min-width:0}.brand strong{white-space:nowrap;letter-spacing:.12em;font-size:clamp(12px,1.1vw,17px)}.brand small{white-space:nowrap}.header nav{min-width:0;gap:clamp(10px,1.5vw,24px)}.header nav a{white-space:nowrap}.top-cta{flex-shrink:0;white-space:nowrap}body{overflow-x:hidden}@media(max-width:1350px){.header nav{display:none}}@media(max-width:520px){.header{padding:10px 14px;gap:8px}.brand{gap:8px}.brand strong{font-size:clamp(10px,3.1vw,14px);letter-spacing:.045em}.brand small{font-size:8px;letter-spacing:.05em}.top-cta{padding:11px 9px;font-size:10px}.official-logo{width:40px;height:40px}}
+
+/* Identité EPS : signature champagne et tracé du logo champagne sur fond noir.
+   L'image source officielle reste intacte : l'effet est purement visuel. */
+.brand small{color:#c9a56d;font-weight:700;letter-spacing:.13em}
+.official-logo{background:transparent;border-radius:0;padding:0;filter:invert(1) sepia(1) saturate(1.5) hue-rotate(350deg) brightness(1.04);mix-blend-mode:screen}
+@media(max-width:520px){.brand small{letter-spacing:.045em}}
+
+/* Logo EPS : les zones claires deviennent noires ; le tracé est champagne.
+   Le traitement concerne uniquement le logo affiché sur le site. */
+.official-logo{background:#090a09;border-radius:50%;padding:3px;filter:none;mix-blend-mode:normal;object-fit:contain}
+
+/* Final : blanc du fichier source rendu noir (invisible sur fond noir), tracé noir en champagne. */
+.official-logo{background:#090a09;border-radius:50%;padding:3px;filter:invert(1) sepia(1) saturate(1.5) hue-rotate(350deg) brightness(1.04);mix-blend-mode:screen}
+
+/* Identité validée à partir du visuel EPS fourni */
+.official-logo{width:70px;height:50px;object-fit:contain;background:transparent;border-radius:0;padding:0;filter:none;mix-blend-mode:normal}.brand strong{color:#d5b476;font-family:Georgia,'Times New Roman',serif;letter-spacing:.13em;font-weight:400}.brand small{color:#d5b476}@media(max-width:520px){.official-logo{width:50px;height:38px}.brand strong{font-size:clamp(10px,3.1vw,14px)}}
+
+/* Photos de prévisualisation sous licence Pexels ; scènes illustratives, non flotte EPS. */
+.hero{background:#121614 url("https://images.pexels.com/photos/10263390/pexels-photo-10263390.jpeg?auto=compress&cs=tinysrgb&w=2000") center 46%/cover no-repeat}
+.hero:before{background:linear-gradient(90deg,rgba(6,9,10,.88) 0%,rgba(6,9,10,.54) 48%,rgba(6,9,10,.65) 100%),linear-gradient(0deg,rgba(8,9,8,.48),transparent 48%)}
+.intro{position:relative;z-index:1}
+.intro:after{content:"";display:block;width:min(350px,76%);height:165px;margin-top:34px;background:url("https://images.pexels.com/photos/17455633/pexels-photo-17455633.jpeg?auto=compress&cs=tinysrgb&w=850") center/cover no-repeat;border:1px solid rgba(201,165,109,.75);box-shadow:0 16px 42px #0009}
+.visual{background-position:center;background-size:cover;position:relative;isolation:isolate}
+.visual:before{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,.58),rgba(0,0,0,.06));z-index:-1}
+.aviation{background-image:url("https://images.pexels.com/photos/11213341/pexels-photo-11213341.jpeg?auto=compress&cs=tinysrgb&w=900")}
+.chauffeur{background-image:url("https://images.pexels.com/photos/17455633/pexels-photo-17455633.jpeg?auto=compress&cs=tinysrgb&w=900")}
+.yacht{background-image:url("https://images.pexels.com/photos/38695226/pexels-photo-38695226.jpeg?auto=compress&cs=tinysrgb&w=900")}
+.events{background-image:url("https://images.pexels.com/photos/12913480/pexels-photo-12913480.jpeg?auto=compress&cs=tinysrgb&w=900")}
+.fleet-grid article:nth-child(1){background:linear-gradient(0deg,#151715ee,#15171566),url("https://images.pexels.com/photos/12152812/pexels-photo-12152812.jpeg?auto=compress&cs=tinysrgb&w=700") center/cover}
+.fleet-grid article:nth-child(2){background:linear-gradient(0deg,#151715ee,#15171566),url("https://images.pexels.com/photos/17455633/pexels-photo-17455633.jpeg?auto=compress&cs=tinysrgb&w=700") center/cover}
+@media(max-width:760px){.hero{background-position:58% center}.intro:after{height:130px;margin-top:25px}.hero:before{background:linear-gradient(90deg,rgba(6,9,10,.84),rgba(6,9,10,.58))}}
+
+/* Homepage v2: cinematic layout based on the approved visual reference. */
+.header{height:72px;min-height:72px;padding:9px clamp(22px,3.2vw,60px);background:#111210;border-bottom:1px solid #8e78474a}
+.official-logo{width:45px;height:43px;object-fit:contain}
+.brand{gap:9px}.brand strong{font-size:clamp(11px,1vw,15px);letter-spacing:.11em}.brand small{font-size:8px;letter-spacing:.14em;margin-top:3px}
+.header nav{display:flex;gap:clamp(12px,1.6vw,26px);font-size:11px}
+.top-cta{padding:12px 21px}
+.hero{min-height:565px;background:#12110f url("https://images.pexels.com/photos/33081324/pexels-photo-33081324.jpeg?auto=compress&cs=tinysrgb&w=2000") center 53%/cover no-repeat}
+.hero:before{background:linear-gradient(90deg,rgba(6,8,9,.86) 0%,rgba(7,9,10,.57) 44%,rgba(7,8,8,.18) 72%,rgba(6,8,9,.36) 100%),linear-gradient(0deg,rgba(9,9,9,.35),transparent 52%)}
+.hero-inner{max-width:1500px;grid-template-columns:minmax(0,1fr) minmax(330px,365px);gap:clamp(22px,4vw,70px);padding:55px clamp(22px,4vw,65px);min-height:565px}
+.intro{align-self:end;padding-bottom:33px}
+.intro:after{display:none}
+.intro h1{font-size:clamp(43px,4.7vw,72px);line-height:1.03;margin:18px 0 18px;text-shadow:0 3px 15px #0009}
+.intro h1 em{color:#d4b278;font-style:normal}
+.lead{max-width:520px;font-size:14px;line-height:1.6;text-shadow:0 2px 8px #000}
+.promises{margin-top:24px;gap:18px;font-size:11px;color:#dfd0b6}
+.booking{align-self:center;padding:23px;background:rgba(14,17,18,.94);border:1px solid #a48b6055;box-shadow:0 14px 42px #0008}
+.booking .eyebrow{font-size:9px}.booking h2{font-size:25px;margin:9px 0 15px}
+.tabs{margin-bottom:11px}.tabs button{padding:10px 2px;font-size:10px}
+.booking label{margin:10px 0;font-size:10px}.booking input,.booking select{padding:9px 11px;margin-top:6px;background:#22282a;border:1px solid #3b4141}
+.submit{margin-top:12px;padding:14px 17px;font-size:11px}
+.booking-note{font-size:10px;margin:10px 0 0}
+.services-section{padding:0;max-width:none;background:#111210}
+.cards{grid-template-columns:repeat(4,minmax(0,1fr));gap:3px}
+.cards article{position:relative;height:205px;overflow:hidden;background:#171717}
+.cards .visual{position:absolute;inset:0;width:100%;height:100%;border:0;padding:0;z-index:0}
+.cards .visual:before{z-index:0;background:linear-gradient(0deg,rgba(0,0,0,.92),rgba(0,0,0,.05) 85%)}
+.cards .visual span{display:none}
+.cards article h3,.cards article p{position:relative;z-index:1;margin-left:20px;margin-right:15px}
+.cards article h3{margin-top:128px;margin-bottom:4px;color:white;font-size:20px}
+.cards article p{font-size:11px;line-height:1.35;color:#e3dfd6}
+.aviation{background-image:url("https://images.pexels.com/photos/10263390/pexels-photo-10263390.jpeg?auto=compress&cs=tinysrgb&w=850")}
+.chauffeur{background-image:url("https://images.pexels.com/photos/18247486/pexels-photo-18247486.jpeg?auto=compress&cs=tinysrgb&w=850")}
+.yacht{background-image:url("https://images.pexels.com/photos/38695226/pexels-photo-38695226.jpeg?auto=compress&cs=tinysrgb&w=850")}
+.events{background-image:url("https://images.pexels.com/photos/12913480/pexels-photo-12913480.jpeg?auto=compress&cs=tinysrgb&w=850")}
+.fleet{padding:48px clamp(22px,4vw,65px) 55px;background:#111210;border:0;text-align:center}
+.fleet .eyebrow{font-size:9px}.fleet h2{font-size:clamp(30px,3vw,42px);margin:9px 0 28px}
+.fleet-grid{gap:13px;text-align:left}
+.fleet-grid article{height:225px;min-height:225px;display:flex;flex-direction:column;justify-content:flex-end;padding:19px;background-color:#191b1a;border:1px solid #484238}
+.fleet-grid article:nth-child(1){background:linear-gradient(0deg,#101010 0%,#10101055 65%),url("https://images.pexels.com/photos/4809795/pexels-photo-4809795.jpeg?auto=compress&cs=tinysrgb&w=850") center/cover}
+.fleet-grid article:nth-child(2){background:linear-gradient(0deg,#101010 0%,#10101055 65%),url("https://images.pexels.com/photos/18247486/pexels-photo-18247486.jpeg?auto=compress&cs=tinysrgb&w=850") center/cover}
+.fleet-grid article:nth-child(3){background:linear-gradient(0deg,#101010 0%,#10101055 65%),url("https://images.pexels.com/photos/31040129/pexels-photo-31040129.jpeg?auto=compress&cs=tinysrgb&w=850") center/cover}
+.fleet-grid article:nth-child(4){background:linear-gradient(0deg,#101010 0%,#10101055 65%),url("https://images.pexels.com/photos/15535501/pexels-photo-15535501.jpeg?auto=compress&cs=tinysrgb&w=850") center/cover}
+.fleet-grid article span{font-size:9px}.fleet-grid article h3{font-size:21px;margin:8px 0 5px;color:#fff}.fleet-grid article p{color:#d6d4d0;margin:0}
+.fleet .disclaimer{text-align:left}
+@media(max-width:1100px){.header nav{display:none}.hero-inner{grid-template-columns:minmax(0,1fr) 345px;gap:22px}.cards article h3{font-size:18px}}
+@media(max-width:760px){.header{height:70px;min-height:70px}.hero{min-height:0;background-position:44% center}.hero-inner{grid-template-columns:1fr;padding:50px 20px 35px;min-height:0}.intro{align-self:auto;padding:45px 0 12px}.intro h1{font-size:clamp(42px,10vw,63px)}.booking{width:100%;max-width:520px;margin:0 auto}.cards{grid-template-columns:repeat(2,minmax(0,1fr))}.cards article{height:185px}.cards article h3{margin-top:111px}.fleet-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:480px){.cards{grid-template-columns:1fr}.cards article{height:190px}.cards article h3{margin-top:117px}.fleet-grid{grid-template-columns:1fr}.brand strong{font-size:11px}.brand small{font-size:7px}.official-logo{width:40px;height:38px}}
+
+/* Chauffeur-first visual: aviation only appears in its service card. Temporary CC BY image until EPS fleet photo supplied. */
+.hero{background-image:url("https://commons.wikimedia.org/wiki/Special:Redirect/file/Black_Mercedes-Benz_V-Class_outside_a_Mayfair_hotel%2C_Grosvenor_Square%2C_London_%28Tripyana%29.jpg?width=1600");background-position:center 52%;background-color:#161616}
+.hero:before{background:linear-gradient(90deg,rgba(8,9,10,.94) 0%,rgba(8,9,10,.75) 36%,rgba(8,9,10,.27) 70%,rgba(8,9,10,.45) 100%),linear-gradient(0deg,rgba(7,8,8,.45),transparent 70%)}
+.intro h1{font-size:clamp(39px,4.4vw,67px);max-width:690px}.intro h1 em{font-style:italic}
+@media(max-width:760px){.hero{background-position:57% center}.hero:before{background:linear-gradient(90deg,rgba(8,9,10,.9),rgba(8,9,10,.65))}}
+
+/* Approved mockup direction: jet + chauffeur/van cinematic composition. */
+.hero{background-image:url("https://images.pexels.com/photos/33081324/pexels-photo-33081324.jpeg?auto=compress&cs=tinysrgb&w=2000");background-position:center 53%;background-color:#15120f}
+.hero:before{background:linear-gradient(90deg,rgba(6,8,9,.82),rgba(7,9,10,.48) 43%,rgba(7,8,8,.20) 70%,rgba(6,8,9,.4)),linear-gradient(0deg,rgba(9,9,9,.4),transparent 55%)}
+.intro h1{font-size:clamp(43px,4.7vw,72px)}.intro h1 em{font-style:normal}
+@media(max-width:760px){.hero{background-position:44% center}.hero:before{background:linear-gradient(90deg,rgba(6,9,10,.84),rgba(6,9,10,.58))}}
+
+/* Composition principale : avion en arrière-plan, Classe V au premier plan,
+   texte à gauche et formulaire à droite, suivant la maquette approuvée. */
+.hero{isolation:isolate;overflow:hidden;min-height:640px;background-image:url("https://images.pexels.com/photos/33081324/pexels-photo-33081324.jpeg?auto=compress&cs=tinysrgb&w=2000");background-position:center 43%}
+.hero:before{z-index:0;background:linear-gradient(90deg,rgba(5,8,10,.87) 0%,rgba(5,8,10,.5) 37%,rgba(5,8,10,.13) 66%,rgba(5,8,10,.58) 100%),linear-gradient(0deg,rgba(9,10,9,.5),transparent 62%)}
+.hero-vehicle{position:absolute;z-index:1;bottom:0;left:35%;width:38%;height:45%;background:url("https://commons.wikimedia.org/wiki/Special:Redirect/file/Black_Mercedes-Benz_V-Class_outside_a_Mayfair_hotel%2C_Grosvenor_Square%2C_London_%28Tripyana%29.jpg?width=1000") center 62%/cover no-repeat;mask-image:linear-gradient(90deg,transparent 0%,black 17%,black 80%,transparent 100%);opacity:.82;box-shadow:0 0 75px #05080988}
+.hero-inner{z-index:2;min-height:640px;grid-template-columns:minmax(0,1fr) minmax(335px,375px)}
+.intro{align-self:center;padding:0 0 65px}.intro h1{font-size:clamp(46px,5.2vw,78px)}
+.booking{z-index:3}
+.fleet-grid article{transition:transform .2s,border-color .2s}.fleet-grid article:hover{transform:translateY(-3px);border-color:#bfa16e}
+@media(max-width:1000px){.hero-vehicle{left:31%;width:40%;height:35%;opacity:.65}.intro h1{font-size:clamp(40px,5vw,64px)}}
+@media(max-width:760px){.hero{min-height:0}.hero-inner{min-height:0}.hero-vehicle{top:125px;bottom:auto;left:26%;width:70%;height:260px;opacity:.4}.intro{padding:50px 0 25px}.booking{position:relative}.hero:before{background:linear-gradient(90deg,#06090bd9,#06090b8a)}}
+
+/* Référence fournie le 25/09 : mise en page, typographie et cartes fidèles. */
+body{background:#171717;color:#f9f7f4}.header{height:67px;min-height:67px;padding:5px 3.5%;background:#101112;gap:22px}.official-logo{width:57px;height:56px}.brand strong{font-size:14px;letter-spacing:.045em}.brand small{font-size:8px;letter-spacing:.19em;text-align:center}.header nav{display:flex;gap:clamp(13px,1.4vw,28px);align-items:center;margin:auto;font-size:11px}.header nav a{padding:15px 0}.header nav .nav-active{color:#edca83;border-bottom:1px solid #edca83}.lang-toggle{font-size:11px;white-space:nowrap;color:#e9c77e}.lang-toggle span{color:#a9a9a9;padding:0 5px}.top-cta{background:linear-gradient(90deg,#bd985b,#f1d391);border-radius:10px;padding:12px 29px;color:#191510}.top-cta span{display:none}
+.hero{min-height:478px;background-image:url("https://images.pexels.com/photos/33081324/pexels-photo-33081324.jpeg?auto=compress&cs=tinysrgb&w=2200");background-position:center 48%;background-color:#3c342e;overflow:hidden}
+.hero:before{z-index:0;background:linear-gradient(90deg,#10141b8a 0%,#10141b1b 45%,#10141b12 70%,#10141b26 100%),linear-gradient(0deg,#0b0d12a8 0%,transparent 45%)}
+.hero-vehicle{display:none}.hero-inner{min-height:478px;max-width:none;padding:34px 3% 33px 4.5%;grid-template-columns:minmax(0,1fr) minmax(345px,376px);gap:25px;align-items:center}.intro{align-self:end;padding:0 0 0}.intro .eyebrow{font-size:11px;letter-spacing:.33em;color:#e7e5e1;font-weight:400}.intro h1{font-size:clamp(47px,5.2vw,76px);line-height:.93;margin:6px 0 18px;letter-spacing:-.02em;text-shadow:0 2px 10px #0007}.intro h1 em{color:#f0c979;font-style:normal}.lead{font-size:16px;line-height:1.38;max-width:450px;color:#fff}.promises{margin-top:38px;display:flex;gap:35px;align-items:center;color:#fff;font-size:11px}.promises span{display:flex;gap:12px;align-items:center;white-space:nowrap}.promises b{font:35px Georgia,serif;color:#d8ae5e}
+.booking{background:linear-gradient(135deg,#202225f7,#090a0bf9);border:1px solid #5d5b55;border-radius:9px;padding:23px 18px 20px;box-shadow:0 15px 50px #0009}.booking h2{font-size:25px;font-weight:bold;margin:0 5px 15px}.tabs{gap:0;background:#242d34;border:1px solid #343b40;border-radius:7px;margin-bottom:12px;overflow:hidden}.tabs button{padding:10px 2px;color:#e4e4e4}.tabs button.selected{background:linear-gradient(90deg,#bd9659,#f0d08b);color:#151515;border:0;border-radius:6px}.booking label{font-size:0;margin:9px 0}.booking input,.booking select{margin:0;background:#252e35;border:1px solid #3b464e;border-radius:7px;height:39px;font-size:12px;padding:10px 13px}.booking label:has(input[name="departure"]) input::placeholder,.booking label:has(input[name="destination"]) input::placeholder{color:#c8cbd0}.form-grid{gap:10px}.submit{border-radius:7px;background:linear-gradient(90deg,#c49e5e,#f8d994);color:#151515;justify-content:center;gap:15px;padding:14px}.booking-note{font-size:10px;color:#c4c5c6}
+.services-section{padding:0;max-width:none}.cards{gap:2px;grid-template-columns:repeat(4,minmax(0,1fr))}.cards article{height:231px}.cards article h3{margin:147px 26px 3px;font-size:23px}.cards article p{margin:0 26px;font-size:12px;line-height:1.35}.cards .visual:before{background:linear-gradient(0deg,#060606ed 0%,#06060611 80%)}.aviation{background-image:url("https://images.pexels.com/photos/10263390/pexels-photo-10263390.jpeg?auto=compress&cs=tinysrgb&w=900")}.chauffeur{background-image:url("https://images.pexels.com/photos/18247486/pexels-photo-18247486.jpeg?auto=compress&cs=tinysrgb&w=900")}.yacht{background-image:url("https://images.pexels.com/photos/38695226/pexels-photo-38695226.jpeg?auto=compress&cs=tinysrgb&w=900")}.events{background-image:url("https://images.pexels.com/photos/12913480/pexels-photo-12913480.jpeg?auto=compress&cs=tinysrgb&w=900")}
+.fleet{position:relative;padding:27px 2.7% 42px;max-width:none;background:radial-gradient(ellipse at center,#242424,#131313 70%)}.fleet .eyebrow{font-size:10px;letter-spacing:.33em;color:#bdbbb9}.fleet h2{font-size:34px;margin:5px 0 23px}.fleet h2:after{content:"";display:block;width:36px;height:2px;background:#e7c47d;margin:12px auto 0}.all-fleet{position:absolute;right:2.7%;top:41px;border:1px solid #c29b5d;border-radius:25px;padding:11px 17px;color:#f1d18e;font-size:10px}.fleet-grid{gap:15px}.fleet-grid article{height:auto;min-height:273px;background:linear-gradient(#0b0c0c,#171717)!important;border:1px solid #363636;border-radius:9px;padding:0 14px 12px;display:flex;flex-direction:column;justify-content:flex-start;overflow:hidden}.fleet-photo{height:133px;margin:0 -14px 4px;background-size:cover;background-position:center;background-repeat:no-repeat}.e-class{background-image:url("https://images.pexels.com/photos/4809795/pexels-photo-4809795.jpeg?auto=compress&cs=tinysrgb&w=700")}.v-class{background-image:url("https://images.pexels.com/photos/18247486/pexels-photo-18247486.jpeg?auto=compress&cs=tinysrgb&w=700")}.s-class{background-image:url("https://images.pexels.com/photos/31040129/pexels-photo-31040129.jpeg?auto=compress&cs=tinysrgb&w=700")}.eqs{background-image:url("https://images.pexels.com/photos/15535501/pexels-photo-15535501.jpeg?auto=compress&cs=tinysrgb&w=700")}.fleet-grid article h3{font:normal 20px Georgia,serif;color:#fff;margin:3px 0}.fleet-grid article p{font-size:11px;color:#d4d4d4;margin:0 0 12px}.fleet-spec{font-size:11px;color:#f0f0f0;margin:auto 0 15px}.fleet-action{border:1px solid #c09c5b;border-radius:20px;text-align:center;font-size:10px;padding:8px 5px;color:#fff}.fleet .disclaimer{font-size:10px}
+@media(max-width:1180px){.header nav{display:none}.hero-inner{grid-template-columns:minmax(0,1fr) minmax(330px,365px)}.promises{gap:16px}.cards article h3{margin-left:17px;margin-right:10px}.cards article p{margin-left:17px;margin-right:10px}}
+@media(max-width:760px){.header{height:67px;min-height:67px}.lang-toggle{display:none}.hero-inner{display:grid;grid-template-columns:1fr;padding:45px 18px 25px}.intro{padding:100px 0 25px}.intro h1{font-size:clamp(45px,10vw,67px)}.hero{background-position:43% center}.promises{flex-wrap:wrap}.booking{max-width:530px;margin:0 auto;width:100%}.cards{grid-template-columns:repeat(2,minmax(0,1fr))}.cards article{height:210px}.cards article h3{margin-top:130px}.fleet-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.all-fleet{position:static;display:inline-block;margin:-8px auto 23px}}
+@media(max-width:480px){.brand strong{font-size:10px}.brand small{font-size:7px}.official-logo{width:43px;height:45px}.header{padding:5px 10px}.top-cta{padding:11px}.intro{padding-top:65px}.intro h1{font-size:45px}.promises{gap:15px}.promises span{font-size:10px}.cards{grid-template-columns:1fr}.fleet-grid{grid-template-columns:1fr}.fleet-photo{height:185px}}
+
+/* Bannière fournie par EPS : emplacement de la photo officielle dans le dépôt. */
+.hero{background-image:url("assets/banniere-eps.jpg");background-position:center 49%;background-size:cover;background-color:#28211e}
+.hero:before{background:linear-gradient(90deg,rgba(8,11,14,.66) 0%,rgba(8,11,14,.12) 49%,rgba(8,11,14,.1) 70%,rgba(8,11,14,.34) 100%),linear-gradient(0deg,rgba(7,9,12,.64),transparent 60%)}
+.hero-vehicle{display:none}
+@media(max-width:760px){.hero{background-position:49% center}.hero:before{background:linear-gradient(90deg,rgba(8,11,14,.75),rgba(8,11,14,.36))}}
+
+/* Bandeau quatre prestations fourni par EPS, juste sous la bannière. */
+.services-section{padding:0;margin:0;max-width:none;background:#101010}
+.services-section .cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;background-image:url("assets/services-eps.jpg");background-size:100% 100%;background-repeat:no-repeat;min-height:clamp(165px,12.3vw,245px)}
+.services-section .cards article{position:relative;min-width:0;height:clamp(165px,12.3vw,245px);background:transparent;border-right:1px solid #ffffff36}
+.services-section .cards article:last-child{border-right:0}
+.services-section .cards .visual{background-image:none!important}
+.services-section .cards .visual:before{background:transparent!important}
+.services-section .cards .visual span{display:none}
+.services-section .cards article h3,.services-section .cards article p{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+@media(max-width:760px){.services-section .cards{grid-template-columns:repeat(2,minmax(0,1fr));background-image:none}.services-section .cards article{height:205px;background-image:url("assets/services-eps.jpg");background-repeat:no-repeat;background-size:400% 100%}.services-section .cards article:nth-child(1){background-position:0% center}.services-section .cards article:nth-child(2){background-position:33.333% center}.services-section .cards article:nth-child(3){background-position:66.666% center}.services-section .cards article:nth-child(4){background-position:100% center}}
+@media(max-width:480px){.services-section .cards{grid-template-columns:1fr}.services-section .cards article{height:220px}}
+
+/* Conserver les proportions natives de la bande EPS sur toutes les tailles d’écran. */
+.services-section .cards{aspect-ratio:1312/224;height:auto;min-height:0}
+.services-section .cards article{height:auto}
+@media(max-width:760px){
+  .services-section .cards article{height:auto;aspect-ratio:328/224;background-size:400% auto}
+}
+@media(max-width:480px){
+  .services-section .cards article{height:auto;aspect-ratio:328/224}
+}
+
+/* Nouvelle bande EPS : proportions natives du visuel fourni (2048 x 684). */
+.services-section .cards{aspect-ratio:2048/684;height:auto;min-height:0}
+.services-section .cards article{height:auto}
+@media(max-width:760px){
+  .services-section .cards article{height:auto;aspect-ratio:512/684;background-size:400% auto}
+}
+@media(max-width:480px){
+  .services-section .cards{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .services-section .cards article{height:auto;aspect-ratio:512/684}
+}
+
+/* Libellés explicites pour les quantités du formulaire de réservation. */
+.reservation-section .booking .form-grid label:has(select){display:grid;gap:6px;font-size:11px;line-height:1.2;color:#e3c889}
+
+.reservation-section .booking label:has(input),.reservation-section .booking label:has(select){display:grid;gap:6px;font-size:11px;line-height:1.2;color:#e3c889}
+
+/* Réservation : coordonnées et récapitulatif avant envoi. */
+.reservation-section .booking label:has(textarea){display:grid;gap:6px;font-size:11px;line-height:1.2;color:#e3c889}
+.reservation-section .booking label[hidden],.reservation-section .booking [hidden]{display:none!important}
+.reservation-section .booking .contact-fields{min-width:0;margin:18px 0 0;padding:14px 0 0;border:0;border-top:1px solid #4d4638}
+.reservation-section .booking .contact-fields legend{padding:0 9px 0 0;color:#e3c889;font-size:12px;font-weight:600;letter-spacing:.08em}
+.reservation-section .booking textarea{display:block;box-sizing:border-box;width:100%;min-height:72px;margin:0;padding:10px 12px;border:1px solid #3b464e;border-radius:7px;background:#252e35;color:#f4f1e9;font:inherit;font-size:12px;line-height:1.5;resize:vertical}
+.reservation-section .booking textarea::placeholder{color:#aab0b2}
+.reservation-section .booking .booking-trap{position:absolute!important;left:-9999px!important;width:1px;height:1px;overflow:hidden}
+.reservation-section .booking-review{margin-top:17px;padding:17px;border:1px solid #8c7449;border-radius:8px;background:#1b1e1c}
+.reservation-section .booking-review h3{margin:0 0 12px;color:#f4f1e9;font:normal 21px Georgia,serif}
+.reservation-section .booking-review dl{display:grid;grid-template-columns:minmax(105px,1fr) minmax(0,1.6fr);gap:7px 12px;margin:0;font-size:12px;line-height:1.4}
+.reservation-section .booking-review dt{color:#e3c889}.reservation-section .booking-review dd{min-width:0;margin:0;color:#f0eee8;overflow-wrap:anywhere}
+.reservation-section .booking-review p{color:#b8b6af;font-size:11px;line-height:1.5}
+.reservation-section .booking-review .submit{width:100%;margin-top:8px}
+.reservation-section .booking-review .submit:disabled{opacity:.55;cursor:not-allowed}
+#form-result:not([hidden]){margin-top:12px;padding:10px;border:1px solid #d5b476;border-radius:6px;color:#e3c889;font-size:12px;line-height:1.5}
+
+/* Accès admin distinct du parcours de réservation. */
+.admin-access{display:flex;align-items:center;justify-content:space-between;gap:30px;padding:36px clamp(20px,6vw,90px);background:#181a18;border-top:1px solid #484032;border-bottom:1px solid #484032}.admin-access .eyebrow{margin:0 0 10px}.admin-access h2{margin:0;font:normal clamp(24px,3vw,34px) Georgia,serif;color:#f1e8d7}.admin-access p:not(.eyebrow){margin:10px 0 0;color:#bcb9b1;font-size:13px;line-height:1.6}.admin-access>a{display:inline-flex;align-items:center;gap:22px;padding:13px 20px;border:1px solid #c8a46b;border-radius:999px;color:#e4cb9a;font-size:12px;white-space:nowrap;transition:background .2s,color .2s,box-shadow .2s}.admin-access>a:hover,.admin-access>a:focus-visible{background:#d5b476;color:#111;box-shadow:0 0 18px #d5b47680;outline:2px solid #e6cf9f;outline-offset:2px}footer a[href="/admin"]{color:#d5b476;text-decoration:underline;text-underline-offset:3px}@media(max-width:700px){.admin-access{align-items:flex-start;flex-direction:column;gap:18px;padding:30px 20px}}
+
+.admin-access .access-links{display:flex;flex-wrap:wrap;gap:12px}.admin-access .access-links a{display:inline-flex;align-items:center;justify-content:space-between;gap:18px;padding:13px 20px;border:1px solid #c8a46b;border-radius:999px;color:#e4cb9a;font-size:12px;white-space:nowrap;transition:background .2s,color .2s,box-shadow .2s}.admin-access .access-links a:hover,.admin-access .access-links a:focus-visible{background:#d5b476;color:#111;box-shadow:0 0 18px #d5b47680;outline:2px solid #e6cf9f;outline-offset:2px}footer a[href="/chauffeur"]{color:#d5b476;text-decoration:underline;text-underline-offset:3px}@media(max-width:700px){.admin-access .access-links{width:100%}.admin-access .access-links a{flex:1;min-width:190px}}

@@ -135,6 +135,11 @@ html[lang="en"] .fleet-en-card small{font:normal clamp(8px,.66vw,12px) Arial,san
 /* Ajustement demandé : remonter légèrement le cadrage sans retoucher le fichier. */
 .hero.eps-approved-hero .eps-approved-banner{transform:translateY(-24px)!important;margin-bottom:-24px!important}
 @media(max-width:650px){.hero.eps-approved-hero .eps-approved-banner{transform:translateY(-10px)!important;margin-bottom:-10px!important}}
+/* Correctif définitif : aucune translation ni découpe. L'image complète est visible,
+   la hauteur dépend de sa proportion naturelle et non de la fenêtre. */
+.hero.eps-approved-hero{display:block!important;height:auto!important;min-height:0!important;overflow:visible!important}
+.hero.eps-approved-hero .eps-approved-banner{display:block!important;width:100%!important;height:auto!important;max-width:100%!important;max-height:none!important;aspect-ratio:auto!important;object-fit:contain!important;object-position:center!important;transform:none!important;margin:0!important;position:static!important;clip-path:none!important}
+.hero.eps-approved-hero .hero-inner{position:relative!important;inset:auto!important}
 </style><style id="eps-four-fleet-20260928">#vehicules .eps-three-grid{grid-template-columns:repeat(4,minmax(0,1fr))}#vehicules .eps-three-photo{aspect-ratio:1200/800;background-size:contain!important;background-position:center!important;background-color:#000}#vehicules .eps-three-photo-1{background-image:url("assets/IMG_1037.JPG")}#vehicules .eps-three-photo-2{background-image:url("assets/IMG_1038.JPG")}#vehicules .eps-three-photo-3{background-image:url("assets/IMG_1039.JPG")}#vehicules .eps-three-photo-4{background-image:url("assets/IMG_1040.JPG")}@media(max-width:1100px){#vehicules .eps-three-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:650px){#vehicules .eps-three-grid{grid-template-columns:1fr;max-width:520px}}</style><style id="eps-fleet-hover-20260928">
 /* Bouton secondaire plus discret ; phares très subtils au survol, sans animation clignotante. */
 #vehicules .eps-three-actions{grid-template-columns:minmax(0,1fr) auto;gap:8px}

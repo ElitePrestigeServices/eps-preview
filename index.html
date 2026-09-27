@@ -126,15 +126,7 @@ html[lang="en"] .fleet-en-card small{font:normal clamp(8px,.66vw,12px) Arial,san
 #vehicules .eps-three-actions{grid-template-columns:minmax(0,1fr) auto;gap:8px}
 #vehicules .eps-three-more{font-size:clamp(9px,.68vw,11px)!important;padding:8px 10px!important;min-height:43px!important;gap:4px!important;letter-spacing:0!important}
 #vehicules .eps-three-reserve{min-height:43px!important}
-#vehicules .eps-three-photo{position:relative;isolation:isolate;overflow:hidden}
-#vehicules .eps-three-photo::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .4s ease;mix-blend-mode:screen;background-repeat:no-repeat}
- /* Chaque paire de phares est calée sur la photo correspondante, et non sur un masque commun. */
-#vehicules .eps-three-photo-1::after{background-image:radial-gradient(ellipse 5% 3.5% at 17% 51%,#f5faff,rgba(216,237,255,.65) 38%,transparent 100%),radial-gradient(ellipse 6% 3.5% at 47% 49%,#f5faff,rgba(216,237,255,.6) 38%,transparent 100%)}
-#vehicules .eps-three-photo-2::after{background-image:radial-gradient(ellipse 5% 3.5% at 18% 55%,#f5faff,rgba(216,237,255,.7) 38%,transparent 100%),radial-gradient(ellipse 5% 3.5% at 47% 52%,#f5faff,rgba(216,237,255,.65) 38%,transparent 100%)}
-#vehicules .eps-three-photo-3::after{background-image:radial-gradient(ellipse 5% 3.5% at 17% 53%,#f5faff,rgba(216,237,255,.7) 38%,transparent 100%),radial-gradient(ellipse 5% 3.5% at 46% 51%,#f5faff,rgba(216,237,255,.65) 38%,transparent 100%)}
-#vehicules .eps-three-photo-4::after{background-image:radial-gradient(ellipse 5% 3.5% at 19% 55%,#f5faff,rgba(216,237,255,.7) 38%,transparent 100%),radial-gradient(ellipse 5% 3.5% at 50% 52%,#f5faff,rgba(216,237,255,.65) 38%,transparent 100%)}
-#vehicules .eps-three-card:hover .eps-three-photo::after,#vehicules .eps-three-card:focus-within .eps-three-photo::after{opacity:1}
-@media(hover:none),(prefers-reduced-motion:reduce){#vehicules .eps-three-photo::after{display:none}}
+
 @media(max-width:650px){#vehicules .eps-three-more{font-size:10px!important;padding:8px 12px!important}}
 </style></head>
 <body><header class="header"><a href="#accueil" class="brand" aria-label="Elite Prestige Services, accueil"><img class="official-logo" src="assets/logo-eps.svg" width="54" height="54" alt="Logo officiel Elite Prestige Services"><span><strong>ELITE PRESTIGE SERVICES</strong><small>CHAUFFEUR PRIVÉ · CÔTE D’AZUR</small></span></a><nav aria-label="Navigation principale"><a href="#accueil">Accueil</a><a href="#vehicules">Nos véhicules</a><a href="#services">Nos services</a><a href="#entreprises">Entreprises</a><a href="#services">Événements</a><a href="#reservation">Mise à disposition</a><a href="#contact">Contact</a></nav><div class="eps-header-actions"><div class="lang-toggle" role="group" aria-label="Langue / Language"><button type="button" data-lang="fr" aria-pressed="true">FR</button><span aria-hidden="true">│</span><button type="button" data-lang="en" aria-pressed="false">EN</button></div><a class="top-cta" href="#reservation">Réserver <span aria-hidden="true">↗</span></a></div></header>

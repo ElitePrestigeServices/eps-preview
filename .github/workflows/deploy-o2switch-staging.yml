@@ -56,7 +56,7 @@ jobs:
           set -euo pipefail
           export LFTP_PASSWORD="$PASSWORD"
           unset PASSWORD
-          timeout 120 lftp --env-password -u "$USER" "ftp://$EPS_FTP_SERVER" <<EOF
+          timeout 120 lftp --env-password -u "epsdeploy" "ftp://$EPS_FTP_SERVER" <<EOF
           set cmd:fail-exit yes
           set ftp:ssl-force true
           set ftp:ssl-protect-data true
@@ -83,7 +83,7 @@ jobs:
           set -euo pipefail
           export LFTP_PASSWORD="$PASSWORD"
           unset PASSWORD
-          lftp --env-password -u "$USER" "ftp://$EPS_FTP_SERVER" <<EOF
+          lftp --env-password -u "epsdeploy" "ftp://$EPS_FTP_SERVER" <<EOF
           set cmd:fail-exit yes
           set ftp:ssl-force true
           set ftp:ssl-protect-data true

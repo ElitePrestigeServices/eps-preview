@@ -9,6 +9,9 @@ concurrency:
   group: eps-o2switch-staging
   cancel-in-progress: false
 
+env:
+  EPS_TARGET_SUBDIR: eps-preview-main
+
 jobs:
   deploy-staging:
     runs-on: ubuntu-latest
@@ -38,6 +41,13 @@ jobs:
       - uses: actions/checkout@v4
       - name: Installer le client FTPS
         run: sudo apt-get update -qq && sudo apt-get install -y -qq lftp
+      - name: Diagnostic certificat FTPS
+        env:
+          HOST: ${{ secrets.EPS_FTP_HOST }}
+        run: |
+          echo "Certificat présenté par le serveur FTPS :"
+          timeout 20 openssl s_client -connect "$HOST:21" -starttls ftp -servername "$HOST" </dev/null 2>/dev/null \
+            | openssl x509 -noout -subject -issuer -dates -ext subjectAltName || true
       - name: Préparer les fichiers publics
         run: |
           mkdir -p "$RUNNER_TEMP/eps-public"
@@ -54,12 +64,14 @@ jobs:
         run: |
           set -euo pipefail
           lftp -u "$USER","$PASSWORD" "ftp://$HOST" <<EOF
+          set cmd:fail-exit yes
           set ftp:ssl-force true
           set ftp:ssl-protect-data true
           set ssl:verify-certificate true
           set net:max-retries 2
           set net:timeout 25
-          mirror --reverse --verbose=1 --only-newer --parallel=3 "$RUNNER_TEMP/eps-public" "$DIRECTORY"
+          cd /$EPS_TARGET_SUBDIR
+          mirror --reverse --verbose=1 --only-newer --parallel=3 "$RUNNER_TEMP/eps-public" .
           bye
           EOF
-          echo "Publication EPS préproduction terminée. Le WordPress de production n'a pas été modifié."
+          echo "Publication EPS dans /$EPS_TARGET_SUBDIR/ terminée. WordPress non modifié."

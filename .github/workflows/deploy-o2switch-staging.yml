@@ -25,11 +25,16 @@ jobs:
             echo "::error::Configurer EPS_FTP_HOST, EPS_FTP_USER, EPS_FTP_PASSWORD et EPS_FTP_STAGING_DIR dans GitHub Secrets."
             exit 1
           }
-          # Ne jamais toucher au dossier public du WordPress par erreur.
-          case "$DIRECTORY" in
-            *eps-nouveau*|*eps-staging*) ;;
-            *) echo "::error::Le dossier doit contenir eps-nouveau ou eps-staging. Publication de production interdite."; exit 1 ;;
-          esac
+          # Le compte epsdeploy est limité par o2switch à /home/hicu1011/eps-nouveau.
+          # Son répertoire FTP / correspond donc uniquement à ce dossier.
+          test "$USER" = "epsdeploy@hicu1011.odns.fr" || {
+            echo "::error::Compte FTP non reconnu : seul epsdeploy est autorisé."
+            exit 1
+          }
+          test "$DIRECTORY" = "/" || {
+            echo "::error::Utiliser / comme répertoire FTP du compte epsdeploy limité à eps-nouveau."
+            exit 1
+          }
       - uses: actions/checkout@v4
       - name: Installer le client FTPS
         run: sudo apt-get update -qq && sudo apt-get install -y -qq lftp

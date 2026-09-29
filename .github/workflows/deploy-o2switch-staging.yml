@@ -1,0 +1,60 @@
+name: EPS - publication automatique vers o2switch (préproduction)
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: eps-o2switch-staging
+  cancel-in-progress: false
+
+jobs:
+  deploy-staging:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Vérifier les identifiants de déploiement
+        env:
+          HOST: ${{ secrets.EPS_FTP_HOST }}
+          USER: ${{ secrets.EPS_FTP_USER }}
+          PASSWORD: ${{ secrets.EPS_FTP_PASSWORD }}
+          DIRECTORY: ${{ secrets.EPS_FTP_STAGING_DIR }}
+        run: |
+          test -n "$HOST" && test -n "$USER" && test -n "$PASSWORD" && test -n "$DIRECTORY" || {
+            echo "::error::Configurer EPS_FTP_HOST, EPS_FTP_USER, EPS_FTP_PASSWORD et EPS_FTP_STAGING_DIR dans GitHub Secrets."
+            exit 1
+          }
+          # Ne jamais toucher au dossier public du WordPress par erreur.
+          case "$DIRECTORY" in
+            *eps-nouveau*|*eps-staging*) ;;
+            *) echo "::error::Le dossier doit contenir eps-nouveau ou eps-staging. Publication de production interdite."; exit 1 ;;
+          esac
+      - uses: actions/checkout@v4
+      - name: Installer le client FTPS
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq lftp
+      - name: Préparer les fichiers publics
+        run: |
+          mkdir -p "$RUNNER_TEMP/eps-public"
+          rsync -a ./ "$RUNNER_TEMP/eps-public/" \
+            --exclude=.git --exclude=.github --exclude=.gitignore \
+            --exclude=README.md --exclude='*.md' \
+            --exclude='node_modules' --exclude='.env*'
+      - name: Publier uniquement en préproduction o2switch
+        env:
+          HOST: ${{ secrets.EPS_FTP_HOST }}
+          USER: ${{ secrets.EPS_FTP_USER }}
+          PASSWORD: ${{ secrets.EPS_FTP_PASSWORD }}
+          DIRECTORY: ${{ secrets.EPS_FTP_STAGING_DIR }}
+        run: |
+          set -euo pipefail
+          lftp -u "$USER","$PASSWORD" "ftp://$HOST" <<EOF
+          set ftp:ssl-force true
+          set ftp:ssl-protect-data true
+          set ssl:verify-certificate true
+          set net:max-retries 2
+          set net:timeout 25
+          mirror --reverse --verbose=1 --only-newer --parallel=3 "$RUNNER_TEMP/eps-public" "$DIRECTORY"
+          bye
+          EOF
+          echo "Publication EPS préproduction terminée. Le WordPress de production n'a pas été modifié."

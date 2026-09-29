@@ -10,17 +10,17 @@ let currentRequest = null;
 let sentResult = null;
 const T = value => window.epsTranslate ? window.epsTranslate(value) : value;
 const phoneField = form.elements.customer_phone;
-phoneField.placeholder = '+33 6 12 34 56 78';
+phoneField.placeholder = '+33 6 12 34 56 78 / +1 212 555 0123';
 const validPhone = value => {
   const normalized = value.trim().replace(/[\s().-]/g, '');
-  return /^0[1-9]\d{8}$/.test(normalized) || /^\+[1-9]\d{7,14}$/.test(normalized);
+  return /^\+?[0-9]{7,15}$/.test(normalized);
 };
 function validatePhone() {
   const value = phoneField.value.trim();
   phoneField.setCustomValidity(!value || validPhone(value) ? '' :
     (window.epsLanguage?.() === 'en'
-      ? 'Enter a French number with 10 digits starting with 0, or an international number starting with +.'
-      : 'Saisissez un numéro français de 10 chiffres commençant par 0, ou un numéro international commençant par +.'));
+      ? 'Enter a valid phone number, with country code for international numbers.'
+      : 'Saisissez un numéro de téléphone valide, avec l’indicatif pays pour les numéros internationaux.'));
 }
 phoneField.addEventListener('input', validatePhone);
 phoneField.addEventListener('change', validatePhone);

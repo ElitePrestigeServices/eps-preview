@@ -41,8 +41,8 @@ jobs:
             exit 1
           }
       - uses: actions/checkout@v4
-      - name: Installer le client FTPS
-        run: sudo apt-get update -qq && sudo apt-get install -y -qq lftp
+      - name: Installer les outils de déploiement
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq lftp imagemagick
       - name: Diagnostic certificat FTPS
         run: |
           echo "Certificat présenté par le serveur FTPS :"
@@ -75,6 +75,18 @@ jobs:
             --exclude=.git --exclude=.github --exclude=.gitignore \
             --exclude=README.md --exclude='*.md' \
             --exclude='node_modules' --exclude='.env*'
+      - name: Optimiser les photos pour le web
+        run: |
+          set -euo pipefail
+          ASSET_DIR="$RUNNER_TEMP/eps-public/assets"
+          test -d "$ASSET_DIR" || exit 0
+          echo "Poids des images avant optimisation :"
+          du -sh "$ASSET_DIR"
+          find "$ASSET_DIR" -type f \( -iname '*.jpg' -o -iname '*.jpeg' \) -print0 | while IFS= read -r -d '' file; do
+            mogrify -auto-orient -strip -interlace Plane -sampling-factor 4:2:0 -resize '1920x1920>' -quality 78 "$file"
+          done
+          echo "Poids des images après optimisation :"
+          du -sh "$ASSET_DIR"
       - name: Publier uniquement en préproduction o2switch
         env:
           USER: ${{ secrets.EPS_FTP_USER }}

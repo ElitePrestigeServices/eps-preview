@@ -77,6 +77,12 @@ button,.btn{margin-top:7px!important;padding:10px 12px!important;min-height:40px
 .muted{font-size:11px!important;line-height:1.35!important}.top{gap:6px!important}
 .scroll,.tablewrap{overflow-x:auto!important;-webkit-overflow-scrolling:touch}
 }
+</style><style id="eps-admin-mobile-no-duplicate">
+@media(max-width:700px){
+#dashboard .eps-live-modules{display:none!important}
+#dashboard>.muted{display:none!important}
+#dashboard .top .muted{display:block!important}
+}
 </style></head><body><div class="shell"><aside class="sidebar"><div class="brand">ELITE PRESTIGE<br>SERVICES</div><div class="caption">ADMINISTRATION EPS</div><nav class="nav"><a class="active" href="./">◫ &nbsp; Tableau de bord</a><a href="reservations/">▤ &nbsp; Réservations et devis <span class="count-badge" id="reservation-count-nav">…</span></a><a href="demandes-clients/">✉ &nbsp; Demandes clients</a><a href="suivi/">♧ &nbsp; Suivi des courses</a><a href="crm/">✉ &nbsp; CRM Prospection</a><a href="../">↗ &nbsp; Voir le site</a></nav></aside><main class="main" id="dashboard"><div class="top"><div><div class="eyebrow">Espace administrateur · Côte d’Azur</div><h1>Tableau de bord</h1><div class="muted">Accès à vos outils EPS connectés à Supabase.</div></div></div><section class="eps-live-modules" aria-label="Modules de gestion"><a class="eps-module" href="reservations/"><h2>Réservations et devis <span class="count-badge" id="reservation-count-card">…</span> →</h2><p>Consultez les réservations et préparez vos devis clients.</p></a><a class="eps-module" href="demandes-clients/"><h2>Demandes clients →</h2><p>Gérez les nouvelles demandes reçues depuis le site.</p></a><a class="eps-module" href="suivi/"><h2>Suivi des courses →</h2><p>Consultez les informations opérationnelles disponibles.</p></a><a class="eps-module" href="crm/"><h2>CRM Prospection →</h2><p>Retrouvez vos contacts et vos campagnes de prospection.</p></a></section><p class="muted">Les chiffres de démonstration ont été retirés. Les données réelles se consultent dans chaque module sécurisé.</p></main></div><script type="module">
 import{createClient}from'https://esm.sh/@supabase/supabase-js@2';
 const db=createClient('https://lrtuztxjngdvrnjuwxfr.supabase.co','sb_publishable_GeaRT-N3IE03M19HCB4MVg_RQwbSnYu');

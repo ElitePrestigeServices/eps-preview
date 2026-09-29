@@ -26,6 +26,16 @@ phoneField.addEventListener('input', validatePhone);
 phoneField.addEventListener('change', validatePhone);
 let sendingState = 'initial';
 
+const hourSelect = document.querySelector('#eps-hour');
+const minuteSelect = document.querySelector('#eps-minute');
+const timeValue = document.querySelector('#eps-time-value');
+function syncTimeValue(){
+  if(!hourSelect || !minuteSelect || !timeValue) return;
+  timeValue.value = hourSelect.value && minuteSelect.value ? hourSelect.value + ':' + minuteSelect.value : '';
+}
+hourSelect?.addEventListener('change', syncTimeValue);
+minuteSelect?.addEventListener('change', syncTimeValue);
+
 const airportMentioned = value => /\b(?:aeroport|airport|aerodrome|aeroporto|aeropuerto|flughafen|heliport|jet center|nce|lfmn|lfmd|cdg|ory|lbg|mrs|tln|gva|mxp|lhr)\b/i.test(value.normalize('NFD').replace(/[\u0300-\u036f]/g, ''));
 function updateFlightField() {
   const needed = airportMentioned(form.elements.departure.value) || (type === 'Transfert' && airportMentioned(form.elements.destination.value));

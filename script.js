@@ -78,7 +78,7 @@ async function checkSendingAvailability() {
   sendButton.disabled = true;
   sendButton.textContent = T('Vérification de l’envoi…');
   try {
-    const response = await fetch('/api/reservation', { cache: 'no-store' });
+    const response = await fetch('https://lrtuztxjngdvrnjuwxfr.supabase.co/functions/v1/eps-reservation', { cache: 'no-store' });
     const state = await response.json();
     if (!response.ok || !state.ready) throw new Error('not configured');
     sendButton.disabled = false;
@@ -224,7 +224,7 @@ sendButton.addEventListener('click', async () => {
   sendingState = 'sending';
   sendStatus.textContent = T('Envoi de votre demande…');
   try {
-    const response = await fetch('/api/reservation', {
+    const response = await fetch('https://lrtuztxjngdvrnjuwxfr.supabase.co/functions/v1/eps-reservation', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(currentRequest)

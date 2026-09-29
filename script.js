@@ -300,13 +300,28 @@ document.querySelectorAll('#reservation-form [name="departure"], #reservation-fo
     const requestController = controller;
     timer = setTimeout(async () => {
       try {
-        const response = await fetch('/api/places?q=' + encodeURIComponent(query) + '&lang=' + document.documentElement.lang, { signal: requestController.signal });
+        const params = new URLSearchParams({
+          format: 'jsonv2',
+          q: query,
+          limit: '10',
+          addressdetails: '1',
+          'accept-language': document.documentElement.lang === 'en' ? 'en,fr' : 'fr,en'
+        });
+        // Worldwide search, with French results promoted to the top.
+        const response = await fetch('https://nominatim.openstreetmap.org/search?' + params.toString(), {
+          signal: requestController.signal,
+          headers: { 'Accept': 'application/json' }
+        });
         if (!response.ok) return;
         const data = await response.json();
         if (input.value.trim() !== query || document.activeElement !== input) return;
-        render([...nearby, ...(Array.isArray(data.places) ? data.places.filter(value => typeof value === 'string') : [])]);
+        const places = (Array.isArray(data) ? data : [])
+          .filter(item => item && typeof item.display_name === 'string')
+          .sort((a, b) => (b.address?.country_code === 'fr') - (a.address?.country_code === 'fr'))
+          .map(item => item.display_name);
+        render([...nearby, ...places]);
       } catch {}
-    }, 400);
+    }, 450);
   };
   input.addEventListener('input', suggest);
   input.addEventListener('focus', () => { if (input.value.trim().length >= 2) suggest(); });

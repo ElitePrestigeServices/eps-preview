@@ -106,7 +106,13 @@ form.addEventListener('submit', event => {
   event.preventDefault();
   updateFlightField();
   validatePhone();
+  syncTimeValue();
   if (!form.reportValidity()) return;
+  if (!timeValue?.value) {
+    hourSelect?.reportValidity();
+    minuteSelect?.reportValidity();
+    return;
+  }
   const data = new FormData(form);
   currentRequest = {
     requestId: crypto.randomUUID(),
@@ -115,7 +121,7 @@ form.addEventListener('submit', event => {
     destination: type === 'Transfert' ? String(data.get('destination') || '').trim() : '',
     flightNumber: form.elements.flight_number.required ? String(data.get('flight_number') || '').trim() : '',
     date: String(data.get('date') || ''),
-    time: String(data.get('time') || ''),
+    time: timeValue?.value || String(data.get('time') || ''),
     durationHours: type === 'Mise à disposition' ? String(data.get('duration_hours') || '') : '',
     passengers: String(data.get('passengers') || ''),
     luggage: String(data.get('luggage') || ''),

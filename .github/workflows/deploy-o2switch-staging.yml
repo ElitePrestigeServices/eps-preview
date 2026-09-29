@@ -10,6 +10,8 @@ concurrency:
   cancel-in-progress: false
 
 env:
+  # Nom du serveur présent dans le certificat FTPS vérifié le 29/09/2026.
+  # Ne pas utiliser ftp.hicu1011.odns.fr : certificat non concordant.
   EPS_TARGET_SUBDIR: eps-preview-main
 
 jobs:
@@ -19,13 +21,13 @@ jobs:
     steps:
       - name: Vérifier les identifiants de déploiement
         env:
-          HOST: ${{ secrets.EPS_FTP_HOST }}
+          HOST: chevrotin.o2switch.net
           USER: ${{ secrets.EPS_FTP_USER }}
           PASSWORD: ${{ secrets.EPS_FTP_PASSWORD }}
           DIRECTORY: ${{ secrets.EPS_FTP_STAGING_DIR }}
         run: |
-          test -n "$HOST" && test -n "$USER" && test -n "$PASSWORD" && test -n "$DIRECTORY" || {
-            echo "::error::Configurer EPS_FTP_HOST, EPS_FTP_USER, EPS_FTP_PASSWORD et EPS_FTP_STAGING_DIR dans GitHub Secrets."
+          test -n "$USER" && test -n "$PASSWORD" && test -n "$DIRECTORY" || {
+            echo "::error::Configurer EPS_FTP_USER, EPS_FTP_PASSWORD et EPS_FTP_STAGING_DIR dans GitHub Secrets."
             exit 1
           }
           # Le compte epsdeploy est limité par o2switch à /home/hicu1011/eps-nouveau.
@@ -43,7 +45,7 @@ jobs:
         run: sudo apt-get update -qq && sudo apt-get install -y -qq lftp
       - name: Diagnostic certificat FTPS
         env:
-          HOST: ${{ secrets.EPS_FTP_HOST }}
+          HOST: chevrotin.o2switch.net
         run: |
           echo "Certificat présenté par le serveur FTPS :"
           timeout 20 openssl s_client -connect "$HOST:21" -starttls ftp -servername "$HOST" </dev/null 2>/dev/null \
@@ -57,7 +59,7 @@ jobs:
             --exclude='node_modules' --exclude='.env*'
       - name: Publier uniquement en préproduction o2switch
         env:
-          HOST: ${{ secrets.EPS_FTP_HOST }}
+          HOST: chevrotin.o2switch.net
           USER: ${{ secrets.EPS_FTP_USER }}
           PASSWORD: ${{ secrets.EPS_FTP_PASSWORD }}
           DIRECTORY: ${{ secrets.EPS_FTP_STAGING_DIR }}

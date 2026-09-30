@@ -10,6 +10,7 @@ let currentRequest = null;
 let sentResult = null;
 const T = value => window.epsTranslate ? window.epsTranslate(value) : value;
 const phoneField = form.elements.customer_phone;
+const phoneCountryCode = form.elements.phone_country_code;
 phoneField.placeholder = '+33 6 12 34 56 78 / +1 212 555 0123';
 const validPhone = value => {
   const normalized = value.trim().replace(/[\s().-]/g, '');
@@ -129,7 +130,7 @@ form.addEventListener('submit', event => {
     vehicle: String(data.get('vehicle') || ''),
     customerName: String(data.get('customer_name') || '').trim(),
     customerEmail: String(data.get('customer_email') || '').trim(),
-    customerPhone: String(data.get('customer_phone') || '').trim(),
+    customerPhone: ((String(data.get('phone_country_code') || '').trim() + ' ' + String(data.get('customer_phone') || '').trim()).trim()),
     notes: String(data.get('notes') || '').trim(),
     language: window.epsLanguage?.() === 'en' ? 'en' : 'fr',
     website: String(data.get('website') || '')

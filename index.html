@@ -710,6 +710,21 @@ body.eps-booking-open .booking select,
 body.eps-booking-open .booking textarea{border-radius:8px!important}
 body.eps-booking-open .eps-wizard-head{margin-bottom:34px!important}
 }
+</style><style id="eps-mobile-final-step-v19">
+@media(max-width:760px){
+/* Étape 5 : le titre du wizard est l'unique titre Récapitulatif. */
+body.eps-booking-open #booking-review.eps-step-active #review-title{display:none!important}
+body.eps-booking-open #booking-review.eps-step-active{margin:0!important;padding:0!important;border:0!important;background:transparent!important}
+body.eps-booking-open #booking-review.eps-step-active #review-details{margin-top:0!important}
+body.eps-booking-open .booking>button.submit[data-eps-step="5"]{display:none!important}
+body.eps-booking-open #booking-review.eps-step-active #send-request{width:min(100%,340px)!important;min-height:54px!important;margin:22px auto 0!important;border-radius:999px!important;display:flex!important;align-items:center!important;justify-content:center!important}
+body.eps-booking-open.eps-mobile-request-sent .eps-wizard-actions{display:none!important}
+body.eps-booking-open.eps-mobile-request-sent #booking-review{display:flex!important;flex:1 1 auto!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;text-align:center!important}
+body.eps-booking-open.eps-mobile-request-sent #review-details,
+body.eps-booking-open.eps-mobile-request-sent #booking-review>p:not(#send-status),
+body.eps-booking-open.eps-mobile-request-sent #send-request{display:none!important}
+body.eps-booking-open.eps-mobile-request-sent #send-status{display:block!important;max-width:360px!important;margin:18px auto!important;font-size:16px!important;line-height:1.55!important}
+}
 </style></head>
 <body><header class="header"><button class="mobile-menu-toggle" type="button" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="main-nav"><span></span><span></span><span></span></button><nav id="main-nav" aria-label="Navigation principale"><a href="#accueil">Accueil</a><a href="#vehicules">Nos véhicules</a><a href="#services">Nos services</a><a href="#entreprises">Entreprises</a><a href="#services">Événements</a><a href="#reservation">Mise à disposition</a><a href="#contact">Contact</a></nav><div class="eps-header-actions"><div class="lang-toggle" role="group" aria-label="Langue / Language"><button type="button" data-lang="fr" aria-pressed="true">FR</button><span aria-hidden="true">│</span><button type="button" data-lang="en" aria-pressed="false">EN</button></div><a class="top-cta" href="#reservation">Réserver <span aria-hidden="true">↗</span></a></div></header>
 <main id="accueil"><section class="hero eps-approved-hero eps-restored-desktop-hero"><div class="eps-banner-stage"><img class="eps-approved-banner" src="assets/IMG_1045.JPG" alt="Elite Prestige Services : flotte de véhicules haut de gamme, jet privé et yacht sur la Côte d’Azur" width="1645" height="928" fetchpriority="high"><div class="eps-banner-branding"><div class="eps-banner-company">ELITE PRESTIGE SERVICES</div><div class="eps-banner-slogan">Your journey. Our excellence.</div></div></div><div class="eps-home-brand eps-mobile-home-brand"><img src="assets/IMG_1034.JPG" alt="Logo Elite Prestige Services — Côte d’Azur" class="eps-home-logo"><div class="eps-home-name">ELITE PRESTIGE SERVICES</div><div class="eps-home-sub">PRIVATE CHAUFFEUR · FRENCH RIVIERA</div><div class="eps-home-rule"></div><div class="eps-home-locations">CANNES · NICE · MONACO · SAINT-TROPEZ</div><a class="hero-booking-link eps-home-cta" href="#reservation">Demander une réservation <span aria-hidden="true">→</span></a></div></section>
@@ -795,4 +810,21 @@ function isolate(){
 }
 const obs=new MutationObserver(isolate);obs.observe(head,{subtree:true,childList:true,characterData:true});
 form.addEventListener('click',()=>setTimeout(isolate,0));isolate();
+})();</script><script id="eps-mobile-final-step-clean-v19">(function(){
+if(!window.matchMedia('(max-width:760px)').matches)return;
+const form=document.getElementById('reservation-form'),review=document.getElementById('booking-review'),send=document.getElementById('send-request'),status=document.getElementById('send-status');
+if(!form||!review||!send)return;
+function clean(){
+ const active=review.classList.contains('eps-step-active');
+ if(active){
+   const title=form.querySelector('.eps-wizard-title'); if(title) title.textContent='Récapitulatif';
+   const raw=form.querySelector(':scope > button.submit[data-eps-step="5"]'); if(raw) raw.style.setProperty('display','none','important');
+ }
+ if(send.textContent.trim()==='Demande envoyée'){
+   document.body.classList.add('eps-mobile-request-sent');
+   const title=form.querySelector('.eps-wizard-title'); if(title) title.textContent='Demande envoyée';
+ }
+}
+new MutationObserver(clean).observe(form,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:['class','hidden','disabled']});
+clean();
 })();</script></body></html>

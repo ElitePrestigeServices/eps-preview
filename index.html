@@ -639,7 +639,7 @@ body:not(.eps-booking-open) .eps-restored-desktop-hero .eps-home-name{display:bl
 body:not(.eps-booking-open) .eps-restored-desktop-hero .eps-home-sub,
 body:not(.eps-booking-open) .eps-restored-desktop-hero .eps-home-rule,
 body:not(.eps-booking-open) .eps-restored-desktop-hero .eps-home-locations{display:block!important}
-body:not(.eps-booking-open) .eps-restored-desktop-hero .eps-home-cta{display:flex!important;margin-top:clamp(70px,10vh,105px)!important;margin-bottom:auto!important;width:min(100%,340px)!important;min-height:54px!important;align-items:center!important;justify-content:space-between!important}
+body:not(.eps-booking-open) .eps-restored-desktop-hero .eps-home-cta{display:flex!important;margin-top:clamp(70px,10vh,105px)!important;margin-bottom:auto!important;width:min(100%,340px)!important;min-height:54px!important;align-items:center!important;justify-content:center!important;text-align:center!important}
 body.eps-booking-open .eps-restored-desktop-hero{display:none!important}
 }
 </style></head>
@@ -703,4 +703,4 @@ function sync(){
 [dep,dest].filter(Boolean).forEach(x=>['input','change','blur'].forEach(ev=>x.addEventListener(ev,sync)));
 form.querySelectorAll('.tabs [data-type]').forEach(b=>b.addEventListener('click',()=>setTimeout(sync,0)));
 new MutationObserver(sync).observe(form,{subtree:true,attributes:true,attributeFilter:['class']});sync();
-})();</script></body></html>
+})();</script><script id="eps-mobile-cta-label-v11">(function(){function sync(){const a=document.querySelector('.eps-restored-desktop-hero .eps-mobile-home-brand .eps-home-cta');if(!a)return;if(window.matchMedia('(max-width:760px)').matches){a.innerHTML='Réservation';}else{a.innerHTML='Demander une réservation <span aria-hidden="true">→</span>';}}sync();window.addEventListener('resize',sync);})();</script></body></html>

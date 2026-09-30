@@ -576,6 +576,24 @@ body.eps-booking-open .eps-wizard-actions{justify-content:center!important}
 body.eps-booking-open .eps-wizard-actions .eps-wizard-next:only-child{flex:0 1 360px!important;margin-left:auto!important;margin-right:auto!important}
 body.eps-booking-open .eps-wizard-actions .eps-wizard-back[style*="visibility: hidden"] + .eps-wizard-next{flex:0 1 360px!important;margin-left:auto!important;margin-right:auto!important}
 }
+</style><style id="eps-mobile-form-final-polish-v7">
+@media(max-width:760px){
+body.eps-booking-open .booking .tabs{display:none!important}
+body.eps-booking-open .booking label{width:100%!important;max-width:100%!important;box-sizing:border-box!important}
+body.eps-booking-open .booking input,
+body.eps-booking-open .booking select,
+body.eps-booking-open .booking textarea{width:100%!important;min-height:52px!important;height:52px!important;padding:0 14px!important;box-sizing:border-box!important;font-size:16px!important;line-height:52px!important;text-align:left!important}
+body.eps-booking-open .booking textarea{height:92px!important;min-height:92px!important;padding:13px 14px!important;line-height:1.35!important}
+body.eps-booking-open .booking>.form-grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;gap:12px!important;align-items:end!important}
+body.eps-booking-open .booking>.form-grid>label{min-width:0!important;margin:0!important}
+body.eps-booking-open .eps-time-picker{width:100%!important;height:52px!important;display:grid!important;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr)!important;align-items:center!important;gap:6px!important}
+body.eps-booking-open .eps-time-picker select{width:100%!important;height:52px!important;min-height:52px!important;padding:0 8px!important;line-height:normal!important;text-align:center!important;text-align-last:center!important}
+body.eps-booking-open .eps-time-picker>span{text-align:center!important}
+body.eps-booking-open .phone-input-row{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;gap:10px!important;width:100%!important}
+body.eps-booking-open .phone-input-row select,body.eps-booking-open .phone-input-row input{width:100%!important;min-width:0!important;text-align:center!important}
+body.eps-booking-open .eps-vehicle-label{justify-content:center!important;text-align:center!important;line-height:1.15!important}
+body.eps-booking-open .flight-field[hidden],body.eps-booking-open .duration-field[hidden]{display:none!important}
+}
 </style></head>
 <body><header class="header"><button class="mobile-menu-toggle" type="button" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="main-nav"><span></span><span></span><span></span></button><nav id="main-nav" aria-label="Navigation principale"><a href="#accueil">Accueil</a><a href="#vehicules">Nos véhicules</a><a href="#services">Nos services</a><a href="#entreprises">Entreprises</a><a href="#services">Événements</a><a href="#reservation">Mise à disposition</a><a href="#contact">Contact</a></nav><div class="eps-header-actions"><div class="lang-toggle" role="group" aria-label="Langue / Language"><button type="button" data-lang="fr" aria-pressed="true">FR</button><span aria-hidden="true">│</span><button type="button" data-lang="en" aria-pressed="false">EN</button></div><a class="top-cta" href="#reservation">Réserver <span aria-hidden="true">↗</span></a></div></header>
 <main id="accueil"><section class="hero eps-approved-hero eps-home-brand-hero"><div class="eps-home-brand"><img src="assets/IMG_1034.JPG" alt="Logo Elite Prestige Services — Côte d’Azur" class="eps-home-logo"><div class="eps-home-name">ELITE PRESTIGE SERVICES</div><div class="eps-home-sub">PRIVATE CHAUFFEUR · FRENCH RIVIERA</div><div class="eps-home-rule"></div><div class="eps-home-locations">CANNES · NICE · MONACO · SAINT-TROPEZ</div><a class="hero-booking-link eps-home-cta" href="#reservation">Demander une réservation <span aria-hidden="true">→</span></a></div></section>
@@ -623,4 +641,18 @@ function refresh(){
  if(flight){flight.hidden=!needsFlight;flight.style.display=needsFlight?'':'none'} if(flightInput)flightInput.required=needsFlight;
 }
 tabs.forEach(b=>b.addEventListener('click',()=>setTimeout(refresh,0)));[dep,dest].filter(Boolean).forEach(x=>{x.addEventListener('input',refresh);x.addEventListener('change',refresh)});refresh();
+})();</script><script id="eps-mobile-conditional-fields-v7">(function(){
+const form=document.getElementById('reservation-form');if(!form)return;
+const flight=form.querySelector('.flight-field'),fi=form.querySelector('[name="flight_number"]'),dur=form.querySelector('.duration-field'),di=form.querySelector('[name="duration_hours"]'),dep=form.querySelector('[name="departure"]'),dest=form.querySelector('[name="destination"]');
+const airport=/(a[eé]roport|airport|heliport)/i;
+function serviceType(){const s=form.querySelector('.tabs [data-type].selected');return s?s.dataset.type:'Transfert'}
+function sync(){
+ const dispo=serviceType()==='Mise à disposition';
+ const airportTrip=!dispo&&airport.test(((dep&&dep.value)||'')+' '+((dest&&dest.value)||''));
+ if(flight){flight.hidden=!airportTrip;flight.style.display=airportTrip?'block':'none'} if(fi){fi.required=airportTrip;if(!airportTrip)fi.value=''}
+ if(dur){dur.hidden=!dispo;dur.style.display=dispo?'block':'none'} if(di){di.required=dispo;if(!dispo)di.value=''}
+}
+[dep,dest].filter(Boolean).forEach(x=>['input','change','blur'].forEach(ev=>x.addEventListener(ev,sync)));
+form.querySelectorAll('.tabs [data-type]').forEach(b=>b.addEventListener('click',()=>setTimeout(sync,0)));
+new MutationObserver(sync).observe(form,{subtree:true,attributes:true,attributeFilter:['class']});sync();
 })();</script></body></html>

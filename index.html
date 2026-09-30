@@ -827,4 +827,20 @@ function clean(){
 }
 new MutationObserver(clean).observe(form,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:['class','hidden','disabled']});
 clean();
+})();</script><script id="eps-mobile-step4-validation-fix-v20">(function(){
+if(!window.matchMedia('(max-width:760px)').matches)return;
+const form=document.getElementById('reservation-form');if(!form)return;
+const next=form.querySelector('.eps-wizard-next');if(!next)return;
+next.addEventListener('click',function(e){
+ const step=(form.querySelector('.eps-wizard-step')?.textContent||'');
+ if(!/ÉTAPE\s+4\s*\/\s*5/i.test(step))return;
+ const name=form.elements.customer_name,email=form.elements.customer_email,phone=form.elements.customer_phone,code=form.elements.phone_country_code;
+ [name,email,phone,code].filter(Boolean).forEach(el=>el.setCustomValidity(''));
+ const phoneDigits=(phone?.value||'').replace(/\D/g,'');
+ if(phone && (phoneDigits.length<7||phoneDigits.length>15)){e.stopImmediatePropagation();phone.setCustomValidity('Saisissez un numéro de téléphone valide.');phone.reportValidity();return}
+ if(name&&!name.checkValidity()){e.stopImmediatePropagation();name.reportValidity();return}
+ if(email&&!email.checkValidity()){e.stopImmediatePropagation();email.reportValidity();return}
+ if(code&&!code.value){e.stopImmediatePropagation();code.setCustomValidity('Choisissez un indicatif.');code.reportValidity();return}
+ if(phone&&!phone.checkValidity()){e.stopImmediatePropagation();phone.reportValidity();return}
+},true);
 })();</script></body></html>

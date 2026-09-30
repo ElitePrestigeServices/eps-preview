@@ -741,6 +741,35 @@ body.eps-booking-open #booking-review.eps-step-active~.eps-wizard-actions{justif
 .header>nav.mobile-open a.mobile-private-access{display:block!important;color:#e3c889!important;font-weight:600!important}
 .header>nav.mobile-open a.mobile-private-access:first-of-type{margin-top:5px!important;border-top:1px solid rgba(213,180,118,.35)!important}
 }
+</style><style id="eps-phone-desktop-fix-20260930">
+/* Coordonnées : 3 champs réels, donc 3 colonnes. Le téléphone garde une vraie zone de saisie. */
+@media(min-width:761px){
+  .reservation-section .booking .contact-fields{
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    gap:0 16px!important;
+  }
+  .reservation-section .booking .contact-fields>label{min-width:0!important}
+  .phone-input-row{
+    display:grid!important;
+    grid-template-columns:132px minmax(120px,1fr)!important;
+    gap:8px!important;
+    width:100%!important;
+  }
+  .phone-input-row .phone-country-code{
+    min-width:0!important;
+    width:132px!important;
+    padding-left:8px!important;
+    padding-right:24px!important;
+    font-size:12px!important;
+  }
+  .phone-input-row input[name="customer_phone"]{
+    min-width:120px!important;
+    width:100%!important;
+    padding-left:10px!important;
+    padding-right:10px!important;
+    font-size:15px!important;
+  }
+}
 </style></head>
 <body><header class="header"><button class="mobile-menu-toggle" type="button" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="main-nav"><span></span><span></span><span></span></button><nav id="main-nav" aria-label="Navigation principale"><a href="#accueil">Accueil</a><a href="#vehicules">Nos véhicules</a><a href="#services">Nos services</a><a href="#entreprises">Entreprises</a><a href="#services">Événements</a><a href="#reservation">Mise à disposition</a><a href="#contact">Contact</a><a class="mobile-private-access" href="admin/">Accès Admin</a><a class="mobile-private-access" href="chauffeur/">Accès Chauffeur</a></nav><div class="eps-header-actions"><div class="lang-toggle" role="group" aria-label="Langue / Language"><button type="button" data-lang="fr" aria-pressed="true">FR</button><span aria-hidden="true">│</span><button type="button" data-lang="en" aria-pressed="false">EN</button></div><a class="top-cta" href="#reservation">Réserver <span aria-hidden="true">↗</span></a></div></header>
 <main id="accueil"><section class="hero eps-approved-hero eps-restored-desktop-hero"><div class="eps-banner-stage"><img class="eps-approved-banner" src="assets/IMG_1045.JPG" alt="Elite Prestige Services : flotte de véhicules haut de gamme, jet privé et yacht sur la Côte d’Azur" width="1645" height="928" fetchpriority="high"><div class="eps-banner-branding"><div class="eps-banner-company">ELITE PRESTIGE SERVICES</div><div class="eps-banner-slogan">Your journey. Our excellence.</div></div></div><div class="eps-home-brand eps-mobile-home-brand"><img src="assets/IMG_1034.JPG" alt="Logo Elite Prestige Services — Côte d’Azur" class="eps-home-logo"><div class="eps-home-name">ELITE PRESTIGE SERVICES</div><div class="eps-home-sub">PRIVATE CHAUFFEUR · FRENCH RIVIERA</div><div class="eps-home-rule"></div><div class="eps-home-locations">CANNES · NICE · MONACO · SAINT-TROPEZ</div><a class="hero-booking-link eps-home-cta" href="#reservation">Demander une réservation <span aria-hidden="true">→</span></a></div></section>

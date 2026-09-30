@@ -691,6 +691,25 @@ body.eps-booking-open .booking>.form-grid[data-eps-step="2"] select{width:100%!i
 body.eps-booking-open .booking>label[data-eps-step="2"]{display:grid!important;grid-template-rows:auto 52px!important;gap:8px!important;width:100%!important;margin:0!important}
 body.eps-booking-open .booking>label[data-eps-step="2"] select{width:100%!important;height:52px!important;min-height:52px!important;margin:0!important;padding:0 16px!important;box-sizing:border-box!important}
 }
+</style><style id="eps-mobile-wizard-clean-v18">
+@media(max-width:760px){
+/* Un seul écran à la fois : aucun champ d'une autre étape ne doit rester visible. */
+body.eps-booking-open .booking>[data-eps-step]:not(.eps-step-active){display:none!important}
+body.eps-booking-open .booking>.flight-field[data-eps-step="1"]:not(.eps-step-active),
+body.eps-booking-open .booking>.duration-field[data-eps-step="1"]:not(.eps-step-active){display:none!important}
+body.eps-booking-open .booking>.flight-field[data-eps-step="1"].eps-step-active[hidden],
+body.eps-booking-open .booking>.duration-field[data-eps-step="1"].eps-step-active[hidden]{display:none!important}
+
+/* Même langage visuel que la première page pour toutes les étapes. */
+body.eps-booking-open .booking>[data-eps-step].eps-step-active{width:100%!important;max-width:100%!important;box-sizing:border-box!important}
+body.eps-booking-open .booking label[data-eps-step].eps-step-active,
+body.eps-booking-open .booking .form-grid[data-eps-step].eps-step-active>label,
+body.eps-booking-open .booking .contact-fields[data-eps-step].eps-step-active label{margin:0 0 18px!important}
+body.eps-booking-open .booking input,
+body.eps-booking-open .booking select,
+body.eps-booking-open .booking textarea{border-radius:8px!important}
+body.eps-booking-open .eps-wizard-head{margin-bottom:34px!important}
+}
 </style></head>
 <body><header class="header"><button class="mobile-menu-toggle" type="button" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="main-nav"><span></span><span></span><span></span></button><nav id="main-nav" aria-label="Navigation principale"><a href="#accueil">Accueil</a><a href="#vehicules">Nos véhicules</a><a href="#services">Nos services</a><a href="#entreprises">Entreprises</a><a href="#services">Événements</a><a href="#reservation">Mise à disposition</a><a href="#contact">Contact</a></nav><div class="eps-header-actions"><div class="lang-toggle" role="group" aria-label="Langue / Language"><button type="button" data-lang="fr" aria-pressed="true">FR</button><span aria-hidden="true">│</span><button type="button" data-lang="en" aria-pressed="false">EN</button></div><a class="top-cta" href="#reservation">Réserver <span aria-hidden="true">↗</span></a></div></header>
 <main id="accueil"><section class="hero eps-approved-hero eps-restored-desktop-hero"><div class="eps-banner-stage"><img class="eps-approved-banner" src="assets/IMG_1045.JPG" alt="Elite Prestige Services : flotte de véhicules haut de gamme, jet privé et yacht sur la Côte d’Azur" width="1645" height="928" fetchpriority="high"><div class="eps-banner-branding"><div class="eps-banner-company">ELITE PRESTIGE SERVICES</div><div class="eps-banner-slogan">Your journey. Our excellence.</div></div></div><div class="eps-home-brand eps-mobile-home-brand"><img src="assets/IMG_1034.JPG" alt="Logo Elite Prestige Services — Côte d’Azur" class="eps-home-logo"><div class="eps-home-name">ELITE PRESTIGE SERVICES</div><div class="eps-home-sub">PRIVATE CHAUFFEUR · FRENCH RIVIERA</div><div class="eps-home-rule"></div><div class="eps-home-locations">CANNES · NICE · MONACO · SAINT-TROPEZ</div><a class="hero-booking-link eps-home-cta" href="#reservation">Demander une réservation <span aria-hidden="true">→</span></a></div></section>
@@ -752,4 +771,28 @@ function sync(){
 [dep,dest].filter(Boolean).forEach(x=>['input','change','blur'].forEach(ev=>x.addEventListener(ev,sync)));
 form.querySelectorAll('.tabs [data-type]').forEach(b=>b.addEventListener('click',()=>setTimeout(sync,0)));
 new MutationObserver(sync).observe(form,{subtree:true,attributes:true,attributeFilter:['class']});sync();
-})();</script><script id="eps-mobile-cta-label-v11">(function(){function sync(){const a=document.querySelector('.eps-restored-desktop-hero .eps-mobile-home-brand .eps-home-cta');if(!a)return;if(window.matchMedia('(max-width:760px)').matches){a.innerHTML='Réservation';}else{a.innerHTML='Demander une réservation <span aria-hidden="true">→</span>';}}sync();window.addEventListener('resize',sync);})();</script></body></html>
+})();</script><script id="eps-mobile-cta-label-v11">(function(){function sync(){const a=document.querySelector('.eps-restored-desktop-hero .eps-mobile-home-brand .eps-home-cta');if(!a)return;if(window.matchMedia('(max-width:760px)').matches){a.innerHTML='Réservation';}else{a.innerHTML='Demander une réservation <span aria-hidden="true">→</span>';}}sync();window.addEventListener('resize',sync);})();</script><script id="eps-mobile-step-isolation-v18">(function(){
+if(!window.matchMedia('(max-width:760px)').matches)return;
+const form=document.getElementById('reservation-form');if(!form)return;
+const head=form.querySelector('.eps-wizard-head');
+if(!head)return;
+function currentStep(){
+ const t=head.querySelector('.eps-wizard-step')?.textContent||'';
+ const m=t.match(/ÉTAPE\s+(\d+)/i);return m?Number(m[1]):1;
+}
+function isolate(){
+ const n=currentStep();
+ form.querySelectorAll(':scope > [data-eps-step]').forEach(el=>{
+   const active=Number(el.dataset.epsStep)===n;
+   el.classList.toggle('eps-step-active',active);
+   if(!active) el.style.setProperty('display','none','important');
+   else el.style.removeProperty('display');
+ });
+ const flight=form.querySelector(':scope > .flight-field');
+ const duration=form.querySelector(':scope > .duration-field');
+ if(n!==1){[flight,duration].filter(Boolean).forEach(el=>el.style.setProperty('display','none','important'));}
+ else {[flight,duration].filter(Boolean).forEach(el=>{if(el.hidden)el.style.setProperty('display','none','important');else el.style.removeProperty('display');});}
+}
+const obs=new MutationObserver(isolate);obs.observe(head,{subtree:true,childList:true,characterData:true});
+form.addEventListener('click',()=>setTimeout(isolate,0));isolate();
+})();</script></body></html>

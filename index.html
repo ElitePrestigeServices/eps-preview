@@ -649,14 +649,15 @@ body.eps-booking-open .eps-wizard-actions .eps-wizard-next{width:min(calc(100vw 
 body.eps-booking-open .eps-wizard-actions .eps-wizard-back[style*="visibility: hidden"]{display:none!important}
 body.eps-booking-open #reservation .booking{padding-bottom:105px!important}
 }
-</style><style id="eps-mobile-step1-overlap-date-fix-v13">
+</style><style id="eps-mobile-step1-uniform-v14">
 @media(max-width:760px){
-/* Les suggestions restent dans leur bloc et repoussent les champs suivants au lieu de les recouvrir. */
-body.eps-booking-open .booking label[data-eps-step="1"]{position:relative!important}
-body.eps-booking-open .booking label[data-eps-step="1"]:has(.location-suggestions:not([hidden])){margin-bottom:86px!important}
-body.eps-booking-open .booking .location-suggestions{z-index:20!important;max-height:82px!important;overflow-y:auto!important}
-/* Date légèrement plus compacte que les autres champs, sans modifier desktop/tablette. */
-body.eps-booking-open .booking>.form-grid[data-eps-step="1"] input[type="date"]{height:48px!important;min-height:48px!important;padding:0 10px!important;font-size:14px!important;line-height:48px!important}
+body.eps-booking-open .booking>.form-grid[data-eps-step="1"]{grid-template-columns:1fr 1fr!important;gap:18px!important;align-items:start!important}
+body.eps-booking-open .booking>.form-grid[data-eps-step="1"]>label{display:grid!important;grid-template-rows:auto 52px!important;align-content:start!important;gap:8px!important;margin:0!important;min-width:0!important}
+body.eps-booking-open .booking>.form-grid[data-eps-step="1"] input[type="date"],
+body.eps-booking-open .booking>.form-grid[data-eps-step="1"] .eps-time-picker{height:52px!important;min-height:52px!important;width:100%!important;margin:0!important}
+body.eps-booking-open .booking>.form-grid[data-eps-step="1"] input[type="date"]{padding:0 14px!important;font-size:16px!important;line-height:52px!important}
+body.eps-booking-open .booking>.form-grid[data-eps-step="1"] .eps-time-picker select{height:52px!important;min-height:52px!important}
+body.eps-booking-open .booking .location-suggestions{z-index:30!important}
 }
 </style></head>
 <body><header class="header"><button class="mobile-menu-toggle" type="button" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="main-nav"><span></span><span></span><span></span></button><nav id="main-nav" aria-label="Navigation principale"><a href="#accueil">Accueil</a><a href="#vehicules">Nos véhicules</a><a href="#services">Nos services</a><a href="#entreprises">Entreprises</a><a href="#services">Événements</a><a href="#reservation">Mise à disposition</a><a href="#contact">Contact</a></nav><div class="eps-header-actions"><div class="lang-toggle" role="group" aria-label="Langue / Language"><button type="button" data-lang="fr" aria-pressed="true">FR</button><span aria-hidden="true">│</span><button type="button" data-lang="en" aria-pressed="false">EN</button></div><a class="top-cta" href="#reservation">Réserver <span aria-hidden="true">↗</span></a></div></header>

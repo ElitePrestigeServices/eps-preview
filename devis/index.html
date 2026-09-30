@@ -2,41 +2,24 @@
 const params=new URLSearchParams(location.search),token=params.get('token')||'',returning=params.get('paiement')==='retour';
 const $=id=>document.getElementById(id),endpoint='https://lrtuztxjngdvrnjuwxfr.supabase.co/functions/v1/eps-live-quote-checkout';
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
-async function loadQuote(){
- const r=await fetch(endpoint+'?token='+encodeURIComponent(token),{cache:'no-store'});
- const d=await r.json();if(!r.ok||!d.reference||!Number.isInteger(d.amount_cents))throw Error('Devis introuvable ou indisponible.');
- return d;
-}
+async function loadQuote(){const r=await fetch(endpoint+'?token='+encodeURIComponent(token),{cache:'no-store'});const d=await r.json();if(!r.ok||!d.reference||!Number.isInteger(d.amount_cents))throw Error('Devis introuvable ou indisponible.');return d}
+async function post(action=''){const r=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token,action})});const d=await r.json();if(!r.ok||!d.ok)throw Error(d.error||'Action indisponible');return d}
 function render(d){
- $('ref').textContent=d.reference;$('route').textContent=d.departure+' → '+d.destination;$('type').textContent=d.type;$('date').textContent=d.date+' à '+d.time;
- $('price').textContent=(d.amount_cents/100).toLocaleString('fr-FR',{style:'currency',currency:'EUR'})+' TTC';
+ $('ref').textContent=d.reference;$('route').textContent=d.departure+' → '+d.destination;$('type').textContent=d.type;$('date').textContent=d.date+' à '+d.time;$('price').textContent=(d.amount_cents/100).toLocaleString('fr-FR',{style:'currency',currency:'EUR'})+' TTC';
  $('status').hidden=true;$('quote').hidden=false;const btn=$('pay'),msg=$('paymsg'),notice=$('notice');
- if(d.payment_state==='autorisé'){
-   btn.hidden=true;
-   notice.innerHTML='<strong>Garantie bancaire validée.</strong> Votre carte a bien été autorisée pour le montant du devis. Aucun encaissement immédiat n’a été effectué.';
-   msg.textContent='Votre réservation est confirmée. Elite Prestige Services encaissera le règlement après la course.';
+ if(d.payment_state==='autorisé'){btn.hidden=true;notice.innerHTML='<strong>Garantie bancaire validée.</strong> Votre carte a bien été autorisée pour le montant du devis. Aucun encaissement immédiat n’a été effectué.';msg.textContent='Votre réservation est confirmée. Elite Prestige Services encaissera le règlement après la course.';return}
+ if(d.payment_state==='payé'){btn.hidden=true;notice.innerHTML='<strong>Paiement encaissé.</strong> Merci.';msg.textContent='Votre règlement a bien été enregistré.';return}
+ if(d.long_lead){
+   if(d.reservation_registered){btn.hidden=true;notice.innerHTML='<strong>Votre réservation est bien enregistrée.</strong>';msg.textContent='Vous recevrez un e-mail 48 heures avant votre prise en charge afin de valider le paiement sécurisé de votre réservation.';return}
+   btn.hidden=false;btn.textContent='Enregistrer ma réservation';
+   notice.textContent='Aucun paiement n’est demandé aujourd’hui. Votre réservation sera enregistrée maintenant et vous recevrez un e-mail 48 heures avant la prise en charge pour valider le paiement.';
+   btn.onclick=async()=>{btn.disabled=true;msg.textContent='Enregistrement de votre réservation…';try{await post('register');const fresh=await loadQuote();render(fresh)}catch(e){msg.textContent=e.message||'Enregistrement impossible';btn.disabled=false}};
    return;
  }
- if(d.payment_state==='payé'){
-   btn.hidden=true;notice.innerHTML='<strong>Paiement encaissé.</strong> Merci.';msg.textContent='Votre règlement a bien été enregistré.';return;
- }
- if(d.payment_state==='annulé'){
-   btn.hidden=false;notice.textContent='La garantie bancaire précédente a été libérée. Vous pouvez en valider une nouvelle si nécessaire.';
- } else btn.hidden=false;
- btn.onclick=async()=>{btn.disabled=true;msg.textContent='Ouverture de la garantie bancaire sécurisée Stripe…';try{
-   const res=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token})});
-   const data=await res.json();if(!res.ok||!data.ok||!/^https:\/\/checkout\.stripe\.com\//.test(data.url||''))throw Error(data.error||'Paiement indisponible');
-   location.assign(data.url);
- }catch(e){msg.textContent=e.message||'Paiement indisponible';btn.disabled=false}};
+ btn.hidden=false;btn.textContent='Valider la garantie bancaire';
+ if(d.payment_state==='annulé')notice.textContent='La garantie bancaire précédente a été libérée. Vous pouvez en valider une nouvelle.';
+ else notice.textContent='Paiement sécurisé par Stripe. Votre carte est autorisée pour le montant du devis, mais EPS n’encaisse pas immédiatement. Le règlement est capturé après la course.';
+ btn.onclick=async()=>{btn.disabled=true;msg.textContent='Ouverture de la garantie bancaire sécurisée Stripe…';try{const data=await post();if(!/^https:\/\/checkout\.stripe\.com\//.test(data.url||''))throw Error('Paiement indisponible');location.assign(data.url)}catch(e){msg.textContent=e.message||'Paiement indisponible';btn.disabled=false}};
 }
-(async()=>{
- if(!/^[a-f0-9]{64}$/.test(token)){$('status').textContent='Lien de devis invalide.';return}
- try{
-   let d=await loadQuote();
-   if(returning && !['autorisé','payé'].includes(d.payment_state||'')){
-     $('status').textContent='Validation de votre garantie bancaire…';
-     for(let i=0;i<8;i++){await sleep(1000);d=await loadQuote();if(['autorisé','payé'].includes(d.payment_state||''))break}
-   }
-   render(d);
- }catch(e){$('status').textContent='Ce devis est introuvable ou temporairement indisponible. Contactez EPS par e-mail.'}
-})();</script></body></html>
+(async()=>{if(!/^[a-f0-9]{64}$/.test(token)){$('status').textContent='Lien de devis invalide.';return}try{let d=await loadQuote();if(returning&&!['autorisé','payé'].includes(d.payment_state||'')){$('status').textContent='Validation de votre garantie bancaire…';for(let i=0;i<8;i++){await sleep(1000);d=await loadQuote();if(['autorisé','payé'].includes(d.payment_state||''))break}}render(d)}catch(e){$('status').textContent='Ce devis est introuvable ou temporairement indisponible. Contactez EPS par e-mail.'}})();
+</script></body></html>

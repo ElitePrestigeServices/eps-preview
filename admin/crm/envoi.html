@@ -227,7 +227,7 @@ else await db.from('eps_crm_campaigns').update({status:'suspendue'}).eq('id',cam
 await loadTodaySent();await loadData();
 show('sendMsg',sent+' envoyé(s), '+failed+' erreur(s)'+(trackingFailures?' · '+trackingFailures+' suivi(s) CRM à vérifier':'')+(stopRequested?' · lot arrêté':'')+'.',(failed||trackingFailures)?'err':'ok');
 }
-$('auth').onsubmit=async e=>{e.preventDefault();const {error}=await db.auth.signInWithPassword({email:$('#email').value,password:$('#password').value});if(error){show('status','Connexion impossible : '+error.message,'err');return}await refresh()};
+$('auth').onsubmit=async e=>{e.preventDefault();const {error}=await db.auth.signInWithPassword({email:$('email').value,password:$('password').value});if(error){show('status','Connexion impossible : '+error.message,'err');return}await refresh()};
 $('importBtn').onclick=importFile;
 $('saveClientBtn').onclick=()=>{localStorage.setItem('eps_google_client_id',$('googleClientId').value.trim());show('gmailState','Client OAuth enregistré sur cet appareil.','ok')};
 $('gmailBtn').onclick=()=>{localStorage.setItem('eps_google_client_id',$('googleClientId').value.trim());initGmail()};

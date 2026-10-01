@@ -36,7 +36,7 @@ Transferts, déplacements professionnels et mise à disposition : nous organison
 Vous souhaitez échanger sur vos besoins ou recevoir une présentation de nos services ? Répondez simplement à cet e-mail.
 
 Pour ne plus recevoir nos messages, répondez simplement STOP.</textarea></label>
-<div class="row"><label>Maximum par jour (50 par défaut, 100 maximum)<input id="dailyLimit" type="number" min="1" max="100" value="50"></label><button id="saveCampaignBtn">Enregistrer le brouillon</button><button class="secondary" id="previewBtn">Prévisualiser</button></div><div id="preview" class="notice hidden"></div></section>
+<div class="row"><label>Maximum par jour (50 par défaut, 100 maximum)<input id="dailyLimit" type="number" min="1" max="100" value="50"></label><button id="saveCampaignBtn">Enregistrer le brouillon</button><button class="secondary" id="previewBtn">Prévisualiser</button></div><div id="preview" class="notice hidden"><b id="previewSubject"></b><iframe id="previewFrame" title="Aperçu de l’e-mail EPS" sandbox style="display:block;width:100%;height:680px;margin-top:10px;border:1px solid #655a42;border-radius:8px;background:#111715"></iframe></div></section>
 <section class="panel"><h2>4. Choisir les destinataires</h2><div class="grid"><label>Rechercher<input id="search" placeholder="Société, ville ou e-mail"></label><label>Type CRM<select id="typeFilter"><option value="">Tous</option><option value="prospect">Prospects</option><option value="entreprise">Entreprises</option><option value="partenaire">Partenaires</option><option value="client">Clients</option></select></label></div><div class="row"><label><input class="check" type="checkbox" id="selectEligible" checked> Sélectionner les adresses éligibles</label><button class="secondary" id="refreshBtn">Actualiser</button></div><div class="scroll"><table><thead><tr><th>Sélection</th><th>Société</th><th>Type</th><th>Ville</th><th>E-mail</th><th>État</th><th>Action</th></tr></thead><tbody id="contactsBody"></tbody></table></div><div id="contactMsg" class="notice hidden"></div></section>
 <section class="panel"><h2>5. Envoyer le prochain lot</h2><div class="row"><button id="sendBtn">Envoyer le lot sélectionné</button><button class="stop" id="stopBtn" disabled>Arrêter le lot</button></div><div class="progress"><i id="progressBar"></i></div><div id="sendMsg" class="notice hidden"></div><small>Limite EPS : 100 e-mails par jour maximum dans l’outil. Pause de 4 secondes entre les envois. Pour 1 000 contacts, l’envoi se fait donc sur plusieurs jours.</small></section>
 </section>
@@ -168,7 +168,8 @@ $('campaignName').value=c.name||'';$('audience').value=c.audience||'sélection m
 }
 async function saveCampaign(){
 const name=$('campaignName').value.trim(),subject=safeHeader($('subject').value),body=$('body').value.trim();if(!name||!subject||!body){show('sendMsg','Renseigne le nom, l’objet et le message.','err');return null}
-const data={name,audience:$('audience').value,status:'brouillon',email_subject:subject,email_body:body};
+const data={name,audience:$('audience').value,email_subject:subject,email_body:body};
+if(!$('campaignSelect').value)data.status='brouillon';
 let result;
 if($('campaignSelect').value)result=await db.from('eps_crm_campaigns').update(data).eq('id',$('campaignSelect').value).select('id').single();
 else result=await db.from('eps_crm_campaigns').insert(data).select('id').single();
@@ -177,7 +178,7 @@ await loadData();$('campaignSelect').value=result.data.id;await loadRecipients()
 }
 function preview(){
 const sample=contacts.find(c=>selectedIds.has(c.id))||contacts.find(c=>isEmail(c.email))||{company_name:'Hôtel Exemple'};
-const body=personalize($('body').value,sample);show('preview','OBJET : '+safeHeader($('subject').value)+'\n\n'+body+'\n\n'+EPS_NAME+' · '+EPS_ADDRESS+'\nNe plus recevoir nos messages : répondre STOP','');
+const body=personalize($('body').value,sample);$('previewSubject').textContent='OBJET : '+safeHeader($('subject').value);$('previewFrame').srcdoc=buildHtml(body);$('preview').classList.remove('hidden');
 }
 function encodeSubject(v){return encodedHeader(v)}
 async function sendOne(contact,subject,body){

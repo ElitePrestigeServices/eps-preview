@@ -246,7 +246,9 @@ $('refreshBtn').onclick=refresh;
 $('sendBtn').onclick=sendBatch;
 $('stopBtn').onclick=()=>{stopRequested=true;$('stopBtn').disabled=true};
 $('logout').onclick=async()=>{await db.auth.signOut();location.reload()};
-$('googleClientId').value=localStorage.getItem('eps_google_client_id')||'';
+const EPS_GOOGLE_CLIENT_ID='8466959978-eo16lgc65u6ssh6jl1eo3nfnhpeabii6.apps.googleusercontent.com';
+$('googleClientId').value=EPS_GOOGLE_CLIENT_ID;
+localStorage.setItem('eps_google_client_id',EPS_GOOGLE_CLIENT_ID);
 db.auth.getSession().then(({data})=>data.session?refresh():null);
 </script>
 </body>

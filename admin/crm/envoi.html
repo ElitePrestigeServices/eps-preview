@@ -26,17 +26,21 @@
 </div>
 <section class="panel"><h2>1. Importer des prospects</h2><div class="row"><label>Fichier CSV ou Excel<input id="fileInput" type="file" accept=".csv,.xlsx,.xls"></label><button id="importBtn">Importer dans le CRM EPS</button></div><small>Colonnes acceptées : société/entreprise, e-mail, prénom, nom, ville, téléphone, notes. Les doublons et les adresses en opposition sont ignorés.</small><div id="importMsg" class="notice hidden"></div></section>
 <section class="panel"><h2>2. Connecter Gmail</h2><div class="row"><label>Google OAuth Client ID<input id="googleClientId" placeholder="…apps.googleusercontent.com" autocomplete="off"></label><button class="secondary" id="saveClientBtn">Enregistrer</button><button id="gmailBtn">Connecter Gmail</button></div><div id="gmailState" class="notice">Gmail non connecté.</div><small class="small">Le Client ID provient d’un projet Google Cloud EPS distinct. <a href="https://console.cloud.google.com/auth/clients" target="_blank" rel="noopener">Créer le client OAuth EPS</a>. Le jeton reste en mémoire pendant cette session et n’est pas enregistré. Connecte <b>eliteprestigeservicescannes@gmail.com</b>, qui doit pouvoir envoyer avec <b>contact@elite-prestige-services.fr</b> (adresse d’expédition ou alias configuré dans Gmail). L’origine EPS doit être autorisée dans le client OAuth Google.</small></section>
-<section class="panel"><h2>3. Préparer la campagne</h2><div class="grid"><label>Campagne existante<select id="campaignSelect"><option value="">Nouvelle campagne</option></select></label><label>Nom<input id="campaignName" maxlength="160" value="Partenariat hôtels Côte d’Azur"></label><label>Audience<select id="audience"><option value="hôtels, conciergeries et entreprises">Hôtels, conciergeries et entreprises</option><option value="hôtels">Hôtels</option><option value="conciergeries">Conciergeries</option><option value="entreprises">Entreprises</option><option value="sélection manuelle">Sélection manuelle</option></select></label><label>Objet<input id="subject" value="Un service de chauffeur privé pour vos clients sur la Côte d’Azur" maxlength="200"></label></div>
+<section class="panel"><h2>3. Préparer la campagne</h2><div class="grid"><label>Campagne existante<select id="campaignSelect"><option value="">Nouvelle campagne</option></select></label><label>Nom<input id="campaignName" maxlength="160" value="Partenariat hôtels Côte d’Azur"></label><label>Audience<select id="audience"><option value="hôtels, conciergeries et entreprises">Hôtels, conciergeries et entreprises</option><option value="hôtels">Hôtels</option><option value="conciergeries">Conciergeries</option><option value="entreprises">Entreprises</option><option value="sélection manuelle">Sélection manuelle</option></select></label><label>Objet<input id="subject" value="Votre chauffeur privé sur la Côte d’Azur" maxlength="200"></label></div>
 <label>Message — variable disponible : {{societe}}<textarea id="body">Bonjour,
 
-Elite Prestige Services accompagne hôtels, conciergeries et entreprises dans leurs besoins de chauffeur privé sur la Côte d’Azur.
+De Cannes à Nice, Monaco et Saint-Tropez, Elite Prestige Services organise vos transferts et déplacements privés avec un chauffeur adapté à votre trajet.
 
-Transferts, déplacements professionnels et mise à disposition : nous organisons les trajets de vos clients et équipes entre Cannes, Nice, Monaco et Saint-Tropez.
+Berline Business, Van ou First : décrivez votre déplacement et recevez une proposition personnalisée.
 
-Vous souhaitez échanger sur vos besoins ou recevoir une présentation de nos services ? Répondez simplement à cet e-mail.
+Demander une réservation
+https://www.elite-prestige-services.fr
 
-Pour ne plus recevoir nos messages, répondez simplement STOP.</textarea></label>
+Elite Prestige Services
+Chauffeur privé · Côte d’Azur
+contact@elite-prestige-services.fr</textarea></label>
 <div class="row"><label>Maximum par jour (50 par défaut, 100 maximum)<input id="dailyLimit" type="number" min="1" max="100" value="50"></label><button id="saveCampaignBtn">Enregistrer le brouillon</button><button class="secondary" id="previewBtn">Prévisualiser</button></div><div id="preview" class="notice hidden"><b id="previewSubject"></b><iframe id="previewFrame" title="Aperçu de l’e-mail EPS" sandbox style="display:block;width:100%;height:680px;margin-top:10px;border:1px solid #655a42;border-radius:8px;background:#111715"></iframe></div></section>
+<section class="panel"><h2>Envoyer un test</h2><p>Un seul message à <b>docheanthony@gmail.com</b>, avec l’objet et le texte ci-dessus.</p><button id="testBtn">Envoyer le test à Anthony</button><div id="testMsg" class="notice hidden" role="status"></div></section>
 <section class="panel"><h2>4. Choisir les destinataires</h2><div class="grid"><label>Rechercher<input id="search" placeholder="Société, ville ou e-mail"></label><label>Type CRM<select id="typeFilter"><option value="">Tous</option><option value="prospect">Prospects</option><option value="entreprise">Entreprises</option><option value="partenaire">Partenaires</option><option value="client">Clients</option></select></label></div><div class="row"><label><input class="check" type="checkbox" id="selectEligible" checked> Sélectionner les adresses éligibles</label><button class="secondary" id="refreshBtn">Actualiser</button></div><div class="scroll"><table><thead><tr><th>Sélection</th><th>Société</th><th>Type</th><th>Ville</th><th>E-mail</th><th>État</th><th>Action</th></tr></thead><tbody id="contactsBody"></tbody></table></div><div id="contactMsg" class="notice hidden"></div></section>
 <section class="panel"><h2>5. Envoyer le prochain lot</h2><div class="row"><button id="sendBtn">Envoyer le lot sélectionné</button><button class="stop" id="stopBtn" disabled>Arrêter le lot</button></div><div class="progress"><i id="progressBar"></i></div><div id="sendMsg" class="notice hidden"></div><small>Limite EPS : 100 e-mails par jour maximum dans l’outil. Pause de 4 secondes entre les envois. Pour 1 000 contacts, l’envoi se fait donc sur plusieurs jours.</small></section>
 </section>
@@ -68,7 +72,7 @@ function b64MimeUtf8(v){const bytes=new TextEncoder().encode(v);let bin='';for(l
 function encodedHeader(v){return '=?UTF-8?B?'+b64MimeUtf8(v).replace(/\r\n/g,'')+'?='}
 function htmlBody(text){let safe=esc(text).replace(/(https?:\/\/[^\s<]+)/g,'<a href="$1" style="color:#b99c60;text-decoration:underline;">$1</a>');return safe.replace(/\n/g,'<br>')}
 function buildHtml(body){
-return '<!doctype html><html lang="fr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head><body style="margin:0;background:#111715;font-family:Arial,Helvetica,sans-serif;color:#eee7d9;"><table width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#111715" style="background:#111715;"><tr><td align="center" style="padding:24px 12px;"><table width="600" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:600px;background:#1c2420;border:1px solid #655a42;"><tr><td align="center" style="padding:25px 20px;"><img src="'+EPS_LOGO+'" width="190" height="58" alt="Elite Prestige Services" border="0" style="display:block;width:190px;height:58px;border:0;"></td></tr><tr><td bgcolor="#c6a971" style="height:2px;font-size:1px;line-height:1px;">&nbsp;</td></tr><tr><td style="padding:28px 30px 20px;font-family:Arial,Helvetica,sans-serif;font-size:16px;line-height:26px;color:#eee7d9;">'+htmlBody(body)+'</td></tr><tr><td style="padding:0 30px 28px;"><table cellpadding="0" cellspacing="0" border="0"><tr><td bgcolor="#c6a971" style="background:#c6a971;padding:12px 20px;"><a href="'+EPS_SITE+'" style="font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:20px;font-weight:bold;color:#141713;text-decoration:none;">Découvrir Elite Prestige Services</a></td></tr></table></td></tr><tr><td bgcolor="#151c19" style="padding:18px 30px;font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:19px;color:#c2b6a3;">'+EPS_NAME+' · Chauffeur privé · Côte d’Azur<br>'+EPS_ADDRESS+'<br><a href="mailto:'+EPS_FROM+'?subject=STOP" style="font-size:12px;line-height:19px;color:#c2b6a3;">Ne plus recevoir nos messages : répondre STOP</a></td></tr></table></td></tr></table></body></html>';
+return '<!doctype html><html lang="fr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head><body style="margin:0;background:#111715;font-family:Arial,Helvetica,sans-serif;color:#eee7d9;"><table width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#111715" style="background:#111715;"><tr><td align="center" style="padding:24px 12px;"><table width="600" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:600px;background:#1c2420;border:1px solid #655a42;"><tr><td align="center" style="padding:25px 20px;"><img src="'+EPS_LOGO+'" width="190" height="58" alt="Elite Prestige Services" border="0" style="display:block;width:190px;height:58px;border:0;"></td></tr><tr><td bgcolor="#c6a971" style="height:2px;font-size:1px;line-height:1px;">&nbsp;</td></tr><tr><td style="padding:28px 30px 20px;font-family:Arial,Helvetica,sans-serif;font-size:16px;line-height:26px;color:#eee7d9;">'+htmlBody(body)+'</td></tr><tr><td style="padding:0 30px 28px;"><table cellpadding="0" cellspacing="0" border="0"><tr><td bgcolor="#c6a971" style="background:#c6a971;padding:12px 20px;"><a href="'+EPS_SITE+'" style="font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:20px;font-weight:bold;color:#141713;text-decoration:none;">Demander une réservation</a></td></tr></table></td></tr><tr><td bgcolor="#151c19" style="padding:18px 30px;font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:19px;color:#c2b6a3;">'+EPS_NAME+' · Chauffeur privé · Côte d’Azur<br>'+EPS_ADDRESS+'<br><a href="mailto:'+EPS_FROM+'?subject=STOP" style="font-size:12px;line-height:19px;color:#c2b6a3;">Ne plus recevoir nos messages : répondre STOP</a></td></tr></table></td></tr></table></body></html>';
 }
 function buildRaw(to,subject,body){
 const boundary='eps_alt_'+crypto.randomUUID().replace(/-/g,'');
@@ -167,7 +171,7 @@ $('fileInput').value='';await refresh();
 $('importBtn').disabled=false;
 }
 function fillCampaign(id){
-const c=campaigns.find(x=>x.id===id);if(!c){$('campaignName').value='Partenariat hôtels Côte d’Azur';$('audience').value='hôtels, conciergeries et entreprises';$('subject').value='Un service de chauffeur privé pour vos clients sur la Côte d’Azur';$('body').value=document.getElementById('body').defaultValue;campaignRecipients=new Map();selectedIds=new Set();renderContacts();return}
+const c=campaigns.find(x=>x.id===id);if(!c){$('campaignName').value='Partenariat hôtels Côte d’Azur';$('audience').value='hôtels, conciergeries et entreprises';$('subject').value='Votre chauffeur privé sur la Côte d’Azur';$('body').value=document.getElementById('body').defaultValue;campaignRecipients=new Map();selectedIds=new Set();renderContacts();return}
 $('campaignName').value=c.name||'';$('audience').value=c.audience||'sélection manuelle';$('subject').value=c.email_subject||'';$('body').value=c.email_body||'';selectedIds=new Set();loadRecipients();
 }
 async function saveCampaign(){
@@ -189,6 +193,19 @@ async function sendOne(contact,subject,body){
 const raw=buildRaw(cleanEmail(contact.email),subject,body);
 const res=await fetch('https://gmail.googleapis.com/gmail/v1/users/me/messages/send',{method:'POST',headers:{Authorization:'Bearer '+gmailToken,'Content-Type':'application/json'},body:JSON.stringify({raw})});
 const out=await res.json().catch(()=>({}));if(!res.ok)throw new Error(out?.error?.message||('Gmail HTTP '+res.status));return out;
+}
+async function sendTest(){
+if(sending)return;
+if(!gmailToken||gmailEmail!==EPS_GOOGLE_ACCOUNT){show('testMsg','Connecte le compte Gmail EPS avant le test.','err');return}
+const subject=safeHeader($('subject').value),body=$('body').value.trim();
+if(!subject||!body){show('testMsg','Renseigne l’objet et le message avant le test.','err');return}
+sending=true;$('testBtn').disabled=true;$('sendBtn').disabled=true;
+show('testMsg','Envoi du test à docheanthony@gmail.com…');
+try{
+await sendOne({email:'docheanthony@gmail.com'},subject,body);
+show('testMsg','Test accepté par Gmail pour docheanthony@gmail.com. Vérifie la réception, le logo et l’adresse d’expédition.','ok');
+}catch(e){show('testMsg','Test non confirmé : '+String(e.message||e)+'. Vérifie les messages envoyés dans Gmail avant de réessayer.','err')}
+finally{sending=false;$('testBtn').disabled=false;$('sendBtn').disabled=false}
 }
 async function sleep(ms){return new Promise(r=>setTimeout(r,ms))}
 async function sendBatch(){
@@ -244,6 +261,7 @@ $('contactsBody').onclick=e=>{const b=e.target.closest('.optout');if(b)markStop(
 $('selectEligible').onchange=()=>{selectedIds=new Set();if($('selectEligible').checked)contacts.forEach(c=>{if(isEmail(c.email)&&!opposed.has(cleanEmail(c.email))&&!todaySent.has(c.id)&&campaignRecipients.get(c.id)!=='envoyé'&&campaignRecipients.get(c.id)!=='en cours')selectedIds.add(c.id)});renderContacts()};
 $('refreshBtn').onclick=refresh;
 $('sendBtn').onclick=sendBatch;
+$('testBtn').onclick=sendTest;
 $('stopBtn').onclick=()=>{stopRequested=true;$('stopBtn').disabled=true};
 $('logout').onclick=async()=>{await db.auth.signOut();location.reload()};
 const EPS_GOOGLE_CLIENT_ID='8466959978-eo16lgc65u6ssh6jl1eo3nfnhpeabii6.apps.googleusercontent.com';

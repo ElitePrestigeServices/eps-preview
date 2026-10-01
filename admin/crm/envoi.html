@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Envoi de prospection | Elite Prestige Services</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<style>
+:root{font-family:Arial,Helvetica,sans-serif;color:#eee7d9;background:#111715}*{box-sizing:border-box}body{margin:0}main{max-width:1220px;margin:auto;padding:24px 16px 48px}h1{font:normal 34px Georgia,serif;color:#dec28c;margin:10px 0}h2{font:normal 22px Georgia,serif;color:#e5c999;margin:0 0 12px}a{color:#e6ca92}.muted{color:#b9b8af}.top{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}.panel{background:#1c2420;border:1px solid #655a42;border-radius:13px;padding:18px;margin:14px 0}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:10px}.stat{border:1px solid #5d533d;border-radius:10px;padding:14px}.stat b{font-size:25px;color:#e2c58f}input,select,textarea,button{font:inherit;padding:11px;border-radius:7px;border:1px solid #8d7952;margin:4px 0;background:#111815;color:white;max-width:100%}input,select,textarea{width:100%}button{background:#c6a971;color:#141713;cursor:pointer;font-weight:bold}button.secondary{background:transparent;color:#dec28c}button.stop{background:#642e29;color:#fff}button:disabled{opacity:.5;cursor:wait}label{display:block;margin:8px 0;color:#e0d4c0}small{color:#c2b6a3}.row{display:flex;gap:10px;align-items:end;flex-wrap:wrap}.row>*{flex:1}.row button{flex:0 0 auto}.scroll{overflow:auto}table{border-collapse:collapse;width:100%;min-width:760px}th,td{text-align:left;padding:10px;border-bottom:1px solid #514d3e}th{color:#dec28c}textarea{min-height:180px}.notice{padding:12px;border:1px solid #61563f;border-radius:8px;color:#d9d2c5;background:#151c19;margin-top:10px}.notice.err{border-color:#a84f48;color:#ffd1c8}.notice.ok{border-color:#4d9870;color:#baf0cf}.pill{padding:3px 8px;border:1px solid #9d8556;border-radius:20px;font-size:12px}.hidden{display:none!important}.progress{height:9px;background:#101512;border-radius:10px;overflow:hidden;margin:10px 0}.progress i{display:block;width:0;height:100%;background:#c6a971}.check{width:auto;min-height:0}.small{font-size:13px;line-height:1.5}.header-actions{display:flex;gap:8px;flex-wrap:wrap}
+@media(max-width:700px){main{padding:12px 10px 32px}h1{font-size:26px}.panel{padding:12px;margin:8px 0}.grid{grid-template-columns:1fr 1fr;gap:7px}input,select,textarea{font-size:16px}button{font-size:13px;padding:9px}.stats{grid-template-columns:repeat(2,1fr)}table{min-width:650px}th,td{padding:8px;font-size:12px}}
+@media(max-width:390px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main>
+<div class="top"><div><a href="./">← CRM EPS</a><h1>Prospection par e-mail</h1><p class="muted">Envoi direct depuis Gmail, en petits lots contrôlés. Aucun message ne part sans clic de ta part.</p></div><div class="header-actions"><button class="secondary" id="logout" hidden>Déconnexion CRM</button></div></div>
+<section class="panel" id="login"><h2>Connexion administrateur</h2><form id="auth"><label>E-mail<input type="email" id="email" required autocomplete="username"></label><label>Mot de passe<input type="password" id="password" required autocomplete="current-password"></label><button>Se connecter</button></form></section>
+<section id="app" hidden>
+<div class="stats">
+<div class="stat"><b id="mContacts">0</b><br><small>Contacts CRM</small></div>
+<div class="stat"><b id="mReady">0</b><br><small>Adresses sélectionnables</small></div>
+<div class="stat"><b id="mToday">0</b><br><small>Envoyés aujourd’hui</small></div>
+<div class="stat"><b id="mStop">0</b><br><small>Oppositions STOP</small></div>
+</div>
+<section class="panel"><h2>1. Importer des prospects</h2><div class="row"><label>Fichier CSV ou Excel<input id="fileInput" type="file" accept=".csv,.xlsx,.xls"></label><button id="importBtn">Importer dans le CRM EPS</button></div><small>Colonnes acceptées : société/entreprise, e-mail, prénom, nom, ville, téléphone, notes. Les doublons et les adresses en opposition sont ignorés.</small><div id="importMsg" class="notice hidden"></div></section>
+<section class="panel"><h2>2. Connecter Gmail</h2><div class="row"><label>Google OAuth Client ID<input id="googleClientId" placeholder="…apps.googleusercontent.com" autocomplete="off"></label><button class="secondary" id="saveClientBtn">Enregistrer</button><button id="gmailBtn">Connecter Gmail</button></div><div id="gmailState" class="notice">Gmail non connecté.</div><small class="small">Le jeton reste en mémoire pendant cette session et n’est pas enregistré. Le compte Gmail connecté doit pouvoir envoyer avec <b>contact@elite-prestige-services.fr</b> (adresse d’expédition ou alias configuré dans Gmail). L’origine EPS doit être autorisée dans le client OAuth Google.</small></section>
+<section class="panel"><h2>3. Préparer la campagne</h2><div class="grid"><label>Campagne existante<select id="campaignSelect"><option value="">Nouvelle campagne</option></select></label><label>Nom<input id="campaignName" maxlength="160" value="Partenariat hôtels Côte d’Azur"></label><label>Audience<select id="audience"><option value="hôtels, conciergeries et entreprises">Hôtels, conciergeries et entreprises</option><option value="hôtels">Hôtels</option><option value="conciergeries">Conciergeries</option><option value="entreprises">Entreprises</option><option value="sélection manuelle">Sélection manuelle</option></select></label><label>Objet<input id="subject" value="Un service de chauffeur privé pour vos clients sur la Côte d’Azur" maxlength="200"></label></div>
+<label>Message — variable disponible : {{societe}}<textarea id="body">Bonjour,
+
+Elite Prestige Services accompagne hôtels, conciergeries et entreprises dans leurs besoins de chauffeur privé sur la Côte d’Azur.
+
+Transferts, déplacements professionnels et mise à disposition : nous organisons les trajets de vos clients et équipes entre Cannes, Nice, Monaco et Saint-Tropez.
+
+Vous souhaitez échanger sur vos besoins ou recevoir une présentation de nos services ? Répondez simplement à cet e-mail.
+
+Pour ne plus recevoir nos messages, répondez simplement STOP.</textarea></label>
+<div class="row"><label>Maximum par jour (50 par défaut, 100 maximum)<input id="dailyLimit" type="number" min="1" max="100" value="50"></label><button id="saveCampaignBtn">Enregistrer le brouillon</button><button class="secondary" id="previewBtn">Prévisualiser</button></div><div id="preview" class="notice hidden"></div></section>
+<section class="panel"><h2>4. Choisir les destinataires</h2><div class="grid"><label>Rechercher<input id="search" placeholder="Société, ville ou e-mail"></label><label>Type CRM<select id="typeFilter"><option value="">Tous</option><option value="prospect">Prospects</option><option value="entreprise">Entreprises</option><option value="partenaire">Partenaires</option><option value="client">Clients</option></select></label></div><div class="row"><label><input class="check" type="checkbox" id="selectEligible" checked> Sélectionner les adresses éligibles</label><button class="secondary" id="refreshBtn">Actualiser</button></div><div class="scroll"><table><thead><tr><th>Sélection</th><th>Société</th><th>Type</th><th>Ville</th><th>E-mail</th><th>État</th><th>Action</th></tr></thead><tbody id="contactsBody"></tbody></table></div><div id="contactMsg" class="notice hidden"></div></section>
+<section class="panel"><h2>5. Envoyer le prochain lot</h2><div class="row"><button id="sendBtn">Envoyer le lot sélectionné</button><button class="stop" id="stopBtn" disabled>Arrêter le lot</button></div><div class="progress"><i id="progressBar"></i></div><div id="sendMsg" class="notice hidden"></div><small>Limite EPS : 100 e-mails par jour maximum dans l’outil. Pause de 4 secondes entre les envois. Pour 1 000 contacts, l’envoi se fait donc sur plusieurs jours.</small></section>
+</section>
+<p id="status" role="status" class="notice hidden"></p>
+</main>
+<script>
+const SUPABASE_URL='https://lrtuztxjngdvrnjuwxfr.supabase.co';
+const SUPABASE_KEY='sb_publishable_GeaRT-N3IE03M19HCB4MVg_RQwbSnYu';
+const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+const $=id=>document.getElementById(id);
+const EPS_FROM='contact@elite-prestige-services.fr';
+const EPS_NAME='Elite Prestige Services';
+const EPS_LOGO='https://www.elite-prestige-services.fr/assets/logo-eps.svg';
+const EPS_SITE='https://www.elite-prestige-services.fr';
+const EPS_ADDRESS='34 rue Borniol, 06400 Cannes';
+let gmailToken=null,gmailEmail=null,tokenClient=null,contacts=[],campaigns=[],opposed=new Map(),todaySent=new Set(),campaignRecipients=new Map(),stopRequested=false,sending=false,selectedIds=new Set(),selectionInitialized=false;
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function cleanEmail(v){return String(v||'').trim().toLowerCase()}
+function normKey(v){return String(v||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]/g,'')}
+function isEmail(v){return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)}
+function localDayStartIso(){const d=new Date();d.setHours(0,0,0,0);return d.toISOString()}
+function show(id,msg,kind){const el=$(id);el.classList.remove('hidden','err','ok');if(kind)el.classList.add(kind);el.textContent=msg}
+function hide(id){$(id).classList.add('hidden')}
+function safeHeader(v){return String(v||'').replace(/[\r\n]/g,' ').trim()}
+function personalize(v,c){return String(v||'').replaceAll('{{societe}}',c?.company_name||'votre établissement')}
+function b64urlUtf8(v){const bytes=new TextEncoder().encode(v);let bin='';for(let i=0;i<bytes.length;i+=0x8000)bin+=String.fromCharCode(...bytes.subarray(i,i+0x8000));return btoa(bin).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'')}
+function b64MimeUtf8(v){const bytes=new TextEncoder().encode(v);let bin='';for(let i=0;i<bytes.length;i+=0x8000)bin+=String.fromCharCode(...bytes.subarray(i,i+0x8000));const b=btoa(bin);return (b.match(/.{1,76}/g)||[]).join('\r\n')}
+function encodedHeader(v){return '=?UTF-8?B?'+b64MimeUtf8(v).replace(/\r\n/g,'')+'?='}
+function htmlBody(text){let safe=esc(text).replace(/(https?:\/\/[^\s<]+)/g,'<a href="$1" style="color:#b99c60;text-decoration:underline;">$1</a>');return safe.replace(/\n/g,'<br>')}
+function buildHtml(body){
+return '<!doctype html><html lang="fr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head><body style="margin:0;background:#111715;font-family:Arial,Helvetica,sans-serif;color:#eee7d9;"><table width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#111715" style="background:#111715;"><tr><td align="center" style="padding:24px 12px;"><table width="600" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:600px;background:#1c2420;border:1px solid #655a42;"><tr><td align="center" style="padding:25px 20px;"><img src="'+EPS_LOGO+'" width="190" height="58" alt="Elite Prestige Services" border="0" style="display:block;width:190px;height:58px;border:0;"></td></tr><tr><td bgcolor="#c6a971" style="height:2px;font-size:1px;line-height:1px;">&nbsp;</td></tr><tr><td style="padding:28px 30px 20px;font-family:Arial,Helvetica,sans-serif;font-size:16px;line-height:26px;color:#eee7d9;">'+htmlBody(body)+'</td></tr><tr><td style="padding:0 30px 28px;"><table cellpadding="0" cellspacing="0" border="0"><tr><td bgcolor="#c6a971" style="background:#c6a971;padding:12px 20px;"><a href="'+EPS_SITE+'" style="font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:20px;font-weight:bold;color:#141713;text-decoration:none;">Découvrir Elite Prestige Services</a></td></tr></table></td></tr><tr><td bgcolor="#151c19" style="padding:18px 30px;font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:19px;color:#c2b6a3;">'+EPS_NAME+' · Chauffeur privé · Côte d’Azur<br>'+EPS_ADDRESS+'<br><a href="mailto:'+EPS_FROM+'?subject=STOP" style="font-size:12px;line-height:19px;color:#c2b6a3;">Ne plus recevoir nos messages : répondre STOP</a></td></tr></table></td></tr></table></body></html>';
+}
+function buildRaw(to,subject,body){
+const boundary='eps_alt_'+crypto.randomUUID().replace(/-/g,'');
+const html=buildHtml(body);
+const mime=['From: '+EPS_NAME+' <'+EPS_FROM+'>','Reply-To: '+EPS_FROM,'To: '+to,'Subject: '+encodedHeader(safeHeader(subject)),'MIME-Version: 1.0','Content-Type: multipart/alternative; boundary="'+boundary+'"','','--'+boundary,'Content-Type: text/plain; charset=UTF-8','Content-Transfer-Encoding: base64','',''+b64MimeUtf8(body+'\n\n'+EPS_NAME+' · Chauffeur privé · Côte d’Azur\n'+EPS_ADDRESS+'\n'+EPS_SITE+'\nNe plus recevoir nos messages : répondre STOP'),'--'+boundary,'Content-Type: text/html; charset=UTF-8','Content-Transfer-Encoding: base64','',''+b64MimeUtf8(html),'--'+boundary+'--',''].join('\r\n');
+return b64urlUtf8(mime);
+}
+async function logActivity(contactId,kind,title,details){
+await db.from('eps_crm_activities').insert({contact_id:contactId,kind,title,details:String(details||'').slice(0,2000),completed_at:new Date().toISOString()});
+}
+async function loadData(){
+const [{data:c,error:ce},{data:k,error:ke},{data:o,error:oe},{count:today,error:te}]=await Promise.all([
+db.from('eps_crm_contacts').select('id,contact_type,company_name,first_name,last_name,email,phone,city,source,notes').order('created_at',{ascending:false}).limit(1000),
+db.from('eps_crm_campaigns').select('id,name,audience,status,email_subject,email_body,created_at').order('created_at',{ascending:false}).limit(100),
+db.from('eps_crm_email_oppositions').select('email,contact_id,reason,created_at').limit(5000),
+db.from('eps_crm_campaign_recipients').select('contact_id',{count:'exact',head:true}).gte('sent_at',localDayStartIso())
+]);
+if(ce||ke||oe||te){show('status','Erreur CRM : '+(ce?.message||ke?.message||oe?.message||te?.message),'err');return}
+contacts=c||[];campaigns=k||[];opposed=new Map((o||[]).map(x=>[cleanEmail(x.email),x]));if(!selectionInitialized){selectedIds=new Set(contacts.filter(x=>isEmail(x.email)&&!opposed.has(cleanEmail(x.email))&&!todaySent.has(x.id)).map(x=>x.id));selectionInitialized=true;}$('mContacts').textContent=contacts.length;$('mStop').textContent=opposed.size;$('mToday').textContent=today||0;
+const ready=contacts.filter(c=>isEmail(c.email)&&!opposed.has(cleanEmail(c.email)));$('mReady').textContent=ready.length;
+renderCampaigns();renderContacts();hide('status');
+}
+function renderCampaigns(){
+const sel=$('campaignSelect'),current=sel.value;
+sel.innerHTML='<option value="">Nouvelle campagne</option>'+campaigns.map(c=>'<option value="'+esc(c.id)+'">'+esc(c.name)+' · '+esc(c.status)+'</option>').join('');
+if(current&&campaigns.some(c=>c.id===current))sel.value=current;
+}
+function renderContacts(){
+const q=$('search').value.trim().toLowerCase(),type=$('typeFilter').value;
+const rows=contacts.filter(c=>(!type||c.contact_type===type)&&[c.company_name,c.city,c.email].join(' ').toLowerCase().includes(q));
+$('contactsBody').innerHTML=rows.map(c=>{
+const email=cleanEmail(c.email),blocked=opposed.has(email),sentToday=todaySent.has(c.id),rec=campaignRecipients.get(c.id),state=blocked?'Opposition STOP':sentToday?'Déjà envoyé aujourd’hui':rec==='envoyé'?'Déjà envoyé dans cette campagne':rec==='échec'?'Échec précédent':rec==='en cours'?'Envoi en cours — vérifier Gmail':'Prêt';
+const disabled=blocked||sentToday||rec==='envoyé'||rec==='en cours'||!isEmail(email);
+const checked=selectedIds.has(c.id)&&!disabled?' checked':'';
+return '<tr><td><input class="check recipient" type="checkbox" data-id="'+esc(c.id)+'"'+checked+(disabled?' disabled':'')+'></td><td><b>'+esc(c.company_name||'—')+'</b></td><td>'+esc(c.contact_type||'—')+'</td><td>'+esc(c.city||'—')+'</td><td>'+esc(email||'—')+'</td><td><span class="pill">'+esc(state)+'</span></td><td>'+(blocked?'<span class="muted">Exclu</span>':'<button class="secondary optout" data-id="'+esc(c.id)+'">STOP</button>')+'</td></tr>'
+}).join('')||'<tr><td colspan="7" class="muted">Aucun contact pour ces filtres.</td></tr>';
+const eligible=rows.filter(c=>isEmail(c.email)&&!opposed.has(cleanEmail(c.email))&&!todaySent.has(c.id)&&campaignRecipients.get(c.id)!=='envoyé'&&campaignRecipients.get(c.id)!=='en cours');
+$('mReady').textContent=eligible.length;$('selectEligible').checked=eligible.length>0&&eligible.every(c=>selectedIds.has(c.id));
+}
+async function markStop(id){const c=contacts.find(x=>x.id===id);if(!c||!isEmail(c.email))return;if(!confirm('Confirmer que cette adresse a demandé à ne plus recevoir de messages EPS ? Elle sera exclue de toutes les campagnes.'))return;const {error}=await db.from('eps_crm_email_oppositions').upsert({email:cleanEmail(c.email),contact_id:c.id,reason:'Opposition enregistrée dans le CRM EPS'},{onConflict:'email'});if(error){show('contactMsg','Impossible d’enregistrer l’opposition : '+error.message,'err');return}selectedIds.delete(c.id);await refresh();show('contactMsg','Adresse placée dans la liste d’opposition EPS.','ok')}
+async function loadRecipients(){
+campaignRecipients=new Map();const id=$('campaignSelect').value;if(!id){renderContacts();return}
+const {data,error}=await db.from('eps_crm_campaign_recipients').select('contact_id,status,sent_at').eq('campaign_id',id).limit(2000);
+if(error){show('status','Erreur de lecture des destinataires : '+error.message,'err');return}
+(data||[]).forEach(r=>campaignRecipients.set(r.contact_id,r.status));renderContacts();
+}
+async function loadTodaySent(){
+todaySent=new Set();const {data,error}=await db.from('eps_crm_campaign_recipients').select('contact_id').gte('sent_at',localDayStartIso()).limit(500);
+if(error){show('status','Erreur de lecture des envois du jour : '+error.message,'err');return}
+(data||[]).forEach(r=>todaySent.add(r.contact_id));
+}
+async function refresh(){
+const {data:ok,error}=await db.rpc('eps_is_admin');
+if(error||ok!==true){$('app').hidden=true;$('login').hidden=false;show('status','Accès réservé à l’administrateur EPS.','err');return}
+await loadTodaySent();await loadData();await loadRecipients();
+}
+function initGmail(){
+const id=$('googleClientId').value.trim();
+if(!id){show('gmailState','Renseigne le Google OAuth Client ID.','err');return}
+if(!window.google?.accounts?.oauth2){show('gmailState','Google Identity est en cours de chargement. Réessaie dans quelques secondes.','err');return}
+tokenClient=google.accounts.oauth2.initTokenClient({client_id:id,scope:'openid email https://www.googleapis.com/auth/gmail.send',callback:async resp=>{
+if(resp.error){show('gmailState','Connexion Gmail refusée : '+resp.error,'err');gmailToken=null;return}
+gmailToken=resp.access_token;
+try{const r=await fetch('https://openidconnect.googleapis.com/v1/userinfo',{headers:{Authorization:'Bearer '+gmailToken}});const data=await r.json();gmailEmail=data.email||null}catch(_){gmailEmail=null}
+show('gmailState','Gmail connecté'+(gmailEmail?' : '+gmailEmail:'')+'. L’expéditeur EPS doit être un alias autorisé dans ce compte.','ok');
+}});
+tokenClient.requestAccessToken({prompt:'consent'});
+}
+function mapRow(row){
+const obj={};Object.entries(row||{}).forEach(([k,v])=>obj[normKey(k)]=v);
+const get=(...keys)=>{for(const k of keys){if(obj[k]!==undefined&&obj[k]!==null&&String(obj[k]).trim())return String(obj[k]).trim()}return ''};
+return {company_name:get('societe','entreprise','company','companyname','nomdelasociete','nomentreprise','nom'),email:cleanEmail(get('email','e-mail','courriel','mail','adressemail')),first_name:get('prenom','firstname','first_name'),last_name:get('nomdefamille','lastname','last_name'),city:get('ville','city'),phone:get('telephone','tel','phone'),notes:get('notes','note'),contact_type:'prospect',source:'prospection EPS'};
+}
+async function importFile(){
+const file=$('fileInput').files[0];if(!file){show('importMsg','Choisis un fichier CSV ou Excel.','err');return}
+$('importBtn').disabled=true;
+try{
+const wb=XLSX.read(await file.arrayBuffer(),{type:'array'}),ws=wb.Sheets[wb.SheetNames[0]],items=XLSX.utils.sheet_to_json(ws,{defval:''}).map(mapRow).filter(x=>x.company_name&&isEmail(x.email));
+const unique=[...new Map(items.map(x=>[x.email,x])).values()];if(!unique.length)throw new Error('Aucune ligne valide : il faut au minimum une société et un e-mail.');
+let added=0,duplicates=0,blocked=0,failed=0;
+for(let i=0;i<unique.length;i+=100){
+const batch=unique.slice(i,i+100),emails=batch.map(x=>x.email);
+const [{data:existing,error:e1},{data:suppressed,error:e2}]=await Promise.all([db.from('eps_crm_contacts').select('email').in('email',emails),db.from('eps_crm_email_oppositions').select('email').in('email',emails)]);
+if(e1||e2)throw new Error(e1?.message||e2?.message);
+const known=new Set((existing||[]).map(x=>cleanEmail(x.email))),stopped=new Set((suppressed||[]).map(x=>cleanEmail(x.email)));
+duplicates+=batch.filter(x=>known.has(x.email)).length;blocked+=batch.filter(x=>stopped.has(x.email)).length;
+const fresh=batch.filter(x=>!known.has(x.email)&&!stopped.has(x.email));
+if(fresh.length){const {error}=await db.from('eps_crm_contacts').insert(fresh);if(error)failed+=fresh.length;else added+=fresh.length}
+}
+show('importMsg',added+' importé(s), '+duplicates+' doublon(s), '+blocked+' en opposition ignoré(s)'+(failed?', '+failed+' erreur(s)':'')+'.',failed?'err':'ok');
+$('fileInput').value='';await refresh();
+}catch(e){show('importMsg','Erreur d’import : '+(e.message||e),'err')}
+$('importBtn').disabled=false;
+}
+function fillCampaign(id){
+const c=campaigns.find(x=>x.id===id);if(!c){$('campaignName').value='Partenariat hôtels Côte d’Azur';$('audience').value='hôtels, conciergeries et entreprises';$('subject').value='Un service de chauffeur privé pour vos clients sur la Côte d’Azur';$('body').value=document.getElementById('body').defaultValue;campaignRecipients=new Map();selectedIds=new Set();renderContacts();return}
+$('campaignName').value=c.name||'';$('audience').value=c.audience||'sélection manuelle';$('subject').value=c.email_subject||'';$('body').value=c.email_body||'';selectedIds=new Set();loadRecipients();
+}
+async function saveCampaign(){
+const name=$('campaignName').value.trim(),subject=safeHeader($('subject').value),body=$('body').value.trim();if(!name||!subject||!body){show('sendMsg','Renseigne le nom, l’objet et le message.','err');return null}
+const data={name,audience:$('audience').value,status:'brouillon',email_subject:subject,email_body:body};
+let result;
+if($('campaignSelect').value)result=await db.from('eps_crm_campaigns').update(data).eq('id',$('campaignSelect').value).select('id').single();
+else result=await db.from('eps_crm_campaigns').insert(data).select('id').single();
+if(result.error){show('sendMsg','Erreur d’enregistrement : '+result.error.message,'err');return null}
+await loadData();$('campaignSelect').value=result.data.id;await loadRecipients();show('sendMsg','Brouillon enregistré dans le CRM EPS.','ok');return result.data.id;
+}
+function preview(){
+const sample=contacts.find(c=>selectedIds.has(c.id))||contacts.find(c=>isEmail(c.email))||{company_name:'Hôtel Exemple'};
+const body=personalize($('body').value,sample);show('preview','OBJET : '+safeHeader($('subject').value)+'\n\n'+body+'\n\n'+EPS_NAME+' · '+EPS_ADDRESS+'\nNe plus recevoir nos messages : répondre STOP','');
+}
+function encodeSubject(v){return encodedHeader(v)}
+async function sendOne(contact,subject,body){
+const raw=buildRaw(cleanEmail(contact.email),subject,body);
+const res=await fetch('https://gmail.googleapis.com/gmail/v1/users/me/messages/send',{method:'POST',headers:{Authorization:'Bearer '+gmailToken,'Content-Type':'application/json'},body:JSON.stringify({raw})});
+const out=await res.json().catch(()=>({}));if(!res.ok)throw new Error(out?.error?.message||('Gmail HTTP '+res.status));return out;
+}
+async function sleep(ms){return new Promise(r=>setTimeout(r,ms))}
+async function sendBatch(){
+if(sending)return;if(!gmailToken){show('sendMsg','Connecte Gmail avant l’envoi.','err');return}
+let campaignId=$('campaignSelect').value;if(!campaignId){campaignId=await saveCampaign();if(!campaignId)return}
+const selected=contacts.filter(c=>selectedIds.has(c.id)&&isEmail(c.email)&&!opposed.has(cleanEmail(c.email))&&!todaySent.has(c.id)&&campaignRecipients.get(c.id)!=='envoyé');
+if(!selected.length){show('sendMsg','Sélectionne au moins une adresse éligible.','err');return}
+const requested=Math.min(100,Math.max(1,Number($('dailyLimit').value)||50));
+const {count,error}=await db.from('eps_crm_campaign_recipients').select('contact_id',{count:'exact',head:true}).gte('sent_at',localDayStartIso());
+if(error){show('sendMsg','Impossible de vérifier la limite du jour : '+error.message,'err');return}
+const remaining=Math.max(0,Math.min(requested,100)-(count||0));if(!remaining){show('sendMsg','Limite du jour atteinte ('+Math.min(requested,100)+' e-mails).','err');return}
+const rows=selected.slice(0,remaining),sub=safeHeader($('subject').value),template=$('body').value;
+if(!confirm('Envoyer '+rows.length+' e-mail(s) via le compte Gmail connecté ('+(gmailEmail||'compte Gmail')+') ? Expéditeur EPS : '+EPS_FROM))return;
+sending=true;stopRequested=false;$('sendBtn').disabled=true;$('stopBtn').disabled=false;
+await db.from('eps_crm_campaigns').update({status:'en cours'}).eq('id',campaignId);
+let sent=0,failed=0,trackingFailures=0;
+for(let i=0;i<rows.length;i++){
+if(stopRequested)break;
+const c=rows[i],to=cleanEmail(c.email),body=personalize(template,c),now=new Date().toISOString();
+$('progressBar').style.width=Math.round(i/rows.length*100)+'%';
+show('sendMsg','Envoi '+(i+1)+' / '+rows.length+' · '+(c.company_name||to),'');
+const {error:insertError}=await db.from('eps_crm_campaign_recipients').upsert({campaign_id:campaignId,contact_id:c.id,status:'en cours',sent_at:now},{onConflict:'campaign_id,contact_id'});
+if(insertError){failed++;await logActivity(c.id,'e-mail','Échec de préparation de l’e-mail',insertError.message);continue}
+try{
+const result=await sendOne(c,sub,body),sentAt=new Date().toISOString();
+const {error:updateError}=await db.from('eps_crm_campaign_recipients').update({status:'envoyé',sent_at:sentAt}).eq('campaign_id',campaignId).eq('contact_id',c.id);
+todaySent.add(c.id);campaignRecipients.set(c.id,'envoyé');sent++;
+if(updateError){trackingFailures++;show('sendMsg','Message accepté par Gmail, mais suivi CRM à vérifier. Cet e-mail est bloqué contre un renvoi automatique.','err')}
+else await logActivity(c.id,'e-mail','Campagne envoyée',campaignId+' · Gmail '+(result.id||''));
+}catch(e){
+failed++;campaignRecipients.set(c.id,'échec');await db.from('eps_crm_campaign_recipients').update({status:'échec',sent_at:null}).eq('campaign_id',campaignId).eq('contact_id',c.id);
+await logActivity(c.id,'e-mail','Échec d’envoi',String(e.message||e));if(/quota|rate|429|401|403|auth/i.test(String(e.message||e)))break;
+}
+$('progressBar').style.width=Math.round((i+1)/rows.length*100)+'%';renderContacts();
+if(i<rows.length-1&&!stopRequested)await sleep(4000);
+}
+sending=false;$('sendBtn').disabled=false;$('stopBtn').disabled=true;
+if(!failed&&!stopRequested&&selected.length<=rows.length)await db.from('eps_crm_campaigns').update({status:'terminée'}).eq('id',campaignId);
+else await db.from('eps_crm_campaigns').update({status:'suspendue'}).eq('id',campaignId);
+await loadTodaySent();await loadData();
+show('sendMsg',sent+' envoyé(s), '+failed+' erreur(s)'+(trackingFailures?' · '+trackingFailures+' suivi(s) CRM à vérifier':'')+(stopRequested?' · lot arrêté':'')+'.',(failed||trackingFailures)?'err':'ok');
+}
+$('auth').onsubmit=async e=>{e.preventDefault();const {error}=await db.auth.signInWithPassword({email:$('#email').value,password:$('#password').value});if(error){show('status','Connexion impossible : '+error.message,'err');return}await refresh()};
+$('importBtn').onclick=importFile;
+$('saveClientBtn').onclick=()=>{localStorage.setItem('eps_google_client_id',$('googleClientId').value.trim());show('gmailState','Client OAuth enregistré sur cet appareil.','ok')};
+$('gmailBtn').onclick=()=>{localStorage.setItem('eps_google_client_id',$('googleClientId').value.trim());initGmail()};
+$('saveCampaignBtn').onclick=saveCampaign;
+$('previewBtn').onclick=preview;
+$('campaignSelect').onchange=()=>fillCampaign($('campaignSelect').value);
+$('search').oninput=renderContacts;$('typeFilter').onchange=renderContacts;
+$('contactsBody').onchange=e=>{const box=e.target.closest('.recipient');if(!box)return;if(box.checked)selectedIds.add(box.dataset.id);else selectedIds.delete(box.dataset.id);renderContacts()};
+$('contactsBody').onclick=e=>{const b=e.target.closest('.optout');if(b)markStop(b.dataset.id)};
+$('selectEligible').onchange=()=>{selectedIds=new Set();if($('selectEligible').checked)contacts.forEach(c=>{if(isEmail(c.email)&&!opposed.has(cleanEmail(c.email))&&!todaySent.has(c.id)&&campaignRecipients.get(c.id)!=='envoyé'&&campaignRecipients.get(c.id)!=='en cours')selectedIds.add(c.id)});renderContacts()};
+$('refreshBtn').onclick=refresh;
+$('sendBtn').onclick=sendBatch;
+$('stopBtn').onclick=()=>{stopRequested=true;$('stopBtn').disabled=true};
+$('logout').onclick=async()=>{await db.auth.signOut();location.reload()};
+$('googleClientId').value=localStorage.getItem('eps_google_client_id')||'';
+db.auth.getSession().then(({data})=>data.session?refresh():null);
+</script>
+</body>
+</html>

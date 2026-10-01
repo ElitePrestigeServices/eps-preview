@@ -121,7 +121,8 @@ if(error){show('status','Erreur de lecture des envois du jour : '+error.message,
 }
 async function refresh(){
 const {data:ok,error}=await db.rpc('eps_is_admin');
-if(error||ok!==true){$('app').hidden=true;$('login').hidden=false;show('status','Accès réservé à l’administrateur EPS.','err');return}
+if(error||ok!==true){$('app').hidden=true;$('login').hidden=false;$('logout').hidden=true;show('status','Accès réservé à l’administrateur EPS.','err');return}
+$('app').hidden=false;$('login').hidden=true;$('logout').hidden=false;
 await loadTodaySent();await loadData();await loadRecipients();
 }
 function initGmail(){

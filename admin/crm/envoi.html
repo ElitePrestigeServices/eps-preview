@@ -25,7 +25,7 @@
 <div class="stat"><b id="mStop">0</b><br><small>Oppositions STOP</small></div>
 </div>
 <section class="panel"><h2>1. Importer des prospects</h2><div class="row"><label>Fichier CSV ou Excel<input id="fileInput" type="file" accept=".csv,.xlsx,.xls"></label><button id="importBtn">Importer dans le CRM EPS</button></div><small>Colonnes acceptées : société/entreprise, e-mail, prénom, nom, ville, téléphone, notes. Les doublons et les adresses en opposition sont ignorés.</small><div id="importMsg" class="notice hidden"></div></section>
-<section class="panel"><h2>2. Connecter Gmail</h2><div class="row"><label>Google OAuth Client ID<input id="googleClientId" placeholder="…apps.googleusercontent.com" autocomplete="off"></label><button class="secondary" id="saveClientBtn">Enregistrer</button><button id="gmailBtn">Connecter Gmail</button></div><div id="gmailState" class="notice">Gmail non connecté.</div><small class="small">Le jeton reste en mémoire pendant cette session et n’est pas enregistré. Le compte Gmail connecté doit pouvoir envoyer avec <b>contact@elite-prestige-services.fr</b> (adresse d’expédition ou alias configuré dans Gmail). L’origine EPS doit être autorisée dans le client OAuth Google.</small></section>
+<section class="panel"><h2>2. Connecter Gmail</h2><div class="row"><label>Google OAuth Client ID<input id="googleClientId" placeholder="…apps.googleusercontent.com" autocomplete="off"></label><button class="secondary" id="saveClientBtn">Enregistrer</button><button id="gmailBtn">Connecter Gmail</button></div><div id="gmailState" class="notice">Gmail non connecté.</div><small class="small">Le Client ID provient d’un projet Google Cloud EPS distinct. <a href="https://console.cloud.google.com/auth/clients" target="_blank" rel="noopener">Créer le client OAuth EPS</a>. Le jeton reste en mémoire pendant cette session et n’est pas enregistré. Connecte <b>eliteprestigeservicescannes@gmail.com</b>, qui doit pouvoir envoyer avec <b>contact@elite-prestige-services.fr</b> (adresse d’expédition ou alias configuré dans Gmail). L’origine EPS doit être autorisée dans le client OAuth Google.</small></section>
 <section class="panel"><h2>3. Préparer la campagne</h2><div class="grid"><label>Campagne existante<select id="campaignSelect"><option value="">Nouvelle campagne</option></select></label><label>Nom<input id="campaignName" maxlength="160" value="Partenariat hôtels Côte d’Azur"></label><label>Audience<select id="audience"><option value="hôtels, conciergeries et entreprises">Hôtels, conciergeries et entreprises</option><option value="hôtels">Hôtels</option><option value="conciergeries">Conciergeries</option><option value="entreprises">Entreprises</option><option value="sélection manuelle">Sélection manuelle</option></select></label><label>Objet<input id="subject" value="Un service de chauffeur privé pour vos clients sur la Côte d’Azur" maxlength="200"></label></div>
 <label>Message — variable disponible : {{societe}}<textarea id="body">Bonjour,
 
@@ -48,6 +48,7 @@ const SUPABASE_KEY='sb_publishable_GeaRT-N3IE03M19HCB4MVg_RQwbSnYu';
 const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 const $=id=>document.getElementById(id);
 const EPS_FROM='contact@elite-prestige-services.fr';
+const EPS_GOOGLE_ACCOUNT='eliteprestigeservicescannes@gmail.com';
 const EPS_NAME='Elite Prestige Services';
 const EPS_LOGO='https://www.elite-prestige-services.fr/assets/logo-eps.svg';
 const EPS_SITE='https://www.elite-prestige-services.fr';
@@ -127,13 +128,15 @@ await loadTodaySent();await loadData();await loadRecipients();
 }
 function initGmail(){
 const id=$('googleClientId').value.trim();
-if(!id){show('gmailState','Renseigne le Google OAuth Client ID.','err');return}
+if(!/^\d+-[a-z0-9-]+\.apps\.googleusercontent\.com$/i.test(id)){show('gmailState','Ce champ attend l’identifiant d’un client OAuth Google dédié à EPS, terminé par .apps.googleusercontent.com, pas une adresse Gmail.','err');return}
+localStorage.setItem('eps_google_client_id',id);
 if(!window.google?.accounts?.oauth2){show('gmailState','Google Identity est en cours de chargement. Réessaie dans quelques secondes.','err');return}
-tokenClient=google.accounts.oauth2.initTokenClient({client_id:id,scope:'openid email https://www.googleapis.com/auth/gmail.send',callback:async resp=>{
+tokenClient=google.accounts.oauth2.initTokenClient({client_id:id,login_hint:EPS_GOOGLE_ACCOUNT,scope:'openid email https://www.googleapis.com/auth/gmail.send',callback:async resp=>{
 if(resp.error){show('gmailState','Connexion Gmail refusée : '+resp.error,'err');gmailToken=null;return}
-gmailToken=resp.access_token;
-try{const r=await fetch('https://openidconnect.googleapis.com/v1/userinfo',{headers:{Authorization:'Bearer '+gmailToken}});const data=await r.json();gmailEmail=data.email||null}catch(_){gmailEmail=null}
-show('gmailState','Gmail connecté'+(gmailEmail?' : '+gmailEmail:'')+'. L’expéditeur EPS doit être un alias autorisé dans ce compte.','ok');
+const accessToken=resp.access_token;
+try{const r=await fetch('https://openidconnect.googleapis.com/v1/userinfo',{headers:{Authorization:'Bearer '+accessToken}});if(!r.ok)throw new Error('Vérification du compte impossible');const data=await r.json();gmailEmail=cleanEmail(data.email)}catch(_){gmailEmail=null}
+if(gmailEmail!==EPS_GOOGLE_ACCOUNT){google.accounts.oauth2.revoke(accessToken,()=>{});gmailToken=null;show('gmailState','Choisis le compte '+EPS_GOOGLE_ACCOUNT+' pour la prospection EPS. Aucun autre compte ne peut envoyer depuis cet outil.','err');return}
+gmailToken=accessToken;show('gmailState','Gmail EPS connecté : '+gmailEmail+'. L’expéditeur '+EPS_FROM+' doit être un alias autorisé dans ce compte.','ok');
 }});
 tokenClient.requestAccessToken({prompt:'consent'});
 }
@@ -230,8 +233,8 @@ show('sendMsg',sent+' envoyé(s), '+failed+' erreur(s)'+(trackingFailures?' · '
 }
 $('auth').onsubmit=async e=>{e.preventDefault();const {error}=await db.auth.signInWithPassword({email:$('email').value,password:$('password').value});if(error){show('status','Connexion impossible : '+error.message,'err');return}await refresh()};
 $('importBtn').onclick=importFile;
-$('saveClientBtn').onclick=()=>{localStorage.setItem('eps_google_client_id',$('googleClientId').value.trim());show('gmailState','Client OAuth enregistré sur cet appareil.','ok')};
-$('gmailBtn').onclick=()=>{localStorage.setItem('eps_google_client_id',$('googleClientId').value.trim());initGmail()};
+$('saveClientBtn').onclick=()=>{const id=$('googleClientId').value.trim();if(!/^\d+-[a-z0-9-]+\.apps\.googleusercontent\.com$/i.test(id)){show('gmailState','Renseigne un Client ID Google terminé par .apps.googleusercontent.com, pas une adresse Gmail.','err');return}localStorage.setItem('eps_google_client_id',id);show('gmailState','Client OAuth EPS enregistré sur cet appareil.','ok')};
+$('gmailBtn').onclick=initGmail;
 $('saveCampaignBtn').onclick=saveCampaign;
 $('previewBtn').onclick=preview;
 $('campaignSelect').onchange=()=>fillCampaign($('campaignSelect').value);

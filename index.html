@@ -820,6 +820,35 @@ body.eps-content-open:not(.eps-booking-open) #contact{scroll-margin-top:90px}
 #eps-access-dialog [hidden]{display:none!important}
 #eps-access-submit:disabled{opacity:.55;cursor:wait}
 #eps-access-message{min-height:21px}
+</style><style id="eps-mobile-single-panel">
+.eps-mobile-panel-heading{display:none}
+@media(max-width:760px){
+body.eps-content-open[data-eps-mobile-panel]{height:auto!important;min-height:100dvh!important;overflow-y:auto!important;background:#101311!important}
+body.eps-content-open[data-eps-mobile-panel] main#accueil{position:static!important;height:auto!important;min-height:0!important;overflow:visible!important;padding:92px 0 24px!important}
+body.eps-content-open[data-eps-mobile-panel] main#accueil>section:not([data-eps-mobile-active]),
+body.eps-content-open[data-eps-mobile-panel]>section,
+body.eps-content-open[data-eps-mobile-panel]>footer:not([data-eps-mobile-active]){display:none!important}
+body.eps-content-open[data-eps-mobile-panel] main#accueil>section[data-eps-mobile-active]{display:block!important;width:100%!important;box-sizing:border-box!important;margin:0!important}
+body.eps-content-open[data-eps-mobile-panel] .eps-mobile-panel-heading{display:block!important;padding:12px 22px 22px!important;text-align:left}
+.eps-mobile-panel-heading a{display:inline-block;padding:10px 0;color:#d5b476;font-size:13px}
+.eps-mobile-panel-heading h1{font:normal 32px/1.15 Georgia,serif;color:#f5e8cf;margin:12px 0 0}
+body.eps-content-open[data-eps-mobile-panel] #vehicules{padding:0 16px 28px!important;background:transparent!important}
+body.eps-content-open[data-eps-mobile-panel] #vehicules .eps-three-heading{display:none!important}
+body.eps-content-open[data-eps-mobile-panel] #vehicules .eps-three-grid{grid-template-columns:1fr!important;max-width:480px!important;padding:0!important;gap:20px!important}
+body.eps-content-open[data-eps-mobile-panel] #vehicules .eps-three-content{padding:20px!important}
+body.eps-content-open[data-eps-mobile-panel] #vehicules .eps-three-content h3{font-size:26px!important}
+body.eps-content-open[data-eps-mobile-panel] #vehicules .eps-three-actions a{flex:1!important;min-height:48px!important;font-size:12px!important}
+body.eps-content-open[data-eps-mobile-panel] #services{padding:0 16px 28px!important}
+body.eps-content-open[data-eps-mobile-panel] #services .cards{display:grid!important;grid-template-columns:1fr!important;max-width:480px!important;margin:auto!important;gap:20px!important;aspect-ratio:auto!important}
+body.eps-content-open[data-eps-mobile-panel="evenements"] #services .cards article:not([data-eps-event-card]){display:none!important}
+body.eps-content-open[data-eps-mobile-panel] #entreprises{padding:6px 22px 32px!important;background:transparent!important}
+body.eps-content-open[data-eps-mobile-panel] #entreprises h2{font-size:28px!important;margin:12px 0 20px!important}
+body.eps-content-open[data-eps-mobile-panel] #entreprises p{font-size:15px!important;line-height:1.7!important}
+body.eps-content-open[data-eps-mobile-panel] #entreprises>a{display:flex!important;justify-content:center!important;box-sizing:border-box!important;width:100%!important;white-space:normal!important;border-radius:28px!important;min-height:52px!important}
+body.eps-content-open[data-eps-mobile-panel] #contact[data-eps-mobile-active]{display:flex!important;flex-direction:column!important;align-items:flex-start!important;gap:20px!important;margin:0 18px 32px!important;padding:25px 20px!important;border:1px solid #786747!important;border-radius:14px!important;font-size:15px!important}
+body.eps-content-open[data-eps-mobile-panel] #contact>a[href^="mailto:"]{display:block!important;width:100%!important;box-sizing:border-box!important;padding:15px 10px!important;text-align:center!important;border-radius:25px!important;background:#d5b476!important;color:#141815!important;font-weight:bold!important}
+body.eps-content-open[data-eps-mobile-panel] #contact>small{line-height:1.65!important;font-size:13px!important}
+}
 </style></head>
 <body><header class="header"><button class="mobile-menu-toggle" type="button" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="main-nav"><span></span><span></span><span></span></button><nav id="main-nav" aria-label="Navigation principale"><a href="#accueil">Accueil</a><a href="#vehicules">Nos véhicules</a><a href="#services">Nos services</a><a href="#entreprises">Entreprises</a><a href="#services" data-menu-detail="events">Événements</a><a href="#reservation" data-booking-type="Mise à disposition">Mise à disposition</a><a href="#contact">Contact</a><a class="mobile-private-access" data-eps-access="admin" href="admin/">Accès Admin</a><a class="mobile-private-access" data-eps-access="chauffeur" href="chauffeur/documents/">Accès Chauffeur</a></nav><div class="eps-header-actions"><div class="lang-toggle" role="group" aria-label="Langue / Language"><button type="button" data-lang="fr" aria-pressed="true">FR</button><span aria-hidden="true">│</span><button type="button" data-lang="en" aria-pressed="false">EN</button></div><a class="top-cta" href="#reservation">Réserver <span aria-hidden="true">↗</span></a></div></header>
 <main id="accueil"><section class="hero eps-approved-hero eps-restored-desktop-hero"><div class="eps-banner-stage"><img class="eps-approved-banner" src="assets/IMG_1045.JPG" alt="Elite Prestige Services : flotte de véhicules haut de gamme, jet privé et yacht sur la Côte d’Azur" width="1645" height="928" fetchpriority="high"><div class="eps-banner-branding"><div class="eps-banner-company">ELITE PRESTIGE SERVICES</div><div class="eps-banner-slogan">Your journey. Our excellence.</div></div></div><div class="eps-home-brand eps-mobile-home-brand"><img src="assets/IMG_1034.JPG" alt="Logo Elite Prestige Services — Côte d’Azur" class="eps-home-logo"><div class="eps-home-name">ELITE PRESTIGE SERVICES</div><div class="eps-home-sub">PRIVATE CHAUFFEUR · FRENCH RIVIERA</div><div class="eps-home-rule"></div><div class="eps-home-locations">CANNES · NICE · MONACO · SAINT-TROPEZ</div><a class="hero-booking-link eps-home-cta" href="#reservation">Demander une réservation <span aria-hidden="true">→</span></a></div></section>
@@ -872,12 +901,12 @@ new MutationObserver(sync).observe(form,{subtree:true,attributes:true,attributeF
 })();</script><script id="eps-mobile-cta-label-v11">(function(){function sync(){const a=document.querySelector('.eps-restored-desktop-hero .eps-mobile-home-brand .eps-home-cta');if(!a)return;if(window.matchMedia('(max-width:760px)').matches){a.innerHTML='Réservation';}else{a.innerHTML='Demander une réservation <span aria-hidden="true">→</span>';}}sync();window.addEventListener('resize',sync);})();</script><script id="eps-mobile-sent-state-v22">(function(){if(!window.matchMedia('(max-width:760px)').matches)return;const form=document.getElementById('reservation-form'),send=document.getElementById('send-request');if(!form||!send)return;new MutationObserver(()=>{if(send.textContent.trim()==='Demande envoyée'){document.body.classList.add('eps-mobile-request-sent');const t=form.querySelector('.eps-wizard-title');if(t)t.textContent='Demande envoyée'}}).observe(send,{childList:true,subtree:true,characterData:true});})();</script><script id="eps-mobile-navigation-fix-script">(function(){
 const nav=document.getElementById('main-nav');if(!nav)return;
 const mobile=window.matchMedia('(max-width:760px)');
-const routes={vehicules:'vehicules',services:'services',entreprises:'entreprises',contact:'contact'};
+const routes={vehicules:'vehicules',services:'services',entreprises:'entreprises',evenements:'services',contact:'contact'};
 const links=[...nav.querySelectorAll('a')].map(a=>({a,href:a.getAttribute('href')}));
 function configure(){
  links.forEach(({a,href})=>{
   if(!mobile.matches){a.setAttribute('href',href);return}
-  if(a.dataset.menuDetail){a.setAttribute('href','chauffeur-evenements-vip-cote-dazur/');return}
+  if(a.dataset.menuDetail){a.setAttribute('href','?rubrique=evenements#services');return}
   const id=href?.slice(1);
   if(href==='#accueil')a.setAttribute('href','./');
   else if(routes[id])a.setAttribute('href','?rubrique='+id+'#'+id);
@@ -888,7 +917,15 @@ const selected=new URLSearchParams(window.location.search).get('rubrique');
 if(routes[selected]){
  document.body.classList.remove('eps-booking-open');
  document.body.classList.add('eps-content-open');
- const scroll=()=>{const target=document.getElementById(selected);if(target)target.scrollIntoView({block:'start',behavior:'instant'})};
+ document.body.dataset.epsMobilePanel=selected;
+ const target=document.getElementById(routes[selected]);if(target)target.setAttribute('data-eps-mobile-active','');
+ if(selected==='evenements'){const card=document.querySelector('#services [data-detail="events"]')?.closest('article');if(card)card.setAttribute('data-eps-event-card','')}
+ const heading=document.createElement('div');heading.className='eps-mobile-panel-heading';
+ const back=document.createElement('a');back.href='./';back.textContent=document.documentElement.lang==='en'?'← Home':'← Accueil';
+ const title=document.createElement('h1');const titles={vehicules:'Nos véhicules',services:'Nos services',entreprises:'Entreprises',evenements:'Événements',contact:'Contact'};
+ title.textContent=window.epsTranslate?window.epsTranslate(titles[selected]):titles[selected];
+ heading.append(back,title);document.getElementById('accueil').prepend(heading);
+ const scroll=()=>{if(mobile.matches)window.scrollTo({top:0,behavior:'instant'});else{const target=document.getElementById(routes[selected]);if(target)target.scrollIntoView({block:'start',behavior:'instant'})}};
  if(document.readyState==='complete')requestAnimationFrame(scroll);else window.addEventListener('load',()=>requestAnimationFrame(scroll),{once:true});
 }
 nav.addEventListener('click',function(e){

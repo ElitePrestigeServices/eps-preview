@@ -43,6 +43,16 @@ jobs:
       - uses: actions/checkout@v4
       - name: Installer les outils de déploiement
         run: sudo apt-get update -qq && sudo apt-get install -y -qq lftp imagemagick ca-certificates && sudo update-ca-certificates
+      - name: Compléter la chaîne FTPS avec les certificats officiels vérifiés
+        run: |
+          set -euo pipefail
+          # Cross-signature officielle vers ISRG Root X1, déjà approuvée par Ubuntu.
+          # Ne jamais approuver un certificat récupéré sans vérifier sa chaîne.
+          curl --fail --silent --show-error --location --proto '=https' https://letsencrypt.org/certs/gen-y/root-yr-by-x1.pem -o "$RUNNER_TEMP/eps-root-yr.pem"
+          curl --fail --silent --show-error --location --proto '=https' https://letsencrypt.org/certs/gen-y/int-yr1.pem -o "$RUNNER_TEMP/eps-yr1.pem"
+          openssl verify -CAfile /etc/ssl/certs/ca-certificates.crt "$RUNNER_TEMP/eps-root-yr.pem"
+          openssl verify -CAfile /etc/ssl/certs/ca-certificates.crt -untrusted "$RUNNER_TEMP/eps-root-yr.pem" "$RUNNER_TEMP/eps-yr1.pem"
+          cat /etc/ssl/certs/ca-certificates.crt "$RUNNER_TEMP/eps-root-yr.pem" "$RUNNER_TEMP/eps-yr1.pem" > "$RUNNER_TEMP/eps-ftps-ca.pem"
       - name: Diagnostic certificat FTPS
         run: |
           echo "Certificat présenté par le serveur FTPS :"
@@ -61,7 +71,7 @@ jobs:
           set ftp:ssl-force true
           set ftp:ssl-protect-data true
           set ssl:verify-certificate true
-          set ssl:ca-file /etc/ssl/certs/ca-certificates.crt
+          set ssl:ca-file "$RUNNER_TEMP/eps-ftps-ca.pem"
           set net:max-retries 1
           set net:timeout 25
           cd /$EPS_TARGET_SUBDIR
@@ -103,7 +113,7 @@ jobs:
           set ftp:ssl-force true
           set ftp:ssl-protect-data true
           set ssl:verify-certificate true
-          set ssl:ca-file /etc/ssl/certs/ca-certificates.crt
+          set ssl:ca-file "$RUNNER_TEMP/eps-ftps-ca.pem"
           set net:max-retries 2
           set net:timeout 25
           cd /$EPS_TARGET_SUBDIR

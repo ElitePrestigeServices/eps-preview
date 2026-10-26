@@ -10,3 +10,5 @@
 - La réussite GitHub seule ne prouve pas une publication effective : se reporter au contrôle HTTP final du workflow. Google devra ensuite explorer de nouveau les pages.
 
 - Première publication arrêtée avant transfert : lftp refusait la chaîne du certificat FTPS (« issuer unknown »). Configuration explicite du magasin CA système et rafraîchissement des CA, sans désactiver la vérification TLS.
+
+- Le magasin système seul ne suffit pas pour la chaîne YR1 présentée par le serveur. Ajout dans le bundle FTPS des certificats officiels Let’s Encrypt YR1 et Root YR croisée par X1, uniquement après validation OpenSSL contre les racines Ubuntu existantes. Source : https://letsencrypt.org/certificates/. La validation du certificat et du nom d’hôte reste active.

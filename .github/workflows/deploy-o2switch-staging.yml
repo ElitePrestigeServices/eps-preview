@@ -74,7 +74,9 @@ jobs:
           rsync -a ./ "$RUNNER_TEMP/eps-public/" \
             --exclude=.git --exclude=.github --exclude=.gitignore \
             --exclude=README.md --exclude='*.md' \
-            --exclude='node_modules' --exclude='.env*'
+            --exclude='node_modules' --exclude='.env*' --exclude='scripts' --exclude='tests'
+      - name: Corriger et vérifier le SEO de la copie publique
+        run: python3 scripts/prepare_production_seo.py "$RUNNER_TEMP/eps-public"
       - name: Optimiser les photos pour le web
         run: |
           set -euo pipefail
@@ -107,3 +109,5 @@ jobs:
           bye
           EOF
           echo "Publication EPS dans /$EPS_TARGET_SUBDIR/ terminée."
+      - name: Vérifier le SEO sur le domaine public
+        run: python3 scripts/verify_production_seo.py

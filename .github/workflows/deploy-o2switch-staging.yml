@@ -42,7 +42,7 @@ jobs:
           }
       - uses: actions/checkout@v4
       - name: Installer les outils de déploiement
-        run: sudo apt-get update -qq && sudo apt-get install -y -qq lftp imagemagick
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq lftp imagemagick ca-certificates && sudo update-ca-certificates
       - name: Diagnostic certificat FTPS
         run: |
           echo "Certificat présenté par le serveur FTPS :"
@@ -61,6 +61,7 @@ jobs:
           set ftp:ssl-force true
           set ftp:ssl-protect-data true
           set ssl:verify-certificate true
+          set ssl:ca-file /etc/ssl/certs/ca-certificates.crt
           set net:max-retries 1
           set net:timeout 25
           cd /$EPS_TARGET_SUBDIR
@@ -102,6 +103,7 @@ jobs:
           set ftp:ssl-force true
           set ftp:ssl-protect-data true
           set ssl:verify-certificate true
+          set ssl:ca-file /etc/ssl/certs/ca-certificates.crt
           set net:max-retries 2
           set net:timeout 25
           cd /$EPS_TARGET_SUBDIR

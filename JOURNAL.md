@@ -8,3 +8,5 @@
 - Le workflow prépare et vérifie cette copie avant le transfert, puis contrôle l’accueil, une page aviation, une page EN et le sitemap sur le vrai domaine. Aucun identifiant, dossier FTP ou réglage de réservation/CRM/Supabase n’est changé.
 - Validation locale : génération complète et vérification des 68 pages ; contrôle des exclusions privées ; tests de rejet d’une régression noindex et d’une canonique incorrecte.
 - La réussite GitHub seule ne prouve pas une publication effective : se reporter au contrôle HTTP final du workflow. Google devra ensuite explorer de nouveau les pages.
+
+- Première publication arrêtée avant transfert : lftp refusait la chaîne du certificat FTPS (« issuer unknown »). Configuration explicite du magasin CA système et rafraîchissement des CA, sans désactiver la vérification TLS.

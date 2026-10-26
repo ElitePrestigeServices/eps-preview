@@ -12,3 +12,5 @@
 - Première publication arrêtée avant transfert : lftp refusait la chaîne du certificat FTPS (« issuer unknown »). Configuration explicite du magasin CA système et rafraîchissement des CA, sans désactiver la vérification TLS.
 
 - Le magasin système seul ne suffit pas pour la chaîne YR1 présentée par le serveur. Ajout dans le bundle FTPS des certificats officiels Let’s Encrypt YR1 et Root YR croisée par X1, uniquement après validation OpenSSL contre les racines Ubuntu existantes. Source : https://letsencrypt.org/certificates/. La validation du certificat et du nom d’hôte reste active.
+
+- **Publication confirmée le 26/10/2026** : workflow 40323323230 réussi (commit c4201aba85de0ff0cb8aa103b027e0dddd4b759b). Contrôle HTTP indépendant après publication : **68/68 URL publiques en 200, une canonique correcte, aucune directive noindex/nofollow et aucun lien vers la préproduction**. Les deux sitemaps servis sont identiques. Vérification publique des exclusions /admin/ et /client/ également réussie. Le résultat n'est pas une confirmation de réindexation par Google, qui nécessite une nouvelle exploration.

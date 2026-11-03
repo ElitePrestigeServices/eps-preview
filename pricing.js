@@ -21,11 +21,36 @@
     'theoule': { 'Business Class': 182, 'Business Van': 265, 'First Class': 316 },
     'saint-tropez': { 'Business Class': 413, 'Business Van': 425, 'First Class': 472 }
   };
-  // Majorations de test : modifiables avant activation définitive.
-  const events = [
-    { name: 'TFWA', start: '2026-09-27', end: '2026-10-01', percent: 25 },
-    { name: 'MIPCOM', start: '2026-10-12', end: '2026-10-15', percent: 25 }
+  // Périodes majorées (clients directs). Source de vérité : table Supabase pricing_events,
+  // chargée au démarrage via eps-pricing-config ; cette liste ne sert qu'en secours.
+  // On applique la PLUS FORTE majoration (salon, saison ou dernière minute), sans cumul.
+  // Les partenaires (code agence) ont le tarif de base toute l'année, sans aucune majoration.
+  let events = [
+    { name: 'MIPIM 2027', start: '2027-03-15', end: '2027-03-19', percent: 35 },
+    { name: 'Festival de Cannes 2027', start: '2027-05-11', end: '2027-05-22', percent: 50 },
+    { name: 'Grand Prix de Monaco 2027', start: '2027-06-03', end: '2027-06-07', percent: 50 },
+    { name: 'Cannes Lions 2027', start: '2027-06-21', end: '2027-06-25', percent: 35 },
+    { name: 'Haute saison été 2027', start: '2027-07-01', end: '2027-08-31', percent: 15, kind: 'saison' },
+    { name: 'Cannes Yachting Festival 2027', start: '2027-09-07', end: '2027-09-12', percent: 30 }
   ];
+  const CONFIG_URL = 'https://lrtuztxjngdvrnjuwxfr.supabase.co/functions/v1/eps-pricing-config';
+  let partnerCode = '';
+  try {
+    const q = new URLSearchParams(location.search);
+    const fromUrl = (q.get('partenaire') || q.get('partner') || '').toUpperCase().trim();
+    if (/^[A-Z0-9-]{3,24}$/.test(fromUrl)) { partnerCode = fromUrl; localStorage.setItem('eps_partner', fromUrl); }
+    else partnerCode = (localStorage.getItem('eps_partner') || '').toUpperCase();
+  } catch (_) {}
+  window.epsPartner = null;
+  window.epsPricingReady = fetch(CONFIG_URL + (partnerCode ? '?partner=' + encodeURIComponent(partnerCode) : ''), { cache: 'no-store' })
+    .then(r => r.ok ? r.json() : null)
+    .then(cfg => {
+      if (!cfg) return;
+      if (Array.isArray(cfg.events)) events = cfg.events;
+      if (cfg.partner && cfg.partner.code) window.epsPartner = cfg.partner;
+      else if (partnerCode) { try { localStorage.removeItem('eps_partner'); } catch (_) {} }
+    })
+    .catch(() => {});
   const normalize = value => String(value || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
   function city(value) {
     const v = normalize(value);
@@ -94,12 +119,15 @@
     if (!base || !request.date || !request.time) return null;
     const hours = (pickupParis(request.date, request.time) - Date.now()) / 3600000;
     if (!Number.isFinite(hours) || hours < 2) return null;
+    const partner = window.epsPartner && request.partnerCode && request.partnerCode === window.epsPartner.code ? window.epsPartner : null;
+    if (partner) return { amount: base, base, event: null, urgency: 0, percent: 0, partner: partner.name, indicative: true };
     const event = events.filter(item => request.date >= item.start && request.date <= item.end)
       .sort((a, b) => b.percent - a.percent)[0];
     const urgency = hours <= 6 ? 30 : hours <= 24 ? 20 : hours <= 48 ? 10 : 0;
     const percent = Math.max(event?.percent || 0, urgency);
+    const applied = (event && (event.percent || 0) >= urgency) ? event : null;
     return { amount: Math.ceil(base * (1 + percent / 100) / 5) * 5,
-      base, event: event?.name || null, urgency, percent, indicative: true };
+      base, event: applied?.name || null, season: applied?.kind === 'saison', urgency, percent, indicative: true };
   };
-  window.epsPricingConfig = { fares, events, airportReferences };
+  Object.defineProperty(window, 'epsPricingConfig', { get: () => ({ fares, events, airportReferences }) });
 })();

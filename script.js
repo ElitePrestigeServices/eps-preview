@@ -133,7 +133,8 @@ form.addEventListener('submit', event => {
     customerPhone: ((String(data.get('phone_country_code') || '').trim() + ' ' + String(data.get('customer_phone') || '').trim()).trim()),
     notes: String(data.get('notes') || '').trim(),
     language: window.epsLanguage?.() === 'en' ? 'en' : 'fr',
-    website: String(data.get('website') || '')
+    website: String(data.get('website') || ''),
+    partnerCode: window.epsPartner?.code || ''
   };
   currentRequest.estimate = window.epsEstimatePrice?.(currentRequest) || null;
   renderReview();
@@ -157,7 +158,7 @@ function renderReview() {
   addDetail('Client', currentRequest.customerName);
   addDetail('E-mail', currentRequest.customerEmail);
   addDetail('Téléphone', currentRequest.customerPhone);
-  if (currentRequest.estimate) addDetail('Tarif indicatif TTC', currentRequest.estimate.amount.toLocaleString('fr-FR', {style:'currency',currency:'EUR'}) + (currentRequest.estimate.event ? ' — tarif événementiel' : ''));
+  if (currentRequest.estimate) { const e = currentRequest.estimate; addDetail(e.partner ? 'Tarif partenaire TTC' : 'Tarif indicatif TTC', e.amount.toLocaleString('fr-FR', {style:'currency',currency:'EUR'}) + (e.partner ? ' — ' + e.partner : e.event ? (e.season ? ' — haute saison' : ' — tarif événementiel (' + e.event + ')') : '')); }
   else addDetail('Tarif', 'Sur devis après étude du trajet');
   if (currentRequest.notes) addDetail('Informations utiles', currentRequest.notes);
   if (currentRequest.type === 'Transfert' && currentRequest.departure && currentRequest.destination) {

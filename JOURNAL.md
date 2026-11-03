@@ -29,6 +29,7 @@
 - Aperçu du nouveau site (même esprit que le pilotage) : /apercu-accueil.html (noindex, non lié), CSS partagé assets/v2/site.css, images allégées assets/v2 (hôtels/yachting/événements passent de ~2,5 Mo à ~110 Ko). Le formulaire de réservation est repris tel quel (script.js inchangé). À valider par Anthony avant de remplacer l’accueil puis les pages.
 - Nouveau site en ligne (validé par Anthony le 03/11 à 23 h 22) : accueil refait (assets/v2/site.css, ancien accueil sauvegardé dans l’historique git), les 73 pages intérieures passées dans le même style par un script (contenu, titres, canonical, hreflang et JSON-LD inchangés ; anciens styles retirés ; bandeau « Un trajet à organiser ? » ajouté). Mention périmée « Preview website: bookings are not active » retirée des pages EN/IT.
 - Traduction de l’accueil en FR/EN/IT/ES (assets/v2/i18n.js remplace locale.js sur l’accueil ; script.js passe par T() pour tous ses messages). Pages intérieures : les boutons de langue mènent aux versions EN/IT existantes, sinon à l’accueil traduit (?lang=). Pas encore de pages en espagnol.
+- Bon de commande : mise en page d’impression resserrée, tient sur une page A4. Accueil : prix des véhicules alignés. Pages intérieures : les boutons de langue n’apparaissent que s’il existe une vraie version traduite (plus de renvoi vers l’accueil).
 - Reste à faire, enrichir les pages (67/74 sous 400 mots), titres trop longs, demande d’avis Google après course.
 
 ## 26/10/2026 — ChatGPT — Correction SEO de publication

@@ -106,7 +106,9 @@ p{margin:0}
 .car .tx{padding:4px 18px 18px;display:flex;flex-direction:column;gap:6px;flex:1;background:var(--surface)}
 .car .model{color:var(--ink-2);font-size:15px}
 .car .cap{display:flex;gap:14px;color:var(--ink-3);font-size:14px;font-weight:600;margin-top:2px}
-.car .from{margin-top:auto;padding-top:12px;display:flex;align-items:center;justify-content:space-between;gap:10px;border-top:1px solid var(--line);margin-top:14px}
+.car .from{margin-top:auto;padding-top:12px;display:flex;align-items:center;justify-content:space-between;gap:10px;border-top:1px solid var(--line)}
+.car .cap{margin-bottom:14px}
+@media (min-width:821px){.car .model{min-height:3.2em}}
 .car .from span{color:var(--ink-3);font-size:14px}
 .car .from b{color:var(--ink)}
 .car button{border:0;background:var(--surface-2);color:var(--ink);border-radius:11px;padding:10px 14px;font-weight:700;font-size:14px;cursor:pointer}
@@ -304,3 +306,4 @@ p{margin:0}
 .lang-toggle a+a{border-left:1px solid var(--line)}
 .lang-toggle a[aria-current="page"]{color:var(--gold)}
 @media (max-width:820px){.main-nav .nav-lang a{flex:1;text-align:center;border:1px solid var(--line);border-radius:10px;padding:10px 6px;font-size:15px;border-bottom:1px solid var(--line)}.main-nav .nav-lang a+a{border-left:1px solid var(--line)}.main-nav .nav-lang a[aria-current="page"]{border-color:var(--gold)}}
+[id]{scroll-margin-top:84px}

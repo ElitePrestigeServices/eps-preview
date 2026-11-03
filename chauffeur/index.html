@@ -216,12 +216,24 @@ h2{font:600 19px/1.2 var(--serif);margin:26px 0 10px}
 .paper .void{color:#a4321f;font-weight:700;border:2px solid #a4321f;display:inline-block;padding:4px 10px;margin-top:10px}
 @media (max-width:600px){.paper{padding:22px 16px;margin-top:10px}.paper .num{text-align:left}}
 @media print{
-  @page{size:A4;margin:14mm}
+  @page{size:A4;margin:10mm 12mm}
   body{padding:0!important;background:#fff!important}
   body>*:not(#docview){display:none!important}
   #docview{position:static;background:#fff;padding:0;overflow:visible}
   .doc-bar,.doc-actions{display:none!important}
-  .paper{box-shadow:none;margin:0;max-width:none;padding:0}
+  .paper{box-shadow:none;margin:0;max-width:none;padding:0;font-size:11.5px;line-height:1.35}
+  .paper .head{padding-bottom:10px}
+  .paper .co img{width:52px!important;height:52px!important;margin-bottom:6px!important}
+  .paper .co b{font-size:17px}
+  .paper .co div,.paper .num .d{font-size:10.5px}
+  .paper .num .t{font-size:22px}
+  .paper .booked{margin:10px 0 2px;padding:7px 10px;font-size:12px}
+  .paper h3{font-size:13px;margin:12px 0 4px}
+  .paper td{padding:3.5px 0}
+  .paper .price td{font-size:14px;padding-top:6px}
+  .paper .foot{margin-top:12px;padding-top:8px;font-size:9.5px}
+  .paper,.paper *{break-inside:avoid;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  html,body{height:auto!important;overflow:visible!important}
 }
 
 .tabs.hidden{display:none!important}

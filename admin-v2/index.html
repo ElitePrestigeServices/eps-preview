@@ -188,6 +188,42 @@ h2{font:600 19px/1.2 var(--serif);margin:26px 0 10px}
 .login p{color:var(--ink-2);margin:0 0 24px}
 .login form{max-width:420px}
 @media (min-width:1000px){body:has(#login:not(.hidden)){padding-left:0}}
+/* Bon de commande : document papier */
+.docview{position:fixed;inset:0;z-index:40;background:#e9e5dc;overflow-y:auto;padding:0 0 40px}
+.docview .doc-bar{position:sticky;top:0;z-index:2;background:var(--bg);padding:calc(env(safe-area-inset-top) + 10px) 0 10px;border-bottom:1px solid var(--line)}
+.docview .doc-bar .wrap{display:flex;align-items:center;gap:10px}
+.docview .doc-bar h2{margin:0;flex:1;font-size:18px;color:var(--ink)}
+.doc-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;max-width:794px;margin:14px auto 0;padding:0 16px}
+.doc-actions .btn{min-height:46px;font-size:15px}
+.docview .btn.danger{color:#a4321f;border-color:#c98a7f;background:#fff}
+.doc-actions .btn:last-child:nth-child(odd){grid-column:1/-1}
+@media (max-width:600px){.docview{display:flex;flex-direction:column}.docview.hidden{display:none!important}.doc-actions{order:3;margin-top:16px}.paper{order:2}}
+.paper{background:#fff;color:#1b1b1b;max-width:794px;margin:14px auto 0;padding:34px 30px 30px;font:14px/1.5 var(--sans);box-shadow:0 10px 40px rgba(0,0,0,.18)}
+.paper .head{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;border-bottom:2px solid #1b1b1b;padding-bottom:16px}
+.paper .co b{font:600 20px/1.15 var(--serif);display:block;margin-bottom:4px;letter-spacing:.01em}
+.paper .co div{font-size:12.5px;color:#444}
+.paper .num{text-align:right}
+.paper .num .t{font:600 26px/1.1 var(--serif)}
+.paper .num .n{font-size:15px;font-weight:700;margin-top:4px}
+.paper .num .d{font-size:12.5px;color:#444;margin-top:2px}
+.paper .booked{margin:16px 0 4px;padding:12px 14px;background:#f4efe3;border-left:4px solid #9c7f43;font-size:14px}
+.paper h3{font:600 15px/1.2 var(--serif);margin:22px 0 8px;color:#1b1b1b}
+.paper table{width:100%;border-collapse:collapse}
+.paper td{padding:7px 0;border-bottom:1px solid #e4e0d6;vertical-align:top}
+.paper td:first-child{width:38%;color:#555;padding-right:12px}
+.paper td:last-child{font-weight:600}
+.paper .price td{font-size:17px;border-bottom:0;padding-top:12px}
+.paper .foot{margin-top:24px;font-size:11.5px;color:#555;border-top:1px solid #e4e0d6;padding-top:12px}
+.paper .void{color:#a4321f;font-weight:700;border:2px solid #a4321f;display:inline-block;padding:4px 10px;margin-top:10px}
+@media (max-width:600px){.paper{padding:22px 16px;margin-top:10px}.paper .num{text-align:left}}
+@media print{
+  @page{size:A4;margin:14mm}
+  body{padding:0!important;background:#fff!important}
+  body>*:not(#docview){display:none!important}
+  #docview{position:static;background:#fff;padding:0;overflow:visible}
+  .doc-bar,.doc-actions{display:none!important}
+  .paper{box-shadow:none;margin:0;max-width:none;padding:0}
+}
 </style>
 </head>
 <body>
@@ -234,6 +270,15 @@ h2{font:600 19px/1.2 var(--serif);margin:26px 0 10px}
   <div class="wrap" id="sheet-body"></div>
 </section>
 
+<section id="docview" class="docview hidden" role="dialog" aria-modal="true" aria-labelledby="doc-title">
+  <div class="doc-bar"><div class="wrap">
+    <button class="icon-btn" id="doc-close" aria-label="Fermer"><svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg></button>
+    <h2 id="doc-title">Bon de commande</h2>
+  </div></div>
+  <div class="doc-actions" id="doc-actions"></div>
+  <article class="paper" id="paper"></article>
+</section>
+
 <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
 
 <script type="module">
@@ -274,10 +319,10 @@ const fld = (label, el, hint) => h('label', { class: 'field' }, h('span', {}, la
 
 /* ================= Données ================= */
 const S = { res: [], drafts: [], quotes: [], pays: [], partners: [], requests: [], periods: [], notifs: [],
-  contacts: null, campaigns: [], recips: [], opps: [], robot: null, drivers: null, docs: [], missions: [] };
+  contacts: null, campaigns: [], recips: [], opps: [], robot: null, drivers: null, docs: [], missions: [], orders: [] };
 const by = (arr, id) => arr.find(x => x.reservation_id === id);
 async function loadCore() {
-  const [r, d, q, p, pa, cr, pe, no] = await Promise.all([
+  const [r, d, q, p, pa, cr, pe, no, bc] = await Promise.all([
     db.from('eps_reservations').select('id,reference,created_at,status,type,departure,destination,flight_number,date,time,duration_hours,passengers,luggage,child_seat,vehicle,customer_name,customer_email,customer_phone,notes,partner_code,archived_at').is('archived_at', null).order('date', { ascending: true }).limit(500),
     db.from('eps_quote_drafts').select('reservation_id,amount_cents,note,status,updated_at'),
     db.from('eps_reservation_quotes').select('reservation_id,amount_cents,state,sent_at,accepted_at'),
@@ -285,13 +330,14 @@ async function loadCore() {
     db.from('eps_partners').select('id,code,name,kind,contact_email,commission_percent,active,created_at').order('created_at', { ascending: false }),
     db.from('eps_customer_requests').select('id,reservation_id,request_type,message,status,created_at,processed_at').order('created_at', { ascending: false }).limit(100),
     db.from('pricing_events').select('name,start_date,end_date,surcharge_percent,enabled,kind').order('start_date', { ascending: true }),
-    db.from('eps_admin_notifications').select('id,kind,source_id,summary,created_at,read_at').order('created_at', { ascending: false }).limit(50)
+    db.from('eps_admin_notifications').select('id,kind,source_id,summary,created_at,read_at').order('created_at', { ascending: false }).limit(50),
+    db.from('eps_order_forms').select('*').order('pickup_date', { ascending: false }).order('pickup_time', { ascending: false }).limit(500)
   ]);
   const err = [r, d, q, p].find(x => x.error);
   if (err) { toast('Lecture impossible : ' + err.error.message, true); return; }
   S.res = r.data; S.drafts = d.data; S.quotes = q.data; S.pays = p.data;
   S.partners = pa.error ? [] : pa.data; S.requests = cr.error ? [] : cr.data;
-  S.periods = pe.error ? [] : pe.data; S.notifs = no.error ? [] : no.data;
+  S.periods = pe.error ? [] : pe.data; S.notifs = no.error ? [] : no.data; S.orders = bc.error ? [] : bc.data;
 }
 async function loadCrm() {
   const [c, k, rc, o, st] = await Promise.all([
@@ -351,11 +397,12 @@ const ICONS = {
   partners: '<circle cx="9" cy="9" r="3"/><circle cx="17" cy="10" r="2.5"/><path d="M3 19c.8-3 3.2-4.5 6-4.5s5.2 1.5 6 4.5M15 15.5c2.6 0 4.6 1.2 5.4 3.5"/>',
   crm: '<path d="M4 6h16v12H4z"/><path d="M4 7l8 6 8-6"/>',
   drivers: '<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="2.5"/><path d="M12 4v5.5M5 15l5-1.5M19 15l-5-1.5"/>',
+  orders: '<path d="M7 3h8l4 4v14H7z"/><path d="M15 3v4h4M10 12h6M10 16h6"/>',
   inbox: '<path d="M4 13l2-8h12l2 8v6H4z"/><path d="M4 13h5l1 2h4l1-2h5"/>',
   settings: '<circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/>',
   more: '<circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/>'
 };
-const NAV = [['home', 'Aujourd’hui'], ['courses', 'Courses'], ['partners', 'Partenaires'], ['crm', 'Prospection'], ['drivers', 'Chauffeurs'], ['inbox', 'Messages'], ['settings', 'Réglages']];
+const NAV = [['home', 'Aujourd’hui'], ['courses', 'Courses'], ['partners', 'Partenaires'], ['orders', 'Bons de commande'], ['crm', 'Prospection'], ['drivers', 'Chauffeurs'], ['inbox', 'Messages'], ['settings', 'Réglages']];
 const TABS = [['home', 'Aujourd’hui'], ['courses', 'Courses'], ['partners', 'Partenaires'], ['more', 'Plus']];
 const titles = Object.fromEntries([...NAV, ['more', 'Plus']]);
 let tab = 'home';
@@ -364,7 +411,7 @@ function drawNav() {
   const c = counts();
   const pip = n => n ? h('span', { class: 'pip' }, n) : null;
   $('side-nav').replaceChildren(...NAV.map(([id, label]) => h('button', { 'aria-current': tab === id ? 'page' : null, onclick: () => go(id) }, svg(ICONS[id]), label, pip(c[id]))));
-  const inMore = ['crm', 'drivers', 'inbox', 'settings'].includes(tab);
+  const inMore = ['orders', 'crm', 'drivers', 'inbox', 'settings'].includes(tab);
   $('tab-nav').replaceChildren(...TABS.map(([id, label]) => h('button', { 'aria-current': (tab === id || (id === 'more' && inMore)) ? 'page' : null, onclick: () => go(id) }, svg(ICONS[id]), label,
     id === 'courses' ? pip(c.courses) : id === 'more' ? pip(c.inbox) : null)));
 }
@@ -380,7 +427,7 @@ function render(loading = false) {
   $('subtitle').textContent = tab === 'home' ? new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }) : '';
   const v = $('view'); v.replaceChildren();
   if (loading) { v.append(h('p', { class: 'hint' }, 'Chargement…')); return; }
-  ({ home: renderHome, courses: renderCourses, partners: renderPartners, crm: renderCrm, drivers: renderDrivers, inbox: renderInbox, settings: renderSettings, more: renderMore })[tab](v);
+  ({ home: renderHome, courses: renderCourses, partners: renderPartners, orders: renderOrders, crm: renderCrm, drivers: renderDrivers, inbox: renderInbox, settings: renderSettings, more: renderMore })[tab](v);
 }
 
 /* ================= Fiche (mobile plein écran, ordinateur à droite) ================= */
@@ -513,6 +560,11 @@ function openCourse(id) {
   }
   if (b.status === 'confirmée' && !mission) body.append(h('div', { class: 'card' }, h('h3', {}, 'Chauffeur'), h('p', { class: 'hint', style: 'margin:0 0 4px' }, 'Tu fais la course toi-même ou tu la proposes à un chauffeur validé.'),
     h('div', { class: 'btns' }, h('button', { class: 'btn quiet', onclick: () => openDispatch(b) }, 'Proposer à un chauffeur'))));
+  const bon = S.orders.find(o => o.reservation_id === b.id && !o.cancelled_at);
+  body.append(h('div', { class: 'card' }, h('h3', {}, 'Bon de commande'),
+    h('p', { class: 'hint', style: 'margin:0 0 4px' }, bon ? bon.number + ', établi le ' + fmtStamp(bon.booked_at) + '.' : 'À établir avant la prise en charge : c’est ta preuve de réservation préalable en cas de contrôle.'),
+    h('div', { class: 'btns' }, bon ? h('button', { class: 'btn quiet', onclick: () => { closeSheet(); openOrderView(bon); } }, 'Voir le bon ' + bon.number)
+      : h('button', { class: 'btn quiet', onclick: () => openOrderForm(orderFromCourse(b)) }, 'Créer le bon de commande'))));
   const sel = h('select', {}, ['reçue', 'devis envoyé', 'confirmée', 'annulée'].map(s => h('option', { value: s, selected: b.status === s }, s)));
   body.append(h('div', { class: 'card' }, h('h3', {}, 'Statut'), fld('Statut de la réservation', sel),
     h('div', { class: 'btns two' }, h('button', { class: 'btn quiet', onclick: () => setStatus(b, sel.value) }, 'Mettre à jour'), h('button', { class: 'btn danger', onclick: () => archive(b) }, 'Archiver')),
@@ -957,10 +1009,177 @@ function renderMore(v) {
   const c = counts();
   const item = (id, t, s, n) => h('button', { class: 'row', onclick: () => go(id) }, h('span', { class: 'main' }, h('div', { class: 't' }, t), h('div', { class: 's' }, s)), n ? h('span', { class: 'pip' }, n) : null, chev());
   v.append(h('div', { class: 'list', style: 'margin-top:4px' },
+    item('orders', 'Bons de commande', 'À présenter en cas de contrôle'),
     item('crm', 'Prospection', 'Robot d’envoi, prospects, message'),
     item('drivers', 'Chauffeurs', 'Documents et attribution des courses'),
     item('inbox', 'Messages', 'Demandes des clients, notifications', c.inbox),
     item('settings', 'Réglages', 'Périodes majorées, liens, déconnexion')));
+}
+
+/* ================= Bons de commande ================= */
+const EPS_CO = { name: 'ELITE PRESTIGE SERVICES', form: 'SARL au capital de 1 500 €', address: '34 rue Borniol, 06400 Cannes', rcs: 'RCS Cannes 925 154 957', tva: 'TVA FR03925154957',
+  evtc: 'EVTC006240319', phone: '+33 7 45 49 53 21', email: 'contact@elite-prestige-services.fr', web: 'elite-prestige-services.fr' };
+const PAY_METHODS = ['Carte bancaire (lien de paiement)', 'Carte bancaire à bord', 'Espèces', 'Virement', 'Facturé au partenaire'];
+const fmtStamp = iso => iso ? new Date(iso).toLocaleString('fr-FR', { timeZone: 'Europe/Paris', day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }).replace(' ', ' à ') : '';
+const fmtLongDay = d => d ? new Date(d + 'T12:00:00').toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }) : '';
+const localInput = iso => { const d = iso ? new Date(iso) : new Date(); const p = new Intl.DateTimeFormat('sv-SE', { timeZone: 'Europe/Paris', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }).format(d); return p.replace(' ', 'T'); };
+// Heure de Paris saisie → instant ISO (gère l'heure d'été)
+function parisToIso(local) {
+  const guess = new Date(local + ':00Z');
+  const shown = new Date(new Date(guess).toLocaleString('en-US', { timeZone: 'Europe/Paris' }));
+  const utcShown = new Date(guess.toLocaleString('en-US', { timeZone: 'UTC' }));
+  return new Date(guess.getTime() - (shown - utcShown)).toISOString();
+}
+function remembered(k, fallback) { try { return localStorage.getItem('eps-bc-' + k) || fallback; } catch { return fallback; } }
+function remember(k, v) { try { if (v) localStorage.setItem('eps-bc-' + k, v); } catch {} }
+function orderFromCourse(b) {
+  const pay = by(S.pays, b.id), q = by(S.quotes, b.id), dr = by(S.drafts, b.id);
+  const cents = pay?.amount_cents ?? q?.amount_cents ?? dr?.amount_cents ?? null;
+  return { reservation_id: b.id, booked_at: b.created_at, customer_name: b.customer_name, customer_phone: b.customer_phone || '', customer_email: b.customer_email || '',
+    service_type: b.type || 'Transfert', pickup_date: b.date, pickup_time: (b.time || '').slice(0, 5), pickup_place: b.departure, destination: b.destination || '',
+    duration_hours: b.duration_hours || null, passengers: Number(b.passengers) || null, flight_number: b.flight_number || '', vehicle: b.vehicle || '',
+    price_cents: cents, payment_method: b.partner_code ? 'Facturé au partenaire' : pay ? 'Carte bancaire (lien de paiement)' : '', partner_code: b.partner_code || null, notes: '' };
+}
+let orderFilter = 'upcoming', orderQuery = '';
+function renderOrders(v) {
+  const today = parisToday();
+  const search = h('input', { class: 'search', type: 'search', placeholder: 'Rechercher un client, un lieu, un numéro', value: orderQuery, oninput: e => { orderQuery = e.target.value; draw(); } });
+  const box = h('div');
+  function draw() {
+    let list = S.orders.slice();
+    if (orderFilter === 'upcoming') list = list.filter(o => o.pickup_date >= today && !o.cancelled_at).reverse();
+    if (orderFilter === 'past') list = list.filter(o => o.pickup_date < today || o.cancelled_at);
+    const q = orderQuery.trim().toLowerCase();
+    if (q) list = list.filter(o => [o.number, o.customer_name, o.customer_phone, o.pickup_place, o.destination].join(' ').toLowerCase().includes(q));
+    const l = h('div', { class: 'list' });
+    list.forEach(o => l.append(h('button', { class: 'row', onclick: () => openOrderView(o) },
+      h('span', { class: 'dot ' + (o.cancelled_at ? '' : o.pickup_date >= today ? 'ok' : '') }),
+      h('span', { class: 'main' }, h('div', { class: 't' }, shortPlace(o.pickup_place) + ' – ' + shortPlace(o.destination || o.service_type)),
+        h('div', { class: 's' }, o.number + ' · ' + o.customer_name + (o.cancelled_at ? ' · annulé' : ''))),
+      h('span', { class: 'end' }, h('b', {}, String(o.pickup_time).slice(0, 5)), fmtDay(o.pickup_date)), chev())));
+    if (!list.length) l.append(h('div', { class: 'empty-note' }, orderFilter === 'upcoming' && !q ? 'Aucun bon pour les courses à venir. Crée-en un avant de prendre en charge ton client.' : 'Aucun bon dans cette liste.'));
+    box.replaceChildren(l);
+  }
+  const left = h('div'), right = h('div');
+  left.append(h('div', { class: 'seg', role: 'group', 'aria-label': 'Filtrer les bons' },
+    [['upcoming', 'À venir'], ['past', 'Passés et annulés'], ['all', 'Tous']].map(([k, l]) => h('button', { 'aria-pressed': String(orderFilter === k), onclick: () => { orderFilter = k; render(); } }, l))), search, box);
+  right.append(h('div', { class: 'btns', style: 'margin-top:0' }, h('button', { class: 'btn primary', onclick: () => openOrderForm({}) }, 'Nouveau bon de commande')),
+    h('div', { class: 'card', style: 'margin-top:16px' }, h('h3', {}, 'En cas de contrôle'),
+      h('p', { class: 'hint', style: 'margin:0' }, 'Ouvre le bon de la course sur ton téléphone et montre-le : il contient les mentions exigées (ta société et son numéro VTC, le nom et le téléphone du client, la date et l’heure de la réservation, la date, l’heure et le lieu de prise en charge). Le bon doit être établi avant la prise en charge.')),
+    h('p', { class: 'hint' }, 'Pour une course déjà dans tes demandes, ouvre-la dans Courses : le bouton « Créer le bon de commande » reprend toutes ses informations.'));
+  v.append(h('div', { class: 'grid-desk' }, left, right));
+  draw();
+}
+function openOrderForm(o, existing) {
+  const val = k => o[k] == null ? '' : String(o[k]);
+  const f = h('form', { onsubmit: async e => {
+    e.preventDefault(); const v = Object.fromEntries(new FormData(f));
+    const booked = parisToIso(v.booked_at), pickup = parisToIso(v.pickup_date + 'T' + v.pickup_time);
+    if (booked > pickup) return toast('La réservation doit être faite avant la prise en charge : vérifie les dates.', true);
+    if (booked > new Date(Date.now() + 5 * 60e3).toISOString()) return toast('La date de réservation ne peut pas être dans le futur.', true);
+    const price = v.price === '' ? null : Math.round(Number(String(v.price).replace(',', '.')) * 100);
+    if (price != null && !(price >= 0)) return toast('Saisis un prix valide.', true);
+    const row = { booked_at: booked, customer_name: v.customer_name.trim(), customer_phone: v.customer_phone.trim(), customer_email: cleanEmail(v.customer_email) || null,
+      service_type: v.service_type, pickup_date: v.pickup_date, pickup_time: v.pickup_time, pickup_place: v.pickup_place.trim(), destination: v.destination.trim() || null,
+      duration_hours: v.duration_hours ? Number(v.duration_hours) : null, passengers: v.passengers ? Number(v.passengers) : null, flight_number: v.flight_number.trim() || null,
+      vehicle: v.vehicle.trim() || null, plate: v.plate.trim().toUpperCase() || null, driver_name: v.driver_name.trim() || null,
+      price_cents: price, payment_method: v.payment_method || null, notes: v.notes.trim() || null, updated_at: new Date().toISOString() };
+    remember('driver', row.driver_name); remember('plate', row.plate); remember('vehicle', row.vehicle);
+    const btn = f.querySelector('button[type=submit]'); btn.disabled = true;
+    const x = existing
+      ? await db.from('eps_order_forms').update(row).eq('id', existing.id).select().single()
+      : await db.from('eps_order_forms').insert({ ...row, reservation_id: o.reservation_id || null, partner_code: o.partner_code || null }).select().single();
+    btn.disabled = false;
+    if (x.error) return toast(x.error.message, true);
+    const i = S.orders.findIndex(y => y.id === x.data.id); if (i >= 0) S.orders[i] = x.data; else S.orders.unshift(x.data);
+    toast(existing ? 'Bon ' + x.data.number + ' mis à jour.' : 'Bon ' + x.data.number + ' créé.'); closeSheet(); if (tab === 'orders') render(); openOrderView(x.data);
+  } });
+  const types = ['Transfert', 'Mise à disposition', 'Événement'];
+  const vehicles = ['Business Van', 'Business Class', 'First Class', 'Electric Class'];
+  const veh = val('vehicle') && val('vehicle') !== 'Sans préférence' ? val('vehicle') : remembered('vehicle', 'Business Van');
+  f.append(
+    h('h3', { style: 'margin:0 0 10px' }, 'Client'),
+    fld('Nom du client', h('input', { name: 'customer_name', required: true, minlength: '2', maxlength: '120', value: val('customer_name'), autocomplete: 'off' })),
+    h('div', { class: 'grid2' }, fld('Téléphone du client', h('input', { name: 'customer_phone', type: 'tel', required: true, minlength: '6', maxlength: '30', value: val('customer_phone') })),
+      fld('E-mail (facultatif)', h('input', { name: 'customer_email', type: 'email', value: val('customer_email') }))),
+    fld('Réservation faite le', h('input', { name: 'booked_at', type: 'datetime-local', required: true, value: localInput(o.booked_at) }), 'Le moment où le client t’a commandé la course. Il doit être avant la prise en charge.'),
+    h('h3', { style: 'margin:18px 0 10px' }, 'Course'),
+    fld('Prestation', h('select', { name: 'service_type' }, types.map(x => h('option', { selected: (val('service_type') || 'Transfert') === x }, x)))),
+    h('div', { class: 'grid2' }, fld('Date de prise en charge', h('input', { name: 'pickup_date', type: 'date', required: true, value: val('pickup_date') || parisToday() })),
+      fld('Heure', h('input', { name: 'pickup_time', type: 'time', required: true, value: val('pickup_time').slice(0, 5) }))),
+    fld('Lieu de prise en charge', h('input', { name: 'pickup_place', required: true, minlength: '2', maxlength: '200', value: val('pickup_place') })),
+    fld('Destination', h('input', { name: 'destination', maxlength: '200', value: val('destination') })),
+    h('div', { class: 'grid2' }, fld('Passagers', h('input', { name: 'passengers', type: 'number', min: '1', max: '8', value: val('passengers') || '1' })),
+      fld('Durée (h, mise à dispo)', h('input', { name: 'duration_hours', type: 'number', min: '1', max: '168', value: val('duration_hours') }))),
+    fld('Numéro de vol', h('input', { name: 'flight_number', maxlength: '24', value: val('flight_number') })),
+    h('h3', { style: 'margin:18px 0 10px' }, 'Véhicule et prix'),
+    h('div', { class: 'grid2' }, fld('Véhicule', h('select', { name: 'vehicle' }, vehicles.map(x => h('option', { selected: veh === x }, x)))),
+      fld('Immatriculation', h('input', { name: 'plate', maxlength: '12', value: val('plate') || remembered('plate', ''), placeholder: 'AB-123-CD', style: 'text-transform:uppercase' }))),
+    fld('Chauffeur', h('input', { name: 'driver_name', maxlength: '80', value: val('driver_name') || remembered('driver', 'Anthony Doche') })),
+    h('div', { class: 'grid2' }, fld('Prix TTC convenu (€)', h('input', { name: 'price', type: 'text', inputmode: 'decimal', value: o.price_cents != null && o.price_cents !== '' ? String(o.price_cents / 100) : '' })),
+      fld('Règlement', h('select', { name: 'payment_method' }, h('option', { value: '' }, '—'), PAY_METHODS.map(x => h('option', { selected: val('payment_method') === x }, x))))),
+    fld('Remarques', h('textarea', { name: 'notes', rows: '2', maxlength: '600' }, val('notes'))),
+    h('button', { class: 'btn primary', type: 'submit' }, existing ? 'Enregistrer les modifications' : 'Créer le bon de commande'));
+  openSheet(existing ? 'Modifier ' + existing.number : 'Nouveau bon de commande', f);
+}
+function orderText(o) {
+  return ['Bon de commande ' + o.number + ' — ' + EPS_CO.name + ' (VTC ' + EPS_CO.evtc + ')',
+    'Réservation faite le ' + fmtStamp(o.booked_at),
+    'Prise en charge : ' + fmtLongDay(o.pickup_date) + ' à ' + String(o.pickup_time).slice(0, 5),
+    'Lieu : ' + o.pickup_place, o.destination ? 'Destination : ' + o.destination : null,
+    'Client : ' + o.customer_name + ' · ' + o.customer_phone,
+    o.vehicle ? 'Véhicule : ' + o.vehicle + (o.plate ? ' · ' + o.plate : '') : null,
+    o.price_cents != null ? 'Prix TTC : ' + eur(o.price_cents) : null,
+    'Contact : ' + EPS_CO.phone + ' · ' + EPS_CO.email].filter(Boolean).join('\n');
+}
+function openOrderView(o) {
+  const row = (k, v) => v ? h('tr', {}, h('td', {}, k), h('td', {}, v)) : null;
+  $('doc-title').textContent = o.number;
+  $('paper').replaceChildren(...[
+    h('div', { class: 'head' },
+      h('div', { class: 'co' }, h('b', {}, EPS_CO.name),
+        h('div', {}, EPS_CO.form + ' · ' + EPS_CO.address), h('div', {}, EPS_CO.rcs + ' · ' + EPS_CO.tva),
+        h('div', {}, 'Inscription au registre des VTC : ' + EPS_CO.evtc), h('div', {}, EPS_CO.phone + ' · ' + EPS_CO.email)),
+      h('div', { class: 'num' }, h('div', { class: 't' }, 'Bon de commande'), h('div', { class: 'n' }, 'N° ' + o.number),
+        h('div', { class: 'd' }, 'Justificatif de réservation préalable'), o.cancelled_at ? h('div', { class: 'void' }, 'ANNULÉ le ' + fmtStamp(o.cancelled_at)) : null)),
+    h('div', { class: 'booked' }, 'Réservation faite par le client le ', h('b', {}, fmtStamp(o.booked_at))),
+    h('h3', {}, 'Client'),
+    h('table', {}, h('tbody', {}, row('Nom', o.customer_name), row('Téléphone', o.customer_phone), row('E-mail', o.customer_email),
+      o.partner_code ? row('Partenaire', (S.partners.find(p => p.code === o.partner_code)?.name || '') + ' (' + o.partner_code + ')') : null)),
+    h('h3', {}, 'Prise en charge'),
+    h('table', {}, h('tbody', {}, row('Date', fmtLongDay(o.pickup_date)), row('Heure', String(o.pickup_time).slice(0, 5)), row('Lieu', o.pickup_place),
+      row('Destination', o.destination), row('Prestation', o.service_type + (o.duration_hours ? ' · ' + Number(o.duration_hours) + ' h' : '')),
+      row('Passagers', o.passengers ? String(o.passengers) : ''), row('Vol', o.flight_number))),
+    h('h3', {}, 'Véhicule'),
+    h('table', {}, h('tbody', {}, row('Catégorie', o.vehicle), row('Immatriculation', o.plate), row('Chauffeur', o.driver_name))),
+    o.price_cents != null || o.payment_method ? [h('h3', {}, 'Prix'),
+      h('table', {}, h('tbody', {}, row('Règlement', o.payment_method), o.price_cents != null ? h('tr', { class: 'price' }, h('td', {}, 'Prix TTC convenu'), h('td', {}, eur(o.price_cents))) : null))] : null,
+    o.notes ? [h('h3', {}, 'Remarques'), h('p', { style: 'margin:0;white-space:pre-wrap' }, o.notes)] : null,
+    h('div', { class: 'foot' }, 'Document établi par ' + EPS_CO.name + ' le ' + fmtStamp(o.created_at) + (o.updated_at && Math.abs(new Date(o.updated_at) - new Date(o.created_at)) > 60e3 ? ', modifié le ' + fmtStamp(o.updated_at) : '') +
+      '. Transport de personnes en voiture de transport avec chauffeur (VTC) sur réservation préalable uniquement. ' + EPS_CO.web)].flat().filter(Boolean));
+  const phone = String(o.customer_phone || '').replace(/[^\d+]/g, '').replace(/^\+/, '').replace(/^0/, '33');
+  const share = async () => {
+    const text = orderText(o);
+    try { if (navigator.share) { await navigator.share({ title: 'Bon de commande ' + o.number, text }); return; } } catch (e) { if (e.name === 'AbortError') return; }
+    try { await navigator.clipboard.writeText(text); toast('Texte du bon copié.'); } catch { toast('Copie impossible sur cet appareil.', true); }
+  };
+  $('doc-actions').replaceChildren(...[
+    h('button', { class: 'btn primary', onclick: () => window.print() }, 'Imprimer ou PDF'),
+    h('button', { class: 'btn quiet', onclick: share }, 'Partager'),
+    phone ? h('a', { class: 'btn quiet', href: 'https://wa.me/' + phone + '?text=' + encodeURIComponent('Bonjour ' + o.customer_name + ', voici votre bon de commande :\n\n' + orderText(o)), target: '_blank', rel: 'noopener' }, 'Envoyer au client') : null,
+    !o.cancelled_at ? h('button', { class: 'btn quiet', onclick: () => { closeDoc(); openOrderForm(o, o); } }, 'Modifier') : null,
+    !o.cancelled_at ? h('button', { class: 'btn danger', onclick: () => cancelOrder(o) }, 'Annuler ce bon') : null].filter(Boolean));
+  $('docview').classList.remove('hidden'); $('docview').scrollTop = 0; document.body.style.overflow = 'hidden';
+}
+function closeDoc() { $('docview').classList.add('hidden'); document.body.style.overflow = ''; }
+$('doc-close').onclick = closeDoc;
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('docview').classList.contains('hidden')) closeDoc(); });
+async function cancelOrder(o) {
+  if (!confirm('Annuler le bon ' + o.number + ' ? Il reste dans l’historique, marqué annulé.')) return;
+  const x = await db.from('eps_order_forms').update({ cancelled_at: new Date().toISOString(), updated_at: new Date().toISOString() }).eq('id', o.id).select().single();
+  if (x.error) return toast(x.error.message, true);
+  const i = S.orders.findIndex(y => y.id === o.id); if (i >= 0) S.orders[i] = x.data;
+  toast('Bon ' + o.number + ' annulé.'); openOrderView(x.data); if (tab === 'orders') render();
 }
 
 /* ================= Démarrage ================= */

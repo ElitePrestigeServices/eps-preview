@@ -102,6 +102,7 @@ h2{font:600 19px/1.2 var(--serif);margin:26px 0 10px}
 .field{display:block;margin:0 0 12px}
 .field>span{display:block;font-size:13px;color:var(--ink-2);margin-bottom:6px}
 .field input,.field select,.field textarea{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:13px 14px;font-size:16px}
+.field select{-webkit-appearance:none;appearance:none;min-height:50px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%23c9ad73' stroke-width='1.8'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:38px}
 .field textarea{resize:vertical}
 .amount{font:600 34px/1 var(--serif)!important;padding:12px 14px!important}
 .hint{font-size:13px;color:var(--ink-2);margin-top:6px}
@@ -352,6 +353,7 @@ async function loadAll() {
   if (!user) return;
   const p = await db.from('eps_chauffeur_profiles').select('user_id,email,first_name,last_name,phone,company,siret,vehicle,status').eq('user_id', user.id).maybeSingle();
   S.profile = p.error ? null : p.data;
+  if (!S.profile) { const ad = await db.rpc('eps_is_admin'); S.isAdmin = ad.data === true; }
   if (!S.profile) return;
   const d = await db.from('eps_chauffeur_documents').select('id,document_type,storage_path,filename,status,admin_note,expires_on,created_at').eq('chauffeur_id', user.id).order('created_at', { ascending: false });
   const seen = new Set(); S.docs = (d.data || []).filter(x => !seen.has(x.document_type) && seen.add(x.document_type));
@@ -374,7 +376,7 @@ const NAV = [['courses', 'Courses'], ['dossier', 'Mon dossier'], ['paiements', '
 const titles = Object.fromEntries(NAV);
 let tab = 'courses';
 function navItems() { return S.profile?.status === 'approved' ? NAV : NAV.filter(([k]) => k === 'dossier'); }
-function counts() { return { courses: S.board.filter(r => r.offer_status === 'disponible').length, dossier: DOCS.filter(([k]) => ['missing', 'rejected', 'expired'].includes(docState(k).key)).length }; }
+function counts() { return { courses: S.board.filter(r => r.offer_status === 'disponible').length, dossier: S.profile ? DOCS.filter(([k]) => ['missing', 'rejected', 'expired'].includes(docState(k).key)).length : 0 }; }
 function drawNav() {
   const c = counts(), items = navItems();
   const pip = n => n ? h('span', { class: 'pip' }, n) : null;
@@ -390,6 +392,9 @@ function render() {
   const name = S.profile ? [S.profile.first_name, S.profile.last_name].filter(Boolean).join(' ') : S.user?.email;
   $('subtitle').textContent = name || '';
   const v = $('view'); v.replaceChildren();
+  if (!S.profile && S.isAdmin) { $('title').textContent = 'Compte administrateur'; return v.append(h('div', { class: 'card', style: 'max-width:620px' }, h('h3', {}, 'Tu es connecté avec le compte EPS'),
+    h('p', { class: 'hint', style: 'margin:0' }, 'Cet espace sert à tes chauffeurs partenaires : ils y envoient leur candidature, leurs justificatifs et leurs factures. Toi, tu gères tout depuis le pilotage.'),
+    h('div', { class: 'btns two' }, h('a', { class: 'btn primary', href: '../admin/' }, 'Ouvrir le pilotage'), h('button', { class: 'btn quiet', onclick: logout }, 'Se déconnecter')))); }
   if (!S.profile) return renderApply(v);
   ({ courses: renderCourses, dossier: renderDossier, paiements: renderPay })[tab](v);
 }

@@ -11,6 +11,8 @@
 - Ajout sur les 74 pages : barre fixe mobile « Réserver » + « WhatsApp » et bouton WhatsApp flottant sur ordinateur (wa.me/33745495321, message prérempli avec la page). Choix d’Anthony : WhatsApp seulement, pas d’appel. Téléphone ajouté dans la fiche entreprise structurée.
 - BUG corrigé : les liens internes « /eps-preview/… » (144 liens, 53 pages) donnaient une 404 sur le vrai domaine (constaté par Anthony). scripts/prepare_production_seo.py les réécrit désormais en « /… » dans la copie publiée, et la vérification bloque la publication s’il en reste un.
 - Nouvelle bannière d’accueil (ordinateur) fournie par Anthony : assets/banniere-eps-2026.jpg (logo + nom intégrés à l’image). Texte superposé masqué pour éviter le doublon ; bannière décalée sous le menu. Le H1 de l’accueil est déplacé hors du bloc masqué (lisible par Google). Version mobile inchangée (logo).
+- Gmail OAuth réparé (03/11/2026) : l’écran de consentement du projet Google Cloud « eps-prospection » était en mode Test (jeton révoqué tous les 7 jours) → passé « En production ». Nouveau code secret client + nouveau refresh token (scopes gmail.send + gmail.readonly) mis dans les secrets Supabase par Anthony. Mail test envoyé à eliteprestigeservicescannes@gmail.com : OK. Fonction v15 : mode « test » limité aux adresses EPS, nettoyage des secrets collés avec guillemets. Source versionnée dans supabase/functions/eps-crm-prospecting/.
+- Décisions d’Anthony : pas de bannière sur l’accueil mobile (logo conservé) ; pas de bannière ni de logo dans le mail de prospection.
 - Reste à faire, enrichir les pages (67/74 sous 400 mots), titres trop longs, demande d’avis Google après course.
 
 ## 26/10/2026 — ChatGPT — Correction SEO de publication

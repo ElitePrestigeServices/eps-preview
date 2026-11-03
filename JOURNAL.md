@@ -1,5 +1,15 @@
 # Journal EPS
 
+## 03/11/2026 — Claude — Reprise de la gestion technique + SEO technique
+
+- Anthony confie la gestion technique complète d’EPS à Claude (site, Supabase EPS, Stripe EPS, CRM). ChatGPT n’intervient plus sauf urgence.
+- Fiche « entreprise » structurée (LocalBusiness + TaxiService : adresse 34 rue Borniol Cannes, 24 h/24, zones desservies, langues) ajoutée sur les 74 pages publiques ; l’ancien bloc TaxiService incomplet de l’accueil est remplacé.
+- Liens de langue hreflang FR/EN/IT + x-default ajoutés, réciproques, sur les 11 trios de pages traduites (33 pages) ; accueil en fr + x-default.
+- Accueil : le nom de la marque dans la bannière devient le titre H1 (rendu visuel identique) avec la mention « Chauffeur privé à Cannes, Nice, Monaco et Saint-Tropez » pour les lecteurs d’écran et Google.
+- Vérifié : scripts/prepare_production_seo.py passe (68 URL publiques, pages privées noindex), JSON-LD valide.
+- Robot de prospection (Supabase, fonction eps-crm-prospecting v11) : envoi par lots de 20 (la v8 était coupée à 150 s), jours ouvrés seulement, 2 essais max par adresse, rapport quotidien et alerte « token Gmail » par e-mail. Le GMAIL_REFRESH_TOKEN reste à renouveler (expiré).
+- Reste à faire : téléphone cliquable (numéro à fournir par Anthony), enrichir les pages (67/74 sous 400 mots), titres trop longs, demande d’avis Google après course.
+
 ## 26/10/2026 — ChatGPT — Correction SEO de publication
 
 - Autorisation d’Anthony : « Corrige les ! », après audit des alertes Search Console du 25/10.

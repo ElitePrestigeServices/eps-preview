@@ -142,7 +142,7 @@ p{margin:0}
 .booking .eps-time-picker span{margin-top:7px;color:var(--ink-3)}
 .booking .contact-fields{border:0;border-top:1px solid var(--line);margin:8px 0 0;padding:18px 0 0}
 .booking legend{font:600 18px/1.2 var(--serif);color:var(--ink);padding:0 0 12px}
-.booking .phone-input-row{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.4fr);gap:8px}
+.booking .phone-input-row{display:grid;grid-template-columns:118px minmax(0,1fr);gap:8px}
 .booking-trap{position:absolute!important;left:-9999px!important}
 .booking .submit{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:56px;margin-top:6px;border:0;border-radius:14px;background:var(--gold);color:var(--gold-ink);font-weight:800;font-size:17px;cursor:pointer}
 .booking .submit:hover{background:var(--gold-2)}
@@ -253,7 +253,7 @@ p{margin:0}
   .foot-grid{grid-template-columns:1fr 1fr;gap:24px}
   .foot-brand{grid-column:1/-1}
 }
-@media (max-width:380px){.booking .phone-input-row{grid-template-columns:1fr}.services{grid-template-columns:1fr}}
+@media (max-width:380px){.services{grid-template-columns:1fr}}
 
 /* Pages intérieures (destinations, transferts, événements, guides, pages légales) */
 .page-body{max-width:920px;padding-top:52px;padding-bottom:20px}

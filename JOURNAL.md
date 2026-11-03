@@ -33,6 +33,7 @@
 - Pages traduites (03/11 nuit) : agenda + chauffeur privé Cannes/Nice/Monaco/Saint-Tropez en EN, IT et ES, + transfert aéroport Nice → Cannes en ES (16 nouvelles pages, 84 URL publiques). hreflang réciproques, boutons de langue, sitemap à jour. Scripts de génération gardés dans scripts/ (convert_pages.py, build_translations.py, build_home.py ; chemins /tmp à adapter). Doublon « Monte-Carlo Rolex Masters » corrigé dans l’agenda.
 - Bon de commande : la mention « Document établi le … » (date de création) est remplacée par la date de la réservation préalable (demande d’Anthony ; on n’affiche pas de fausse date de création). Accueil mobile : boutons Réserver/WhatsApp du haut retirés (doublon avec la barre du bas).
 - Prospection : Anthony arrête l’immobilier (04/11). 97 contacts agences/locations de villas passés en contact_type « écarté » (31 avaient déjà reçu le mail) ; le robot (v16) et le pilotage les ignorent ; filtre « Immobilier » retiré.
+- Dossier chauffeur : 11 pièces obligatoires (ajout permis recto/verso, inscription registre VTC avec expiration, Kbis/SIRET) ; liste affichée dès la candidature ; validation du compte bloquée tant que les 11 ne sont pas validées. Formulaire de réservation : indicatif téléphone = drapeau + code seulement. Pilotage : suggestions de lieux (villes, aéroports) dans « Nouvelle demande » et le bon de commande.
 - Reste à faire, enrichir les pages (67/74 sous 400 mots), titres trop longs, demande d’avis Google après course.
 
 ## 26/10/2026 — ChatGPT — Correction SEO de publication

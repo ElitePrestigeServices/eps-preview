@@ -295,6 +295,7 @@ h2{font:600 19px/1.2 var(--serif);margin:26px 0 10px}
   <article class="paper" id="paper"></article>
 </section>
 
+<datalist id="eps-places"><option value="Cannes"></option><option value="Nice"></option><option value="Monaco"></option><option value="Saint-Tropez"></option><option value="Antibes"></option><option value="Juan-les-Pins"></option><option value="Mougins"></option><option value="Le Cannet"></option><option value="Mandelieu-la-Napoule"></option><option value="Théoule-sur-Mer"></option><option value="Grasse"></option><option value="Valbonne"></option><option value="Sophia Antipolis"></option><option value="Biot"></option><option value="Villeneuve-Loubet"></option><option value="Cagnes-sur-Mer"></option><option value="Saint-Laurent-du-Var"></option><option value="Saint-Paul-de-Vence"></option><option value="Vence"></option><option value="Villefranche-sur-Mer"></option><option value="Beaulieu-sur-Mer"></option><option value="Saint-Jean-Cap-Ferrat"></option><option value="Èze"></option><option value="Cap-d’Ail"></option><option value="Roquebrune-Cap-Martin"></option><option value="Menton"></option><option value="Saint-Raphaël"></option><option value="Fréjus"></option><option value="Sainte-Maxime"></option><option value="Port Grimaud"></option><option value="Grimaud"></option><option value="Ramatuelle"></option><option value="Gassin"></option><option value="La Croix-Valmer"></option><option value="Hyères"></option><option value="Toulon"></option><option value="Marseille"></option><option value="Aix-en-Provence"></option><option value="Le Muy"></option><option value="Draguignan"></option><option value="Sanremo"></option><option value="Ventimiglia"></option><option value="Gênes"></option><option value="Aéroport de Nice Côte d’Azur"></option><option value="Aéroport de Cannes-Mandelieu"></option><option value="Cannes-Mandelieu Airport"></option><option value="Aéroport de Toulon-Hyères"></option><option value="Aéroport de Marseille Provence"></option><option value="Aéroport de Paris-Orly"></option><option value="Aéroport de Paris-Charles de Gaulle"></option><option value="Aéroport de Genève"></option><option value="Monaco Heliport"></option></datalist>
 <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
 
 <script type="module">
@@ -689,7 +690,7 @@ function openNewCourse() {
     fld('Client', h('input', { name: 'customer_name', required: true, maxlength: '80', autocomplete: 'off' })),
     h('div', { class: 'grid2' }, fld('Téléphone', h('input', { name: 'customer_phone', type: 'tel' })), fld('E-mail', h('input', { name: 'customer_email', type: 'email', required: true }))),
     fld('Prestation', h('select', { name: 'type' }, h('option', {}, 'Transfert'), h('option', {}, 'Mise à disposition'))),
-    fld('Départ', h('input', { name: 'departure', required: true })), fld('Arrivée', h('input', { name: 'destination', required: true })),
+    fld('Départ', h('input', { name: 'departure', required: true, list: 'eps-places', autocomplete: 'off' })), fld('Arrivée', h('input', { name: 'destination', required: true, list: 'eps-places', autocomplete: 'off' })),
     h('div', { class: 'grid2' }, fld('Date', h('input', { name: 'date', type: 'date', required: true, value: parisToday() })), fld('Heure', h('input', { name: 'time', type: 'time', required: true }))),
     fld('Véhicule', h('select', { name: 'vehicle' }, ['Business Van', 'Business Class', 'First Class', 'Electric Class', 'Sans préférence'].map(x => h('option', {}, x)))),
     h('div', { class: 'grid2' }, fld('Passagers', h('input', { name: 'passengers', type: 'number', min: '1', max: '7', value: '2', required: true })), fld('Bagages', h('input', { name: 'luggage', type: 'number', min: '0', max: '20', value: '1' }))),
@@ -915,7 +916,7 @@ function openCampaign(camp) {
 }
 
 /* ================= Chauffeurs (documents + dispatch) ================= */
-const DOC_TYPES = { carte_vtc: 'Carte VTC (recto)', carte_vtc_verso: 'Carte VTC (verso)', rc_pro: 'RC Pro', assurance_auto: 'Assurance auto', carte_grise: 'Carte grise', identite_siret: 'Justificatif SIRET', identite_recto: 'Identité (recto)', identite_verso: 'Identité (verso)' };
+const DOC_TYPES = { carte_vtc: 'Carte VTC (recto)', carte_vtc_verso: 'Carte VTC (verso)', permis_recto: 'Permis (recto)', permis_verso: 'Permis (verso)', identite_recto: 'Identité (recto)', identite_verso: 'Identité (verso)', registre_vtc: 'Registre VTC (EVTC)', identite_siret: 'Kbis / SIRET', rc_pro: 'RC Pro', assurance_auto: 'Assurance véhicule', carte_grise: 'Carte grise' };
 const DRIVER_STATE = { approved: ['Validé', 'ok'], pending: ['À valider', 'wait'], suspended: ['Suspendu', 'alert'], rejected: ['Refusé', ''] };
 function renderDrivers(v) {
   if (!S.drivers) { v.append(h('p', { class: 'hint' }, 'Chargement…')); return; }
@@ -1168,8 +1169,8 @@ function openOrderForm(o, existing) {
     fld('Prestation', h('select', { name: 'service_type' }, types.map(x => h('option', { selected: (val('service_type') || 'Transfert') === x }, x)))),
     h('div', { class: 'grid2' }, fld('Date de prise en charge', h('input', { name: 'pickup_date', type: 'date', required: true, value: val('pickup_date') || parisToday() })),
       fld('Heure', h('input', { name: 'pickup_time', type: 'time', required: true, value: val('pickup_time').slice(0, 5) }))),
-    fld('Lieu de prise en charge', h('input', { name: 'pickup_place', required: true, minlength: '2', maxlength: '200', value: val('pickup_place') })),
-    fld('Destination', h('input', { name: 'destination', maxlength: '200', value: val('destination') })),
+    fld('Lieu de prise en charge', h('input', { name: 'pickup_place', required: true, minlength: '2', maxlength: '200', value: val('pickup_place'), list: 'eps-places', autocomplete: 'off' })),
+    fld('Destination', h('input', { name: 'destination', maxlength: '200', value: val('destination'), list: 'eps-places', autocomplete: 'off' })),
     h('div', { class: 'grid2' }, fld('Passagers', h('input', { name: 'passengers', type: 'number', min: '1', max: '8', value: val('passengers') || '1' })),
       fld('Durée (h, mise à dispo)', h('input', { name: 'duration_hours', type: 'number', min: '1', max: '168', value: val('duration_hours') }))),
     fld('Numéro de vol', h('input', { name: 'flight_number', maxlength: '24', value: val('flight_number') })),

@@ -334,9 +334,12 @@ const fileOk = f => f && ALLOWED.includes(f.type) && f.size > 0 && f.size <= 104
 
 /* ================= Données ================= */
 const DOCS = [
-  ['carte_vtc', 'Carte VTC — recto', true], ['carte_vtc_verso', 'Carte VTC — verso', true],
-  ['identite_recto', 'Carte d’identité — recto', false], ['identite_verso', 'Carte d’identité — verso', false],
-  ['rc_pro', 'RC Pro exploitation', true], ['assurance_auto', 'Assurance transport rémunéré', true], ['carte_grise', 'Carte grise', false]];
+  ['carte_vtc', 'Carte professionnelle VTC — recto', true], ['carte_vtc_verso', 'Carte professionnelle VTC — verso', true],
+  ['permis_recto', 'Permis de conduire — recto', false], ['permis_verso', 'Permis de conduire — verso', false],
+  ['identite_recto', 'Carte d’identité ou passeport — recto', false], ['identite_verso', 'Carte d’identité — verso', false],
+  ['registre_vtc', 'Inscription au registre des VTC (EVTC)', true], ['identite_siret', 'Kbis ou avis de situation SIRET', false],
+  ['rc_pro', 'RC Pro exploitation', true], ['assurance_auto', 'Assurance véhicule transport de personnes', true], ['carte_grise', 'Carte grise du véhicule', false]];
+const NDOCS = DOCS.length;
 const STATUS = { pending: 'Dossier en cours de vérification', approved: 'Compte validé', suspended: 'Compte suspendu', excluded: 'Compte fermé' };
 const S = { user: null, profile: null, docs: [], board: [], orders: [], bank: null, invoices: [] };
 function docState(kind) {
@@ -424,14 +427,16 @@ function renderApply(v) {
     h('button', { class: 'btn primary', type: 'submit' }, 'Envoyer ma candidature'));
   v.append(h('div', { class: 'grid-desk' }, h('div', {}, h('div', { class: 'card' }, f)),
     h('div', {}, h('div', { class: 'card' }, h('h3', {}, 'Comment ça marche'),
-      h('p', { class: 'hint', style: 'margin:0' }, 'Tu envoies ta candidature puis tes 7 justificatifs (carte VTC, carte d’identité, RC Pro, assurance, carte grise). EPS les vérifie. Une fois validé, tu reçois les courses de ta catégorie et le premier qui accepte obtient la mission.')))));
+      h('p', { class: 'hint', style: 'margin:0 0 10px' }, 'Tu envoies ta candidature, puis les pièces obligatoires ci-dessous. EPS les vérifie. Une fois ton compte validé, tu reçois les courses de ta catégorie : le premier qui accepte obtient la mission.')),
+      h('div', { class: 'card' }, h('h3', {}, 'Pièces obligatoires'), h('ul', { style: 'margin:0;padding-left:18px;color:var(--ink-2);font-size:15px;line-height:1.8' }, DOCS.map(([, l, e]) => h('li', {}, l + (e ? ' (avec date d’expiration)' : '')))),
+        h('p', { class: 'hint' }, 'PDF, JPG ou PNG, 10 Mo maximum par pièce.')))));
 }
 
 /* ================= Courses ================= */
 function renderCourses(v) {
   const left = h('div'), right = h('div');
   if (!docsCurrent()) left.append(h('div', { class: 'card' }, h('h3', {}, 'Dossier à mettre à jour'),
-    h('p', { class: 'hint', style: 'margin:0' }, 'Les courses s’affichent seulement quand tes 7 justificatifs sont validés et à jour.'),
+    h('p', { class: 'hint', style: 'margin:0' }, 'Les courses s’affichent seulement quand tes ' + NDOCS + ' pièces obligatoires sont validées et à jour.'),
     h('div', { class: 'btns' }, h('button', { class: 'btn quiet', onclick: () => go('dossier') }, 'Voir mon dossier'))));
   const avail = S.board.filter(r => r.offer_status === 'disponible'), mine = S.board.filter(r => r.offer_status === 'acceptée');
   left.append(h('h2', { style: 'margin-top:4px' }, 'Courses proposées'));
@@ -528,7 +533,7 @@ function renderDossier(v) {
   left.append(h('div', { class: 'card' },
     h('div', { class: 'badges' }, h('span', { class: 'badge ' + (p.status === 'approved' ? 'ok' : p.status === 'pending' ? 'wait' : 'alert') }, STATUS[p.status] || p.status), h('span', { class: 'badge' }, p.vehicle)),
     h('p', { class: 'hint', style: 'margin:0' }, p.status === 'approved' ? (docsCurrent() ? 'Tout est en ordre : tu reçois les courses de ta catégorie.' : 'Un justificatif est à renouveler : tant qu’il ne l’est pas, tu ne vois plus les courses.')
-      : p.status === 'pending' ? ok + ' justificatif(s) validé(s) sur 7. EPS valide ton compte quand les 7 sont validés.' : 'Contacte EPS pour en savoir plus.')));
+      : p.status === 'pending' ? ok + ' pièce(s) validée(s) sur ' + NDOCS + '. EPS valide ton compte quand toutes les pièces obligatoires sont validées.' : 'Contacte EPS pour en savoir plus.')));
   left.append(h('h2', {}, 'Mes justificatifs'));
   const l = h('div', { class: 'list' });
   for (const [kind, label] of DOCS) {

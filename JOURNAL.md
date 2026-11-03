@@ -10,6 +10,7 @@
 - Robot de prospection (Supabase, fonction eps-crm-prospecting v11) : envoi par lots de 20 (la v8 était coupée à 150 s), jours ouvrés seulement, 2 essais max par adresse, rapport quotidien et alerte « token Gmail » par e-mail. Le GMAIL_REFRESH_TOKEN reste à renouveler (expiré).
 - Ajout sur les 74 pages : barre fixe mobile « Réserver » + « WhatsApp » et bouton WhatsApp flottant sur ordinateur (wa.me/33745495321, message prérempli avec la page). Choix d’Anthony : WhatsApp seulement, pas d’appel. Téléphone ajouté dans la fiche entreprise structurée.
 - BUG corrigé : les liens internes « /eps-preview/… » (144 liens, 53 pages) donnaient une 404 sur le vrai domaine (constaté par Anthony). scripts/prepare_production_seo.py les réécrit désormais en « /… » dans la copie publiée, et la vérification bloque la publication s’il en reste un.
+- Nouvelle bannière d’accueil (ordinateur) fournie par Anthony : assets/banniere-eps-2026.jpg (logo + nom intégrés à l’image). Texte superposé masqué pour éviter le doublon ; bannière décalée sous le menu. Le H1 de l’accueil est déplacé hors du bloc masqué (lisible par Google). Version mobile inchangée (logo).
 - Reste à faire, enrichir les pages (67/74 sous 400 mots), titres trop longs, demande d’avis Google après course.
 
 ## 26/10/2026 — ChatGPT — Correction SEO de publication

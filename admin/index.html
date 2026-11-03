@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="robots" content="noindex,nofollow">
 <meta name="theme-color" content="#0f1a16">
+<link rel="icon" href="../assets/v2/icon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../assets/v2/icon-180.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>EPS — Pilotage</title>
@@ -230,6 +232,7 @@ h2{font:600 19px/1.2 var(--serif);margin:26px 0 10px}
 
 <section id="login" class="login hidden">
   <div class="wrap">
+    <img src="../assets/v2/logo-eps-256.webp" alt="Logo Elite Prestige Services" width="84" height="84" style="display:block;margin-bottom:18px">
     <h1 class="brand">Elite Prestige<br>Services</h1>
     <p>Connecte-toi pour piloter tes courses.</p>
     <form id="loginform">
@@ -243,7 +246,7 @@ h2{font:600 19px/1.2 var(--serif);margin:26px 0 10px}
 
 <div id="app" class="hidden">
   <nav class="side" aria-label="Navigation principale">
-    <div class="brand">Elite Prestige Services<span>Pilotage</span></div>
+    <div class="brand"><img src="../assets/v2/logo-eps-256.webp" alt="" width="44" height="44" style="display:block;margin-bottom:12px">Elite Prestige Services<span>Pilotage</span></div>
     <div id="side-nav"></div>
     <div class="foot">
       <a href="https://www.elite-prestige-services.fr/" target="_blank" rel="noopener">Voir le site</a>
@@ -1182,7 +1185,7 @@ function openOrderView(o) {
   $('doc-title').textContent = o.number;
   $('paper').replaceChildren(...[
     h('div', { class: 'head' },
-      h('div', { class: 'co' }, h('b', {}, EPS_CO.name),
+      h('div', { class: 'co' }, h('img', { src: '../assets/v2/logo-eps-256.webp', alt: '', width: '54', height: '54', style: 'display:block;margin-bottom:10px;background:#0f1a16;border-radius:50%;padding:4px' }), h('b', {}, EPS_CO.name),
         h('div', {}, EPS_CO.form + ' · ' + EPS_CO.address), h('div', {}, EPS_CO.rcs + ' · ' + EPS_CO.tva),
         h('div', {}, 'Inscription au registre des VTC : ' + EPS_CO.evtc), h('div', {}, EPS_CO.phone + ' · ' + EPS_CO.email)),
       h('div', { class: 'num' }, h('div', { class: 't' }, 'Bon de commande'), h('div', { class: 'n' }, 'N° ' + o.number),

@@ -11,7 +11,7 @@ let sentResult = null;
 const T = value => window.epsTranslate ? window.epsTranslate(value) : value;
 const phoneField = form.elements.customer_phone;
 const phoneCountryCode = form.elements.phone_country_code;
-phoneField.placeholder = '+33 6 12 34 56 78 / +1 212 555 0123';
+phoneField.placeholder = '';
 const validPhone = value => {
   const normalized = value.trim().replace(/[\s().-]/g, '');
   return /^\+?[0-9]{7,15}$/.test(normalized);

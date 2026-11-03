@@ -1185,7 +1185,7 @@ function openOrderView(o) {
   $('doc-title').textContent = o.number;
   $('paper').replaceChildren(...[
     h('div', { class: 'head' },
-      h('div', { class: 'co' }, h('img', { src: '../assets/v2/logo-eps-256.webp', alt: '', width: '54', height: '54', style: 'display:block;margin-bottom:10px;background:#0f1a16;border-radius:50%;padding:4px' }), h('b', {}, EPS_CO.name),
+      h('div', { class: 'co' }, h('img', { src: '../assets/v2/logo-eps-256.webp', alt: '', width: '78', height: '78', style: 'display:block;margin-bottom:12px;background:#0f1a16;border-radius:50%;padding:6px' }), h('b', {}, EPS_CO.name),
         h('div', {}, EPS_CO.form + ' · ' + EPS_CO.address), h('div', {}, EPS_CO.rcs + ' · ' + EPS_CO.tva),
         h('div', {}, 'Inscription au registre des VTC : ' + EPS_CO.evtc), h('div', {}, EPS_CO.phone + ' · ' + EPS_CO.email)),
       h('div', { class: 'num' }, h('div', { class: 't' }, 'Bon de commande'), h('div', { class: 'n' }, 'N° ' + o.number),

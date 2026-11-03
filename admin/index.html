@@ -363,7 +363,7 @@ async function loadCrm() {
     db.rpc('eps_admin_prospecting_status')
   ]);
   if (c.error) { toast('CRM indisponible : ' + c.error.message, true); return; }
-  S.contacts = c.data; S.campaigns = k.error ? [] : k.data; S.recips = rc.error ? [] : rc.data; S.opps = o.error ? [] : o.data;
+  S.contacts = c.data.filter(x => x.contact_type !== 'écarté'); // immobilier écarté le 04/11/2026 S.campaigns = k.error ? [] : k.data; S.recips = rc.error ? [] : rc.data; S.opps = o.error ? [] : o.data;
   S.robot = st.error ? null : st.data;
 }
 async function loadDrivers() {
@@ -775,7 +775,7 @@ function openPartner(id) {
 }
 
 /* ================= Prospection (CRM) ================= */
-const SEGMENTS = [['hotel', 'Hôtels', /h[oô]tel|palace|resort/i], ['conciergerie', 'Conciergeries', /concierg/i], ['immo', 'Immobilier', /immobili|location|villa/i], ['yacht', 'Yachting', /yacht|nautique|marin/i], ['event', 'Événementiel', /[ée]v[ée]nement|congr[eè]s|mariage|wedding|agence/i]];
+const SEGMENTS = [['hotel', 'Hôtels', /h[oô]tel|palace|resort/i], ['conciergerie', 'Conciergeries', /concierg/i], ['yacht', 'Yachting', /yacht|nautique|marin/i], ['event', 'Événementiel', /[ée]v[ée]nement|congr[eè]s|mariage|wedding|agence/i]];
 const segmentOf = c => { const t = (c.notes || '') + ' ' + (c.company_name || ''); for (const [k, , re] of SEGMENTS) if (re.test(t)) return k; return 'autre'; };
 const SEG_LABEL = Object.fromEntries([...SEGMENTS.map(([k, l]) => [k, l]), ['autre', 'Autres']]);
 let crmFilter = 'todo', crmSeg = '', crmQuery = '', crmLimit = 60;

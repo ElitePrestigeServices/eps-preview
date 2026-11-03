@@ -8,7 +8,8 @@
 - Accueil : le nom de la marque dans la bannière devient le titre H1 (rendu visuel identique) avec la mention « Chauffeur privé à Cannes, Nice, Monaco et Saint-Tropez » pour les lecteurs d’écran et Google.
 - Vérifié : scripts/prepare_production_seo.py passe (68 URL publiques, pages privées noindex), JSON-LD valide.
 - Robot de prospection (Supabase, fonction eps-crm-prospecting v11) : envoi par lots de 20 (la v8 était coupée à 150 s), jours ouvrés seulement, 2 essais max par adresse, rapport quotidien et alerte « token Gmail » par e-mail. Le GMAIL_REFRESH_TOKEN reste à renouveler (expiré).
-- Reste à faire : téléphone cliquable (numéro à fournir par Anthony), enrichir les pages (67/74 sous 400 mots), titres trop longs, demande d’avis Google après course.
+- Ajout sur les 74 pages : barre fixe mobile « Réserver » + « WhatsApp » et bouton WhatsApp flottant sur ordinateur (wa.me/33745495321, message prérempli avec la page). Choix d’Anthony : WhatsApp seulement, pas d’appel. Téléphone ajouté dans la fiche entreprise structurée.
+- Reste à faire : vérifier les liens internes « /eps-preview/… » sur le domaine, enrichir les pages (67/74 sous 400 mots), titres trop longs, demande d’avis Google après course.
 
 ## 26/10/2026 — ChatGPT — Correction SEO de publication
 

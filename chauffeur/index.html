@@ -509,7 +509,7 @@ function openOrderView(o) {
     h('h3', {}, 'Exécution'),
     h('table', {}, h('tbody', {}, row('Catégorie', o.vehicle), row('Chauffeur', driver + (S.profile.company ? ' (' + S.profile.company + ')' : '')))),
     o.notes ? [h('h3', {}, 'Remarques'), h('p', { style: 'margin:0;white-space:pre-wrap' }, o.notes)] : null,
-    h('div', { class: 'foot' }, 'Course commandée auprès de ' + EPS_CO.name + ' et confiée à ' + (S.profile.company || driver) + '. Document établi le ' + fmtStamp(o.created_at) + '. ' + EPS_CO.web)].flat().filter(Boolean));
+    h('div', { class: 'foot' }, 'Course commandée auprès de ' + EPS_CO.name + ' et confiée à ' + (S.profile.company || driver) + ', réservation du ' + fmtStamp(o.booked_at) + '. ' + EPS_CO.web)].flat().filter(Boolean));
   $('doc-actions').replaceChildren(h('button', { class: 'btn primary', onclick: () => window.print() }, 'Imprimer ou PDF'), h('button', { class: 'btn quiet', onclick: closeDoc }, 'Fermer'));
   $('docview').classList.remove('hidden'); $('docview').scrollTop = 0; document.body.style.overflow = 'hidden';
 }

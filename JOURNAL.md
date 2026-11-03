@@ -31,6 +31,7 @@
 - Traduction de l’accueil en FR/EN/IT/ES (assets/v2/i18n.js remplace locale.js sur l’accueil ; script.js passe par T() pour tous ses messages). Pages intérieures : les boutons de langue mènent aux versions EN/IT existantes, sinon à l’accueil traduit (?lang=). Pas encore de pages en espagnol.
 - Bon de commande : mise en page d’impression resserrée, tient sur une page A4. Accueil : prix des véhicules alignés. Pages intérieures : les boutons de langue n’apparaissent que s’il existe une vraie version traduite (plus de renvoi vers l’accueil).
 - Pages traduites (03/11 nuit) : agenda + chauffeur privé Cannes/Nice/Monaco/Saint-Tropez en EN, IT et ES, + transfert aéroport Nice → Cannes en ES (16 nouvelles pages, 84 URL publiques). hreflang réciproques, boutons de langue, sitemap à jour. Scripts de génération gardés dans scripts/ (convert_pages.py, build_translations.py, build_home.py ; chemins /tmp à adapter). Doublon « Monte-Carlo Rolex Masters » corrigé dans l’agenda.
+- Bon de commande : la mention « Document établi le … » (date de création) est remplacée par la date de la réservation préalable (demande d’Anthony ; on n’affiche pas de fausse date de création). Accueil mobile : boutons Réserver/WhatsApp du haut retirés (doublon avec la barre du bas).
 - Reste à faire, enrichir les pages (67/74 sous 400 mots), titres trop longs, demande d’avis Google après course.
 
 ## 26/10/2026 — ChatGPT — Correction SEO de publication

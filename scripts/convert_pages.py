@@ -22,7 +22,7 @@ T = {
    f_lines=['Aeropuerto de Niza → Cannes','Niza → Mónaco','Aeropuerto de Niza → Saint-Tropez','Aeropuerto de Cannes-Mandelieu'], legal=['Aviso legal','Condiciones de venta','Condiciones de uso','Privacidad'], lic='© Elite Prestige Services · licencia VTC EVTC006240319'),
 }
 CITY = {'fr': ['Cannes','Nice','Monaco','Saint-Tropez'], 'en': ['Cannes','Nice','Monaco','Saint-Tropez'], 'it': ['Cannes','Nizza','Monaco','Saint-Tropez'], 'es': ['Cannes','Niza','Mónaco','Saint-Tropez']}
-CSSV = '20261104c'
+CSSV = '20261104d'
 
 def header(lang, alts, wa):
     t = T[lang]

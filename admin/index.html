@@ -1215,8 +1215,7 @@ function openOrderView(o) {
     o.price_cents != null || o.payment_method ? [h('h3', {}, 'Prix'),
       h('table', {}, h('tbody', {}, row('Règlement', o.payment_method), o.price_cents != null ? h('tr', { class: 'price' }, h('td', {}, 'Prix TTC convenu'), h('td', {}, eur(o.price_cents))) : null))] : null,
     o.notes ? [h('h3', {}, 'Remarques'), h('p', { style: 'margin:0;white-space:pre-wrap' }, o.notes)] : null,
-    h('div', { class: 'foot' }, 'Document établi par ' + EPS_CO.name + ' le ' + fmtStamp(o.created_at) + (o.updated_at && Math.abs(new Date(o.updated_at) - new Date(o.created_at)) > 60e3 ? ', modifié le ' + fmtStamp(o.updated_at) : '') +
-      '. Transport de personnes en voiture de transport avec chauffeur (VTC) sur réservation préalable uniquement. ' + EPS_CO.web)].flat().filter(Boolean));
+    h('div', { class: 'foot' }, EPS_CO.name + ' — bon de commande lié à la réservation du ' + fmtStamp(o.booked_at) + '. Transport de personnes en voiture de transport avec chauffeur (VTC) sur réservation préalable uniquement. ' + EPS_CO.web)].flat().filter(Boolean));
   const phone = String(o.customer_phone || '').replace(/[^\d+]/g, '').replace(/^\+/, '').replace(/^0/, '33');
   const share = async () => {
     const text = orderText(o);

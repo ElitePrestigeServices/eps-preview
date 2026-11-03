@@ -38,7 +38,7 @@ html=f'''<!doctype html>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="preload" as="image" href="assets/v2/hero.webp" media="(min-width:821px)">
-<link rel="stylesheet" href="assets/v2/site.css?v=20261104c">
+<link rel="stylesheet" href="assets/v2/site.css?v=20261104d">
 </head>
 <body>
 <header class="site-head"><div class="wrap">

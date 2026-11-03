@@ -233,7 +233,7 @@ p{margin:0}
   .hero-body{padding:44px 20px 36px}
   .hero-logo{width:120px;height:120px;margin:0 auto 22px;filter:none}
   .hero h1{font-size:40px;text-shadow:none}
-  .hero-actions .btn{flex:1;min-width:0;padding:0 14px}
+  .hero-actions{display:none}
   .eps-cta-bar{display:flex}
   .eps-wa-float{display:none}
   .tickets{grid-template-columns:1fr;gap:12px}

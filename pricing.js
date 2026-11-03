@@ -5,8 +5,10 @@
   const fares = {
     'cannes|nice': { 'Business Class': 130, 'Business Van': 160, 'First Class': 200 },
     'cannes|cannes-mandelieu-airport': { 'Business Class': 95, 'Business Van': 115, 'First Class': 120 },
-    'cannes|monaco': { 'Business Class': 170, 'Business Van': 260, 'First Class': 330 },
-    'cannes|saint-tropez': { 'Business Class': 230, 'Business Van': 360, 'First Class': 450 }
+    'cannes|monaco': { 'Business Class': 170, 'Business Van': 230, 'First Class': 330 },
+    // 03/11/2026 : van Monaco 260 → 230 et Saint-Tropez 360 → 320 (écart van/berline ramené vers +35 %) ; ajout aéroport de Nice ↔ Monaco.
+    'monaco|nice': { 'Business Class': 150, 'Business Van': 195, 'First Class': 240 },
+    'cannes|saint-tropez': { 'Business Class': 230, 'Business Van': 320, 'First Class': 450 }
   };
   // Relevés Blacklane transmis le 26/09/2026. Références de marché, pas tarifs EPS validés.
   // Les trajets aéroport sont directionnels : les prix retour restent à confirmer.
@@ -85,7 +87,8 @@
       'cannes-centre|nice-airport': 'cannes|nice',
       'cannes-centre|mandelieu-airport': 'cannes|cannes-mandelieu-airport',
       'cannes-centre|monaco': 'cannes|monaco',
-      'cannes-centre|saint-tropez': 'cannes|saint-tropez'
+      'cannes-centre|saint-tropez': 'cannes|saint-tropez',
+      'monaco|nice-airport': 'monaco|nice'
     };
     const base = fares[routes[pair]]?.[request.vehicle];
     if (!base || !request.date || !request.time) return null;

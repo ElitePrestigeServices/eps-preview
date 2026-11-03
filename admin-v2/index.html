@@ -1,0 +1,630 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#0f1a16">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>EPS — Pilotage</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="../pricing.js?v=20261103-admin2"></script>
+<style>
+:root{
+  --bg:#0f1a16; --surface:#16241f; --surface-2:#1d2e28; --line:#2a3d36;
+  --ink:#ede6d6; --ink-2:#a9b3ac; --ink-3:#76837b;
+  --gold:#c9ad73; --gold-ink:#1a1408;
+  --alert:#d06a5a; --ok:#78ad8f; --wait:#d9b35b;
+  --radius-lg:20px; --radius:12px;
+  --serif:"Fraunces",Georgia,serif; --sans:"Manrope",system-ui,-apple-system,sans-serif;
+  --tab-h:64px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 var(--sans);-webkit-font-smoothing:antialiased}
+body{min-height:100vh;padding-bottom:calc(var(--tab-h) + env(safe-area-inset-bottom) + 16px)}
+button,input,select,textarea{font:inherit;color:inherit}
+a{color:var(--gold)}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:6px}
+.hidden{display:none!important}
+.wrap{max-width:560px;margin:0 auto;padding:0 16px}
+
+/* En-tête */
+.top{position:sticky;top:0;z-index:5;background:linear-gradient(var(--bg) 70%,transparent);padding:calc(env(safe-area-inset-top) + 14px) 0 12px}
+.top .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.top h1{margin:0;font:600 26px/1.1 var(--serif);letter-spacing:-.01em}
+.top .sub{color:var(--ink-3);font-size:13px}
+.icon-btn{border:1px solid var(--line);background:var(--surface);border-radius:999px;width:42px;height:42px;display:grid;place-items:center;cursor:pointer}
+.icon-btn svg{width:20px;height:20px;stroke:var(--ink-2);fill:none;stroke-width:1.8}
+
+/* Billet de la prochaine course : l'élément fort */
+.ticket{position:relative;margin:6px 0 22px;background:var(--gold);color:var(--gold-ink);border-radius:var(--radius-lg);padding:20px 20px 18px;overflow:hidden}
+.ticket::before,.ticket::after{content:"";position:absolute;top:96px;width:22px;height:22px;border-radius:50%;background:var(--bg)}
+.ticket::before{left:-11px}.ticket::after{right:-11px}
+.ticket .when{display:flex;align-items:baseline;gap:10px}
+.ticket .time{font:600 64px/1 var(--serif);letter-spacing:-.03em}
+.ticket .day{font-weight:600;font-size:15px}
+.ticket .count{margin-left:auto;font-size:13px;font-weight:600;background:rgba(26,20,8,.12);padding:4px 10px;border-radius:999px;white-space:nowrap}
+.ticket .perf{border-top:2px dashed rgba(26,20,8,.35);margin:18px -20px 14px}
+.ticket .route{font:600 20px/1.25 var(--serif)}
+.ticket .route span{display:block}
+.ticket .route .to::before{content:"";display:inline-block;width:14px;height:2px;background:currentColor;vertical-align:middle;margin-right:8px;opacity:.6}
+.ticket .who{margin-top:10px;font-size:14px;display:flex;flex-wrap:wrap;gap:6px 14px}
+.ticket .who b{font-weight:700}
+.ticket.empty{background:var(--surface);color:var(--ink-2);border:1px dashed var(--line)}
+.ticket.empty::before,.ticket.empty::after{display:none}
+.ticket.empty .route{color:var(--ink)}
+
+/* Sections & listes */
+h2{font:600 19px/1.2 var(--serif);margin:26px 0 10px}
+.list{background:var(--surface);border-radius:var(--radius-lg);overflow:hidden}
+.row{display:flex;align-items:center;gap:12px;padding:14px 16px;border:0;border-bottom:1px solid var(--line);background:none;width:100%;text-align:left;cursor:pointer}
+.row:last-child{border-bottom:0}
+.row:active{background:var(--surface-2)}
+.row .main{flex:1;min-width:0}
+.row .t{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row .s{color:var(--ink-2);font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row .end{text-align:right;font-size:14px;color:var(--ink-2);white-space:nowrap}
+.row .end b{display:block;color:var(--ink);font-weight:700}
+.dot{width:10px;height:10px;border-radius:50%;flex:none;background:var(--ink-3)}
+.dot.alert{background:var(--alert)}.dot.ok{background:var(--ok)}.dot.wait{background:var(--wait)}
+.chev{width:16px;height:16px;stroke:var(--ink-3);fill:none;stroke-width:2;flex:none}
+.empty-note{padding:18px 16px;color:var(--ink-2);font-size:14px}
+.big-n{font:600 30px/1 var(--serif);min-width:44px;color:var(--ink)}
+.row.todo .big-n{color:var(--alert)}
+
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border-radius:var(--radius-lg);overflow:hidden}
+.stat{background:var(--surface);padding:14px 16px}
+.stat .v{font:600 24px/1.1 var(--serif)}
+.stat .l{color:var(--ink-2);font-size:13px;margin-top:2px}
+
+/* Filtres */
+.seg{display:flex;gap:6px;overflow-x:auto;margin:4px 0 14px;scrollbar-width:none}
+.seg button{flex:none;border:1px solid var(--line);background:none;border-radius:999px;padding:8px 14px;font-size:14px;color:var(--ink-2);cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink);font-weight:600}
+
+/* Boutons */
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:52px;border-radius:14px;border:0;font-weight:700;font-size:16px;cursor:pointer;text-decoration:none}
+.btn.primary{background:var(--gold);color:var(--gold-ink)}
+.btn.quiet{background:var(--surface-2);color:var(--ink)}
+.btn.ok{background:#2e5a43;color:#eaf5ee}
+.btn.danger{background:none;border:1px solid #6a342c;color:#f0b9ae}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btns{display:grid;gap:10px;margin-top:12px}
+.btns.two{grid-template-columns:1fr 1fr}
+
+/* Formulaires */
+.field{display:block;margin:0 0 12px}
+.field>span{display:block;font-size:13px;color:var(--ink-2);margin-bottom:6px}
+.field input,.field select,.field textarea{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:13px 14px;font-size:16px}
+.field textarea{resize:vertical}
+.amount{font:600 34px/1 var(--serif)!important;padding:12px 14px!important}
+.hint{font-size:13px;color:var(--ink-2);margin-top:6px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.card{background:var(--surface);border-radius:var(--radius-lg);padding:16px;margin-bottom:12px}
+.card h3{margin:0 0 10px;font:600 17px/1.2 var(--serif)}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:15px}
+.kv dt{color:var(--ink-3)}.kv dd{margin:0}
+.badge{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;padding:3px 10px;border-radius:999px;background:var(--surface-2);color:var(--ink-2)}
+.badge.partner{background:rgba(201,173,115,.16);color:var(--gold)}
+.badge.alert{background:rgba(208,106,90,.16);color:#f0b9ae}
+.badge.ok{background:rgba(120,173,143,.16);color:#b8dcc6}
+.contact{display:flex;gap:10px;margin-top:12px}
+.contact a{flex:1;text-align:center;padding:10px;border-radius:12px;background:var(--surface-2);text-decoration:none;color:var(--ink);font-weight:600;font-size:14px}
+
+/* Fiche plein écran */
+.sheet{position:fixed;inset:0;z-index:20;background:var(--bg);overflow-y:auto;padding-bottom:40px;transform:translateY(100%);visibility:hidden;transition:transform .28s cubic-bezier(.2,.8,.2,1),visibility 0s linear .28s}
+.sheet.open{transform:none;visibility:visible;transition:transform .28s cubic-bezier(.2,.8,.2,1)}
+.sheet .bar{position:sticky;top:0;z-index:2;background:var(--bg);padding:calc(env(safe-area-inset-top) + 10px) 0 10px;border-bottom:1px solid var(--line);margin-bottom:16px}
+.sheet .bar .wrap{display:flex;align-items:center;gap:10px}
+.sheet .bar h2{margin:0;flex:1;font-size:18px}
+@media (prefers-reduced-motion:reduce){.sheet{transition:none}}
+
+/* Barre d'onglets */
+.tabs{position:fixed;left:0;right:0;bottom:0;z-index:10;background:rgba(15,26,22,.96);backdrop-filter:blur(10px);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom)}
+.tabs .wrap{display:grid;grid-template-columns:repeat(4,1fr);height:var(--tab-h)}
+.tabs button{border:0;background:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:12px;color:var(--ink-3);cursor:pointer;position:relative}
+.tabs svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8}
+.tabs button[aria-current="page"]{color:var(--gold)}
+.tabs .pip{position:absolute;top:8px;left:calc(50% + 8px);min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:var(--alert);color:#fff;font-size:11px;font-weight:700;display:grid;place-items:center}
+
+/* Message */
+.toast{position:fixed;left:16px;right:16px;bottom:calc(var(--tab-h) + env(safe-area-inset-bottom) + 12px);z-index:30;max-width:528px;margin:0 auto;background:var(--ink);color:var(--bg);padding:13px 16px;border-radius:14px;font-weight:600;font-size:15px;box-shadow:0 10px 30px rgba(0,0,0,.4)}
+.toast.err{background:#f0b9ae;color:#3a120c}
+
+/* Connexion */
+.login{min-height:100vh;display:grid;align-content:center;padding:24px 16px}
+.login .brand{font:600 34px/1.05 var(--serif);margin:0 0 6px}
+.login p{color:var(--ink-2);margin:0 0 24px}
+.login form{max-width:420px}
+</style>
+</head>
+<body>
+
+<section id="login" class="login hidden">
+  <div class="wrap">
+    <h1 class="brand">Elite Prestige<br>Services</h1>
+    <p>Connecte-toi pour piloter tes courses.</p>
+    <form id="loginform">
+      <label class="field"><span>E-mail</span><input id="email" type="email" autocomplete="email" required></label>
+      <label class="field"><span>Mot de passe</span><input id="password" type="password" autocomplete="current-password" required></label>
+      <button class="btn primary" type="submit">Se connecter</button>
+      <p id="loginmsg" class="hint" role="status"></p>
+    </form>
+  </div>
+</section>
+
+<div id="app" class="hidden">
+  <header class="top"><div class="wrap">
+    <div><h1 id="title">Aujourd’hui</h1><div class="sub" id="subtitle"></div></div>
+    <button class="icon-btn" id="refresh" aria-label="Actualiser"><svg viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.3-5.6"/><path d="M20 4v5h-5"/></svg></button>
+  </div></header>
+
+  <main class="wrap">
+    <section id="v-home"></section>
+    <section id="v-courses" class="hidden"></section>
+    <section id="v-partners" class="hidden"></section>
+    <section id="v-more" class="hidden"></section>
+  </main>
+
+  <nav class="tabs" aria-label="Navigation"><div class="wrap">
+    <button data-tab="home" aria-current="page"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg>Aujourd’hui</button>
+    <button data-tab="courses"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h10"/></svg>Courses<span class="pip hidden" id="pip-courses"></span></button>
+    <button data-tab="partners"><svg viewBox="0 0 24 24"><circle cx="9" cy="9" r="3"/><circle cx="17" cy="10" r="2.5"/><path d="M3 19c.8-3 3.2-4.5 6-4.5s5.2 1.5 6 4.5M15 15.5c2.6 0 4.6 1.2 5.4 3.5"/></svg>Partenaires</button>
+    <button data-tab="more"><svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg>Plus</button>
+  </div></nav>
+</div>
+
+<section id="sheet" class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-title">
+  <div class="bar"><div class="wrap">
+    <button class="icon-btn" id="sheet-close" aria-label="Fermer"><svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg></button>
+    <h2 id="sheet-title"></h2>
+  </div></div>
+  <div class="wrap" id="sheet-body"></div>
+</section>
+
+<div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
+
+<script type="module">
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+const SB = 'https://lrtuztxjngdvrnjuwxfr.supabase.co';
+const db = createClient(SB, 'sb_publishable_GeaRT-N3IE03M19HCB4MVg_RQwbSnYu');
+const SITE = 'https://www.elite-prestige-services.fr/';
+
+/* ---------- Outils ---------- */
+const $ = id => document.getElementById(id);
+function h(tag, attrs = {}, ...kids) {
+  const e = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs || {})) {
+    if (v == null || v === false) continue;
+    if (k === 'class') e.className = v;
+    else if (k.startsWith('on')) e.addEventListener(k.slice(2), v);
+    else if (k === 'html') e.innerHTML = v; // uniquement pour nos icônes SVG statiques
+    else e.setAttribute(k, v === true ? '' : v);
+  }
+  for (const k of kids.flat()) if (k != null && k !== false) e.append(k.nodeType ? k : document.createTextNode(String(k)));
+  return e;
+}
+const eur = c => (c / 100).toLocaleString('fr-FR', { style: 'currency', currency: 'EUR', maximumFractionDigits: c % 100 ? 2 : 0 });
+const parisToday = () => new Intl.DateTimeFormat('sv-SE', { timeZone: 'Europe/Paris' }).format(new Date());
+const fmtDay = d => { if (!d) return ''; const t = parisToday(); const tm = new Date(Date.parse(t) + 864e5).toISOString().slice(0, 10);
+  if (d === t) return 'Aujourd’hui'; if (d === tm) return 'Demain';
+  return new Date(d + 'T12:00:00').toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short' }); };
+const shortPlace = s => String(s || '').split(',')[0].replace(/aéroport( de)? nice( côte d[’']azur)?/i, 'Aéroport de Nice').trim();
+const chev = () => h('span', { html: '<svg class="chev" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>' });
+let toastT;
+function toast(text, err = false) { const t = $('toast'); t.textContent = text; t.classList.toggle('err', err); t.classList.remove('hidden'); clearTimeout(toastT); toastT = setTimeout(() => t.classList.add('hidden'), err ? 6000 : 3500); }
+async function token() { const { data: { session } } = await db.auth.getSession(); if (!session?.access_token) throw Error('Session expirée : reconnecte-toi.'); return session.access_token; }
+
+/* ---------- Données ---------- */
+const S = { res: [], drafts: [], quotes: [], pays: [], partners: [], requests: [], periods: [] };
+const by = (arr, id) => arr.find(x => x.reservation_id === id);
+async function load() {
+  const [r, d, q, p, pa, cr, pe] = await Promise.all([
+    db.from('eps_reservations').select('id,reference,created_at,status,type,departure,destination,flight_number,date,time,duration_hours,passengers,luggage,child_seat,vehicle,customer_name,customer_email,customer_phone,notes,partner_code,archived_at').is('archived_at', null).order('date', { ascending: true }).limit(300),
+    db.from('eps_quote_drafts').select('reservation_id,amount_cents,note,status,updated_at'),
+    db.from('eps_reservation_quotes').select('reservation_id,amount_cents,state,sent_at,accepted_at'),
+    db.from('eps_reservation_payments').select('reservation_id,amount_cents,state,paid_at,authorized_at,authorization_expires_at'),
+    db.from('eps_partners').select('id,code,name,kind,contact_email,commission_percent,active,created_at').order('created_at', { ascending: false }),
+    db.from('eps_customer_requests').select('id,reservation_id,request_type,status,created_at,processed_at').is('processed_at', null),
+    db.from('pricing_events').select('name,start_date,end_date,surcharge_percent,enabled,kind').order('start_date', { ascending: true })
+  ]);
+  const err = [r, d, q, p, pa].find(x => x.error);
+  if (err) { toast('Lecture impossible : ' + err.error.message, true); return; }
+  S.res = r.data; S.drafts = d.data; S.quotes = q.data; S.pays = p.data; S.partners = pa.data;
+  S.requests = cr.error ? [] : cr.data; S.periods = pe.error ? [] : pe.data;
+  render();
+}
+
+/* ---------- Statut d'une course ---------- */
+function stage(b) {
+  const pay = by(S.pays, b.id), quote = by(S.quotes, b.id);
+  if (b.status === 'annulée') return { key: 'off', label: 'Annulée', cls: '' };
+  if (pay?.state === 'payé') return { key: 'paid', label: 'Payée', cls: 'ok' };
+  if (pay?.state === 'autorisé') return { key: 'auth', label: 'Garantie à encaisser', cls: 'alert' };
+  if (b.status === 'confirmée') return { key: 'confirmed', label: 'Confirmée', cls: 'ok' };
+  if (quote || b.status === 'devis envoyé') return { key: 'quoted', label: 'Devis envoyé', cls: 'wait' };
+  return { key: 'new', label: 'Devis à faire', cls: 'alert' };
+}
+const isPast = b => b.date < parisToday();
+const needsAction = b => !isPast(b) && ['new', 'auth'].includes(stage(b).key);
+
+/* ---------- Prix conseillé ---------- */
+function suggest(b) {
+  const partner = b.partner_code ? S.partners.find(p => p.code === b.partner_code) : null;
+  if ((b.type || '') === 'Mise à disposition') {
+    const hours = Math.max(2, Number(b.duration_hours) || 2);
+    const hourly = { 'Business Class': 100, 'Business Van': 120, 'First Class': 150, 'Electric Class': 150 }[b.vehicle] || 100;
+    return { amount: Math.ceil(hours * hourly / 5) * 5, why: hours + ' h × ' + hourly + ' € de l’heure' };
+  }
+  const e = window.epsEstimatePrice?.({ type: b.type || 'Transfert', departure: b.departure, destination: b.destination, date: b.date, time: b.time, vehicle: b.vehicle });
+  if (!e) return null;
+  if (partner) return { amount: e.base, why: 'Tarif partenaire fixe (' + partner.name + '), sans majoration' };
+  if (e.percent) return { amount: e.amount, why: e.base + ' € + ' + e.percent + ' % ' + (e.event ? '(' + e.event + ')' : '(dernière minute)') };
+  return { amount: e.amount, why: 'Tarif de base du site' };
+}
+
+/* ---------- Rendu ---------- */
+let tab = 'home', filter = 'todo';
+const titles = { home: 'Aujourd’hui', courses: 'Courses', partners: 'Partenaires', more: 'Plus' };
+function render() {
+  const todo = S.res.filter(needsAction).length;
+  const pip = $('pip-courses'); pip.textContent = todo; pip.classList.toggle('hidden', !todo);
+  $('title').textContent = titles[tab];
+  $('subtitle').textContent = tab === 'home' ? new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }) : '';
+  for (const t of ['home', 'courses', 'partners', 'more']) $('v-' + t).classList.toggle('hidden', t !== tab);
+  document.querySelectorAll('.tabs button').forEach(b => b.dataset.tab === tab ? b.setAttribute('aria-current', 'page') : b.removeAttribute('aria-current'));
+  ({ home: renderHome, courses: renderCourses, partners: renderPartners, more: renderMore })[tab]();
+}
+
+function courseRow(b) {
+  const st = stage(b), pay = by(S.pays, b.id), dr = by(S.drafts, b.id), q = by(S.quotes, b.id);
+  const amt = pay?.amount_cents ?? q?.amount_cents ?? dr?.amount_cents;
+  return h('button', { class: 'row', onclick: () => openCourse(b.id) },
+    h('span', { class: 'dot ' + st.cls }),
+    h('span', { class: 'main' },
+      h('div', { class: 't' }, shortPlace(b.departure) + ' – ' + shortPlace(b.destination)),
+      h('div', { class: 's' }, b.customer_name + (b.partner_code ? ' · ' + b.partner_code : ''))),
+    h('span', { class: 'end' }, h('b', {}, (b.time || '').slice(0, 5)), fmtDay(b.date), amt ? h('div', {}, eur(amt)) : null),
+    chev());
+}
+
+function renderHome() {
+  const v = $('v-home'); v.replaceChildren();
+  const today = parisToday();
+  const startOf = b => Date.parse(b.date + 'T' + ((b.time || '00:00').slice(0, 5)) + ':00');
+  const upcoming = S.res.filter(b => b.date >= today && startOf(b) > Date.now() - 2 * 3600e3 && ['confirmed', 'paid', 'auth'].includes(stage(b).key)).sort((a, b) => (a.date + a.time).localeCompare(b.date + b.time));
+  const next = upcoming[0];
+  if (next) {
+    const mins = Math.round((Date.parse(next.date + 'T' + (next.time || '00:00') + ':00') - Date.now()) / 60000);
+    const count = mins < 0 ? 'En cours' : mins < 60 ? 'Dans ' + mins + ' min' : mins < 1440 ? 'Dans ' + Math.round(mins / 60) + ' h' : 'Dans ' + Math.round(mins / 1440) + ' j';
+    v.append(h('button', { class: 'ticket', style: 'width:100%;text-align:left;border:0;cursor:pointer', onclick: () => openCourse(next.id), 'aria-label': 'Prochaine course' },
+      h('div', { class: 'when' }, h('span', { class: 'time' }, (next.time || '').slice(0, 5)), h('span', { class: 'day' }, fmtDay(next.date)), h('span', { class: 'count' }, count)),
+      h('div', { class: 'perf' }),
+      h('div', { class: 'route' }, h('span', {}, shortPlace(next.departure)), h('span', { class: 'to' }, shortPlace(next.destination))),
+      h('div', { class: 'who' }, h('b', {}, next.customer_name), h('span', {}, next.vehicle), h('span', {}, next.passengers + ' pass.'), next.flight_number ? h('span', {}, 'Vol ' + next.flight_number) : null)));
+  } else {
+    v.append(h('div', { class: 'ticket empty' }, h('div', { class: 'route' }, 'Aucune course confirmée à venir'), h('div', { class: 'who' }, 'Les courses confirmées ou payées apparaîtront ici.')));
+  }
+
+  v.append(h('h2', {}, 'À faire'));
+  const newOnes = S.res.filter(b => !isPast(b) && stage(b).key === 'new');
+  const auths = S.res.filter(b => stage(b).key === 'auth');
+  const quoted = S.res.filter(b => !isPast(b) && stage(b).key === 'quoted');
+  const todo = h('div', { class: 'list' });
+  const item = (n, t, s, go) => h('button', { class: 'row' + (n ? ' todo' : ''), onclick: go }, h('span', { class: 'big-n' }, n), h('span', { class: 'main' }, h('div', { class: 't' }, t), h('div', { class: 's' }, s)), chev());
+  todo.append(
+    item(newOnes.length, newOnes.length > 1 ? 'Demandes sans devis' : 'Demande sans devis', newOnes.length ? 'La plus proche : ' + fmtDay(newOnes[0].date) : 'Tout est à jour', () => { filter = 'todo'; go('courses'); }),
+    item(auths.length, 'Garanties à encaisser', auths.length ? 'Carte autorisée, à encaisser après la course' : 'Aucune garantie en attente', () => { filter = 'todo'; go('courses'); }),
+    item(quoted.length, 'Devis en attente de réponse', quoted.length ? 'Le client n’a pas encore payé' : 'Aucun devis en attente', () => { filter = 'quoted'; go('courses'); }),
+    item(S.requests.length, 'Messages de clients', S.requests.length ? 'Modifications ou annulations demandées' : 'Aucun message en attente', () => { location.href = '../admin/demandes-clients/'; })
+  );
+  v.append(todo);
+
+  const month = today.slice(0, 7);
+  const paidMonth = S.pays.filter(p => p.state === 'payé' && (p.paid_at || '').slice(0, 7) === month);
+  const ca = paidMonth.reduce((s, p) => s + (p.amount_cents || 0), 0);
+  const coursesMonth = S.res.filter(b => (b.date || '').slice(0, 7) === month && b.status !== 'annulée').length;
+  const commission = commissionsDue().total;
+  v.append(h('h2', {}, 'Ce mois-ci'),
+    h('div', { class: 'stats' },
+      h('div', { class: 'stat' }, h('div', { class: 'v' }, eur(ca)), h('div', { class: 'l' }, 'Encaissé')),
+      h('div', { class: 'stat' }, h('div', { class: 'v' }, coursesMonth), h('div', { class: 'l' }, 'Courses prévues')),
+      h('div', { class: 'stat' }, h('div', { class: 'v' }, upcoming.length), h('div', { class: 'l' }, 'Courses à venir')),
+      h('div', { class: 'stat' }, h('div', { class: 'v' }, eur(commission)), h('div', { class: 'l' }, 'Commissions à reverser'))));
+
+  if (upcoming.length > 1) {
+    v.append(h('h2', {}, 'Ensuite'));
+    const l = h('div', { class: 'list' }); upcoming.slice(1, 6).forEach(b => l.append(courseRow(b))); v.append(l);
+  }
+}
+
+function renderCourses() {
+  const v = $('v-courses'); v.replaceChildren();
+  const filters = [['todo', 'À traiter'], ['upcoming', 'À venir'], ['quoted', 'Devis envoyés'], ['past', 'Passées'], ['all', 'Toutes']];
+  v.append(h('div', { class: 'seg', role: 'group', 'aria-label': 'Filtrer les courses' },
+    filters.map(([k, l]) => h('button', { 'aria-pressed': String(filter === k), onclick: () => { filter = k; renderCourses(); } }, l))));
+  let list = S.res.slice();
+  if (filter === 'todo') list = list.filter(needsAction);
+  if (filter === 'upcoming') list = list.filter(b => !isPast(b) && stage(b).key !== 'off');
+  if (filter === 'quoted') list = list.filter(b => !isPast(b) && stage(b).key === 'quoted');
+  if (filter === 'past') list = list.filter(isPast).reverse();
+  const l = h('div', { class: 'list' });
+  list.forEach(b => l.append(courseRow(b)));
+  if (!list.length) l.append(h('div', { class: 'empty-note' }, filter === 'todo' ? 'Rien à traiter. Les nouvelles demandes du site arriveront ici.' : 'Aucune course dans cette liste.'));
+  v.append(l, h('div', { class: 'btns' }, h('button', { class: 'btn quiet', onclick: openNewCourse }, 'Ajouter une demande reçue par téléphone')));
+}
+
+/* ---------- Fiche course ---------- */
+function openSheet(title, body) { $('sheet-title').textContent = title; $('sheet-body').replaceChildren(body); $('sheet').classList.add('open'); $('sheet').scrollTop = 0; document.body.style.overflow = 'hidden'; }
+function closeSheet() { $('sheet').classList.remove('open'); document.body.style.overflow = ''; }
+$('sheet-close').onclick = closeSheet;
+
+function openCourse(id) {
+  const b = S.res.find(x => x.id === id); if (!b) return;
+  const st = stage(b), pay = by(S.pays, b.id), dr = by(S.drafts, b.id), q = by(S.quotes, b.id);
+  const partner = b.partner_code ? S.partners.find(p => p.code === b.partner_code) : null;
+  const body = h('div');
+
+  const phone = String(b.customer_phone || '').replace(/[^\d+]/g, '');
+  body.append(h('div', { class: 'card' },
+    h('div', { style: 'display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px' }, h('span', { class: 'badge ' + st.cls }, st.label), partner ? h('span', { class: 'badge partner' }, 'Partenaire ' + partner.name) : b.partner_code ? h('span', { class: 'badge partner' }, 'Code ' + b.partner_code) : null),
+    h('dl', { class: 'kv' },
+      h('dt', {}, 'Quand'), h('dd', {}, fmtDay(b.date) + ' à ' + (b.time || '').slice(0, 5)),
+      h('dt', {}, 'Départ'), h('dd', {}, b.departure),
+      b.destination ? [h('dt', {}, 'Arrivée'), h('dd', {}, b.destination)] : null,
+      h('dt', {}, 'Prestation'), h('dd', {}, b.type + (b.duration_hours ? ' · ' + b.duration_hours + ' h' : '')),
+      h('dt', {}, 'Véhicule'), h('dd', {}, b.vehicle),
+      h('dt', {}, 'Passagers'), h('dd', {}, b.passengers + ' · ' + (b.luggage ?? '0') + ' bagage(s)'),
+      b.flight_number ? [h('dt', {}, 'Vol'), h('dd', {}, b.flight_number)] : null,
+      b.child_seat && b.child_seat !== 'none' ? [h('dt', {}, 'Siège enfant'), h('dd', {}, b.child_seat)] : null,
+      b.notes ? [h('dt', {}, 'Notes'), h('dd', {}, b.notes)] : null,
+      h('dt', {}, 'Référence'), h('dd', {}, b.reference || '—')),
+    h('div', { style: 'margin-top:14px;font-weight:700' }, b.customer_name),
+    h('div', { class: 'contact' },
+      phone ? h('a', { href: 'tel:' + phone }, 'Appeler') : null,
+      phone ? h('a', { href: 'https://wa.me/' + phone.replace(/^\+/, '').replace(/^0/, '33'), target: '_blank', rel: 'noopener' }, 'WhatsApp') : null,
+      b.customer_email ? h('a', { href: 'mailto:' + b.customer_email }, 'E-mail') : null)));
+
+  /* Paiement */
+  if (pay) {
+    const box = h('div', { class: 'card' }, h('h3', {}, 'Paiement'), h('p', { style: 'margin:0' }, pay.state + ' · ' + eur(pay.amount_cents)));
+    if (pay.state === 'autorisé') {
+      if (pay.authorization_expires_at) box.append(h('p', { class: 'hint' }, 'Garantie valable jusqu’au ' + new Date(pay.authorization_expires_at).toLocaleString('fr-FR', { dateStyle: 'short', timeStyle: 'short' })));
+      box.append(h('div', { class: 'btns' },
+        h('button', { class: 'btn ok', onclick: e => payAction(b, 'capture', e.currentTarget) }, 'Encaisser ' + eur(pay.amount_cents)),
+        h('button', { class: 'btn danger', onclick: e => payAction(b, 'cancel', e.currentTarget) }, 'Libérer la garantie sans encaisser')));
+    }
+    body.append(box);
+  }
+
+  /* Devis */
+  const locked = ['autorisé', 'payé'].includes(pay?.state);
+  if (!locked && b.status !== 'annulée') {
+    const sug = suggest(b);
+    const amount = h('input', { class: 'amount', type: 'number', inputmode: 'decimal', step: '1', min: '1', value: dr ? String(dr.amount_cents / 100) : (sug ? String(sug.amount) : ''), 'aria-label': 'Montant du devis TTC en euros' });
+    const note = h('textarea', { rows: '2', placeholder: 'Message pour le client (facultatif)' }); note.value = dr?.note || '';
+    const card = h('div', { class: 'card' }, h('h3', {}, q ? 'Devis déjà envoyé : ' + eur(q.amount_cents) : 'Devis'),
+      h('label', { class: 'field' }, h('span', {}, 'Prix TTC (€)'), amount,
+        h('div', { class: 'hint' }, sug ? 'Prix conseillé ' + sug.amount + ' € · ' + sug.why : 'Pas de tarif connu pour ce trajet : saisis le prix.')),
+      h('label', { class: 'field' }, h('span', {}, 'Message'), note));
+    const send = h('button', { class: 'btn primary', onclick: () => sendQuote(b, amount, note, send) }, q ? 'Renvoyer un nouveau devis' : 'Envoyer le devis au client');
+    card.append(h('div', { class: 'btns' }, send, h('button', { class: 'btn quiet', onclick: () => saveDraft(b, amount, note).then(ok => ok && toast('Devis enregistré, pas encore envoyé.')) }, 'Enregistrer sans envoyer')),
+      h('p', { class: 'hint' }, 'Le client reçoit un e-mail depuis contact@elite-prestige-services.fr avec son lien de paiement sécurisé.'));
+    body.append(card);
+  }
+
+  /* Statut */
+  const sel = h('select', {}, ['reçue', 'devis envoyé', 'confirmée', 'annulée'].map(s => h('option', { value: s, selected: b.status === s }, s)));
+  body.append(h('div', { class: 'card' }, h('h3', {}, 'Statut'),
+    h('label', { class: 'field' }, h('span', {}, 'Statut de la réservation'), sel),
+    h('div', { class: 'btns two' },
+      h('button', { class: 'btn quiet', onclick: () => setStatus(b, sel.value) }, 'Mettre à jour'),
+      h('button', { class: 'btn danger', onclick: () => archive(b) }, 'Archiver')),
+    h('p', { class: 'hint' }, 'Pour supprimer définitivement ou attribuer un chauffeur, passe par ', h('a', { href: '../admin/reservations/' }, 'l’ancien admin'), ' ou le ', h('a', { href: '../admin/dispatch/' }, 'dispatch'), '.')));
+
+  openSheet((b.reference || 'Course') + ' · ' + b.customer_name, body);
+}
+
+async function saveDraft(b, amount, note) {
+  const cents = Math.round(Number(amount.value) * 100);
+  if (!Number.isInteger(cents) || cents < 100) { toast('Saisis un prix valide.', true); return false; }
+  const x = await db.from('eps_quote_drafts').upsert({ reservation_id: b.id, amount_cents: cents, note: note.value, status: 'brouillon', updated_at: new Date().toISOString() }, { onConflict: 'reservation_id' });
+  if (x.error) { toast(x.error.message, true); return false; }
+  return true;
+}
+async function sendQuote(b, amount, note, btn) {
+  const cents = Math.round(Number(amount.value) * 100);
+  if (!Number.isInteger(cents) || cents < 100) { toast('Saisis un prix valide.', true); return; }
+  if (!confirm('Envoyer à ' + b.customer_email + ' un devis de ' + eur(cents) + ' ?' + (by(S.quotes, b.id) ? '\nL’ancien lien de devis ne fonctionnera plus.' : ''))) return;
+  btn.disabled = true; btn.textContent = 'Envoi en cours…';
+  try {
+    if (!await saveDraft(b, amount, note)) throw Error('Devis non enregistré');
+    const link = await db.rpc('eps_prepare_quote_link', { p_reservation: b.id });
+    if (link.error) throw Error(link.error.message);
+    const r = await fetch(SB + '/functions/v1/eps-send-quote-email', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + await token() }, body: JSON.stringify({ reservation_id: b.id, token: link.data }) });
+    const d = await r.json().catch(() => ({}));
+    if (!r.ok || !d.ok) throw Error(d.error || 'Envoi impossible');
+    if (b.status === 'reçue') await db.from('eps_reservations').update({ status: 'devis envoyé', updated_at: new Date().toISOString() }).eq('id', b.id);
+    toast('Devis envoyé à ' + b.customer_name + '.');
+    closeSheet(); await load();
+  } catch (e) { toast(e.message || 'Envoi impossible', true); btn.disabled = false; btn.textContent = 'Envoyer le devis au client'; }
+}
+async function payAction(b, action, btn) {
+  const pay = by(S.pays, b.id);
+  if (!confirm(action === 'capture' ? 'Encaisser maintenant ' + eur(pay.amount_cents) + ' sur la carte de ' + b.customer_name + ' ?' : 'Libérer la garantie sans rien encaisser ?')) return;
+  btn.disabled = true;
+  try {
+    const r = await fetch(SB + '/functions/v1/eps-admin-payment-action', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + await token() }, body: JSON.stringify({ reservation_id: b.id, action }) });
+    const d = await r.json().catch(() => ({}));
+    if (!r.ok || !d.ok) throw Error(d.error || 'Action Stripe impossible');
+    toast(action === 'capture' ? 'Paiement encaissé.' : 'Garantie libérée.');
+    closeSheet(); setTimeout(load, 1200);
+  } catch (e) { toast(e.message, true); btn.disabled = false; }
+}
+async function setStatus(b, status) {
+  if (status === 'confirmée' && !confirm('Confirmer cette réservation ? Vérifie que le client a bien accepté le devis.')) return;
+  const x = await db.from('eps_reservations').update({ status, updated_at: new Date().toISOString() }).eq('id', b.id);
+  if (x.error) return toast(x.error.message, true);
+  toast('Statut mis à jour : ' + status + '.'); closeSheet(); load();
+}
+async function archive(b) {
+  if (!confirm('Archiver ' + (b.reference || 'cette course') + ' ? Elle sort des listes, l’historique est conservé.')) return;
+  const x = await db.from('eps_reservations').update({ archived_at: new Date().toISOString(), updated_at: new Date().toISOString() }).eq('id', b.id);
+  if (x.error) return toast(x.error.message, true);
+  toast('Course archivée.'); closeSheet(); load();
+}
+
+function openNewCourse() {
+  const f = h('form', { onsubmit: async e => {
+    e.preventDefault(); const v = Object.fromEntries(new FormData(f));
+    const reference = 'EPS-' + Date.now().toString(36).toUpperCase() + '-' + Math.random().toString(36).slice(2, 6).toUpperCase();
+    const row = { reference, status: 'reçue', type: v.type, departure: v.departure, destination: v.destination, date: v.date, time: v.time, vehicle: v.vehicle,
+      passengers: String(v.passengers), luggage: String(v.luggage || '0'), customer_name: v.customer_name, customer_email: v.customer_email, customer_phone: v.customer_phone || '',
+      flight_number: v.flight_number || '', notes: v.notes || '', partner_code: v.partner_code || null };
+    const x = await db.from('eps_reservations').insert(row);
+    if (x.error) return toast(x.error.message, true);
+    toast('Demande ' + reference + ' ajoutée.'); closeSheet(); await load();
+  } });
+  const fld = (label, el) => h('label', { class: 'field' }, h('span', {}, label), el);
+  f.append(
+    fld('Client', h('input', { name: 'customer_name', required: true, maxlength: '80', autocomplete: 'off' })),
+    h('div', { class: 'grid2' }, fld('Téléphone', h('input', { name: 'customer_phone', type: 'tel' })), fld('E-mail', h('input', { name: 'customer_email', type: 'email', required: true }))),
+    fld('Prestation', h('select', { name: 'type' }, h('option', {}, 'Transfert'), h('option', {}, 'Mise à disposition'))),
+    fld('Départ', h('input', { name: 'departure', required: true })), fld('Arrivée', h('input', { name: 'destination', required: true })),
+    h('div', { class: 'grid2' }, fld('Date', h('input', { name: 'date', type: 'date', required: true, value: parisToday() })), fld('Heure', h('input', { name: 'time', type: 'time', required: true }))),
+    fld('Véhicule', h('select', { name: 'vehicle' }, ['Business Van', 'Business Class', 'First Class', 'Electric Class', 'Sans préférence'].map(x => h('option', {}, x)))),
+    h('div', { class: 'grid2' }, fld('Passagers', h('input', { name: 'passengers', type: 'number', min: '1', max: '7', value: '2', required: true })), fld('Bagages', h('input', { name: 'luggage', type: 'number', min: '0', max: '20', value: '1' }))),
+    fld('Numéro de vol', h('input', { name: 'flight_number' })),
+    fld('Partenaire', h('select', { name: 'partner_code' }, h('option', { value: '' }, 'Aucun (client direct)'), S.partners.filter(p => p.active).map(p => h('option', { value: p.code }, p.name + ' (' + p.code + ')')))),
+    fld('Notes', h('textarea', { name: 'notes', rows: '2' })),
+    h('button', { class: 'btn primary', type: 'submit' }, 'Ajouter la demande'));
+  openSheet('Nouvelle demande', f);
+}
+
+/* ---------- Partenaires ---------- */
+function commissionsDue() {
+  const rows = {}; let total = 0;
+  for (const b of S.res) {
+    if (!b.partner_code) continue;
+    const p = S.partners.find(x => x.code === b.partner_code); const pay = by(S.pays, b.id);
+    const r = rows[b.partner_code] ||= { courses: 0, paid: 0, commission: 0 };
+    r.courses++;
+    if (pay?.state === 'payé') { r.paid += pay.amount_cents; const c = Math.round(pay.amount_cents * (Number(p?.commission_percent ?? 10) / 100)); r.commission += c; total += c; }
+  }
+  return { rows, total };
+}
+const KINDS = { conciergerie: 'Conciergerie', hotel: 'Hôtel', agence: 'Agence immobilière', evenementiel: 'Événementiel', yachting: 'Yachting', autre: 'Autre', test: 'Test' };
+function partnerLink(p) { return SITE + '?partenaire=' + encodeURIComponent(p.code); }
+function renderPartners() {
+  const v = $('v-partners'); v.replaceChildren();
+  const { rows, total } = commissionsDue();
+  v.append(h('div', { class: 'stats', style: 'margin-top:4px' },
+    h('div', { class: 'stat' }, h('div', { class: 'v' }, S.partners.filter(p => p.active && p.kind !== 'test').length), h('div', { class: 'l' }, 'Partenaires actifs')),
+    h('div', { class: 'stat' }, h('div', { class: 'v' }, eur(total)), h('div', { class: 'l' }, 'Commissions à reverser'))));
+  v.append(h('h2', {}, 'Tes partenaires'));
+  const l = h('div', { class: 'list' });
+  for (const p of S.partners) {
+    const r = rows[p.code] || { courses: 0, commission: 0 };
+    l.append(h('button', { class: 'row', onclick: () => openPartner(p.id) },
+      h('span', { class: 'dot ' + (p.active ? 'ok' : '') }),
+      h('span', { class: 'main' }, h('div', { class: 't' }, p.name), h('div', { class: 's' }, (KINDS[p.kind] || p.kind) + ' · ' + p.code)),
+      h('span', { class: 'end' }, h('b', {}, r.courses + ' course' + (r.courses > 1 ? 's' : '')), r.commission ? eur(r.commission) : '—'),
+      chev()));
+  }
+  if (!S.partners.length) l.append(h('div', { class: 'empty-note' }, 'Aucun partenaire. Ajoute ta première agence ou conciergerie.'));
+  v.append(l, h('div', { class: 'btns' }, h('button', { class: 'btn primary', onclick: () => openPartner(null) }, 'Ajouter un partenaire')),
+    h('p', { class: 'hint' }, 'Chaque partenaire a un lien personnel : ses clients réservent au tarif fixe, sans majoration, et tu reverses 10 % des courses payées.'));
+}
+const slug = s => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toUpperCase().replace(/[^A-Z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 20);
+function openPartner(id) {
+  const p = id ? S.partners.find(x => x.id === id) : null;
+  const body = h('div');
+  if (p) {
+    const { rows } = commissionsDue(); const r = rows[p.code] || { courses: 0, paid: 0, commission: 0 };
+    const link = partnerLink(p);
+    body.append(h('div', { class: 'card' },
+      h('div', { style: 'display:flex;gap:8px;margin-bottom:10px' }, h('span', { class: 'badge ' + (p.active ? 'ok' : '') }, p.active ? 'Actif' : 'Désactivé'), h('span', { class: 'badge partner' }, p.code)),
+      h('dl', { class: 'kv' }, h('dt', {}, 'Type'), h('dd', {}, KINDS[p.kind] || p.kind), h('dt', {}, 'Contact'), h('dd', {}, p.contact_email || '—'),
+        h('dt', {}, 'Courses'), h('dd', {}, r.courses), h('dt', {}, 'Payé'), h('dd', {}, eur(r.paid)), h('dt', {}, 'Commission'), h('dd', {}, eur(r.commission) + ' (' + Number(p.commission_percent) + ' %)')),
+      h('label', { class: 'field', style: 'margin-top:14px' }, h('span', {}, 'Lien de réservation du partenaire'), h('input', { value: link, readonly: true })),
+      h('div', { class: 'btns two' },
+        h('button', { class: 'btn quiet', onclick: async () => { try { await navigator.clipboard.writeText(link); toast('Lien copié.'); } catch { toast('Sélectionne le lien pour le copier.', true); } } }, 'Copier le lien'),
+        p.contact_email ? h('a', { class: 'btn quiet', href: 'mailto:' + p.contact_email + '?subject=' + encodeURIComponent('Votre lien de réservation Elite Prestige Services') + '&body=' + encodeURIComponent('Bonjour,\n\nVoici votre lien de réservation partenaire : ' + link + '\n\nVos clients y réservent au tarif fixe, sans majoration, et nous vous reversons ' + Number(p.commission_percent) + ' % sur chaque course payée.\n\nElite Prestige Services') }, 'Envoyer par e-mail') : h('span')),
+      h('div', { class: 'btns' }, h('button', { class: p.active ? 'btn danger' : 'btn ok', onclick: async () => {
+        const x = await db.from('eps_partners').update({ active: !p.active }).eq('id', p.id);
+        if (x.error) return toast(x.error.message, true); toast(p.active ? 'Partenaire désactivé : son lien ne donne plus le tarif fixe.' : 'Partenaire réactivé.'); closeSheet(); load(); } }, p.active ? 'Désactiver ce partenaire' : 'Réactiver ce partenaire'))));
+    const theirs = S.res.filter(b => b.partner_code === p.code);
+    if (theirs.length) { body.append(h('h2', {}, 'Ses courses')); const l = h('div', { class: 'list' }); theirs.slice().reverse().forEach(b => l.append(courseRow(b))); body.append(l); }
+    openSheet(p.name, body); return;
+  }
+  const name = h('input', { name: 'name', required: true, maxlength: '80' });
+  const code = h('input', { name: 'code', required: true, pattern: '[A-Z0-9-]{3,24}', maxlength: '24', autocapitalize: 'characters' });
+  name.addEventListener('input', () => { if (!code.dataset.touched) code.value = slug(name.value); });
+  code.addEventListener('input', () => { code.dataset.touched = '1'; code.value = code.value.toUpperCase().replace(/[^A-Z0-9-]/g, ''); });
+  const f = h('form', { onsubmit: async e => {
+    e.preventDefault(); const v = Object.fromEntries(new FormData(f));
+    const x = await db.from('eps_partners').insert({ name: v.name.trim(), code: v.code, kind: v.kind, contact_email: v.contact_email || null, commission_percent: Number(v.commission_percent) || 10 });
+    if (x.error) return toast(x.error.code === '23505' ? 'Ce code existe déjà, choisis-en un autre.' : x.error.message, true);
+    toast('Partenaire ajouté.'); closeSheet(); await load();
+  } },
+    h('label', { class: 'field' }, h('span', {}, 'Nom'), name),
+    h('label', { class: 'field' }, h('span', {}, 'Type'), h('select', { name: 'kind' }, Object.entries(KINDS).filter(([k]) => k !== 'test').map(([k, l]) => h('option', { value: k }, l)))),
+    h('label', { class: 'field' }, h('span', {}, 'E-mail du contact'), h('input', { name: 'contact_email', type: 'email' })),
+    h('div', { class: 'grid2' },
+      h('label', { class: 'field' }, h('span', {}, 'Code (lien)'), code),
+      h('label', { class: 'field' }, h('span', {}, 'Commission (%)'), h('input', { name: 'commission_percent', type: 'number', min: '0', max: '50', step: '0.5', value: '10' }))),
+    h('p', { class: 'hint' }, 'Le code apparaît dans son lien : elite-prestige-services.fr/?partenaire=CODE'),
+    h('button', { class: 'btn primary', type: 'submit' }, 'Ajouter le partenaire'));
+  openSheet('Nouveau partenaire', f);
+}
+
+/* ---------- Plus ---------- */
+function renderMore() {
+  const v = $('v-more'); v.replaceChildren();
+  const link = (t, s, href) => h('a', { class: 'row', href, style: 'text-decoration:none;color:inherit' }, h('span', { class: 'main' }, h('div', { class: 't' }, t), h('div', { class: 's' }, s)), chev());
+  v.append(h('h2', { style: 'margin-top:4px' }, 'Outils'), h('div', { class: 'list' },
+    link('Dispatch chauffeurs', 'Proposer une course à un chauffeur', '../admin/dispatch/'),
+    link('Documents chauffeurs', 'Valider les pièces des chauffeurs', '../admin/documents/'),
+    link('Messages de clients', 'Modifications et annulations', '../admin/demandes-clients/'),
+    link('Suivi en direct', 'Alertes, paiements, notifications', '../admin/suivi/'),
+    link('Prospection', 'Contacts et campagnes d’e-mails', '../admin/crm/'),
+    link('Ancien admin des réservations', 'Suppression définitive, aperçu imprimable', '../admin/reservations/')));
+  const today = parisToday();
+  const periods = S.periods.filter(p => p.enabled && p.end_date && p.end_date >= today);
+  v.append(h('h2', {}, 'Périodes majorées'));
+  const l = h('div', { class: 'list' });
+  periods.forEach(p => l.append(h('div', { class: 'row', style: 'cursor:default' },
+    h('span', { class: 'main' }, h('div', { class: 't' }, p.name), h('div', { class: 's' }, fmtDay(p.start_date) + ' – ' + fmtDay(p.end_date))),
+    h('span', { class: 'end' }, h('b', {}, '+' + Number(p.surcharge_percent) + ' %')))));
+  if (!periods.length) l.append(h('div', { class: 'empty-note' }, 'Aucune période majorée à venir.'));
+  v.append(l, h('p', { class: 'hint' }, 'Les clients directs paient la plus forte majoration de la période. Les partenaires gardent leur tarif fixe.'));
+  v.append(h('div', { class: 'btns' },
+    h('a', { class: 'btn quiet', href: SITE, target: '_blank', rel: 'noopener' }, 'Voir le site'),
+    h('button', { class: 'btn danger', onclick: async () => { await db.auth.signOut(); guard(); } }, 'Se déconnecter')));
+}
+
+/* ---------- Navigation & connexion ---------- */
+function go(t) { tab = t; history.replaceState(null, '', '#' + t); render(); window.scrollTo(0, 0); }
+document.querySelectorAll('.tabs button').forEach(b => b.onclick = () => go(b.dataset.tab));
+$('refresh').onclick = async () => { await load(); toast('À jour.'); };
+async function guard() {
+  const { data: { user } } = await db.auth.getUser();
+  const { data: admin } = user ? await db.rpc('eps_is_admin') : { data: false };
+  $('login').classList.toggle('hidden', !!admin); $('app').classList.toggle('hidden', !admin);
+  if (admin) { const t = location.hash.slice(1); if (titles[t]) tab = t; await load(); }
+  else if (user) $('loginmsg').textContent = 'Ce compte n’a pas les droits administrateur EPS.';
+}
+$('loginform').onsubmit = async e => {
+  e.preventDefault(); $('loginmsg').textContent = '';
+  const r = await db.auth.signInWithPassword({ email: $('email').value, password: $('password').value });
+  $('password').value = '';
+  if (r.error) $('loginmsg').textContent = 'Connexion refusée : vérifie l’e-mail et le mot de passe.'; else guard();
+};
+window.epsPricingReady?.then(() => { if (!$('app').classList.contains('hidden')) render(); });
+guard();
+</script>
+</body>
+</html>

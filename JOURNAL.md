@@ -19,6 +19,7 @@
   - Fonctions : eps-pricing-config (lecture publique des périodes + vérif. code partenaire), eps-reservation v20 (enregistre le code partenaire, signale [Partenaire] dans l’alerte admin). Test de bout en bout OK (réservation D870D7FC annulée). Code TEST-EPS à désactiver.
   - Site : lien partenaire = https://www.elite-prestige-services.fr/?partenaire=CODE (mémorisé sur l’appareil) ; récapitulatif « Tarif partenaire ».
   - Robot de prospection mis en PAUSE (cron eps-crm-prospecting-lots inactif) en attendant la validation des mails partenaires.
+- Nouvel admin mobile /admin-v2/ (03/11/2026, demandé par Anthony : téléphone d’abord, construit à côté de l’ancien) : onglets Aujourd’hui (billet de la prochaine course, à faire, chiffres du mois), Courses (filtres, fiche, devis + lien + envoi en un geste, encaissement/libération de garantie, statut, archivage, ajout d’une demande téléphonique avec partenaire), Partenaires (création de codes, lien à copier/envoyer, désactivation, courses et commissions 10 % sur paiements « payé »), Plus (liens vers dispatch, documents, demandes, suivi, CRM, ancien admin ; périodes majorées). Mêmes appels Supabase que l’ancien admin (eps_prepare_quote_link, eps-send-quote-email, eps-admin-payment-action). Suppression définitive volontairement laissée à l’ancien admin. Politique RLS admin ajoutée sur eps_partners.
 - Reste à faire, enrichir les pages (67/74 sous 400 mots), titres trop longs, demande d’avis Google après course.
 
 ## 26/10/2026 — ChatGPT — Correction SEO de publication

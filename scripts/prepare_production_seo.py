@@ -98,7 +98,7 @@ def check(root):
     for page in root.rglob("*.html"):
         if PREVIEW_PATH.search(page.read_text(encoding="utf-8")):
             raise ValueError(f"Preview path link remains: {page}")
-    for directory in ("admin", "client", "chauffeur", "test-reservation", "test-dispatch", "test-validation-chauffeurs", "dispatch-demo"):
+    for directory in ("admin", "admin-v2", "client", "chauffeur", "test-reservation", "test-dispatch", "test-validation-chauffeurs", "dispatch-demo"):
         for page in (root / directory).rglob("*.html"):
             if not any("noindex" in rule for rule in Metadata(page.read_text(encoding="utf-8")).robots):
                 raise ValueError(f"Private page lost noindex: {page}")

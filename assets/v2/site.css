@@ -49,7 +49,8 @@ p{margin:0}
 .lang-toggle{display:flex;align-items:center;gap:2px;color:var(--ink-3)}
 .lang-toggle button{border:0;background:none;color:var(--ink-3);font-weight:700;font-size:13px;padding:6px;cursor:pointer}
 .lang-toggle button[aria-pressed="true"]{color:var(--gold)}
-.lang-toggle span{opacity:.4}
+.lang-toggle button+button{border-left:1px solid var(--line)}
+.lang-toggle button{padding:4px 8px}
 .site-head .btn{min-height:44px;padding:0 18px;font-size:15px;border-radius:12px}
 .menu-btn{display:none;width:44px;height:44px;border-radius:12px;border:1px solid var(--line);background:var(--surface);cursor:pointer;place-items:center}
 .menu-btn svg{width:22px;height:22px;stroke:var(--ink);fill:none;stroke-width:1.8}
@@ -221,6 +222,10 @@ p{margin:0}
   .main-nav.open{display:flex}
   .main-nav a{padding:14px 10px;font-size:17px;border-bottom:1px solid var(--line);border-radius:0}
   .main-nav .mobile-only{display:block}
+  .head-lang{display:none}
+  .main-nav .nav-lang{display:flex;gap:6px;padding:14px 6px 4px}
+  .main-nav .nav-lang button{border:1px solid var(--line);border-radius:10px;padding:10px 14px;font-size:15px;flex:1}
+  .main-nav .nav-lang button[aria-pressed="true"]{border-color:var(--gold)}
   .hero{height:auto;min-height:auto;max-height:none;background:var(--bg)}
   .hero picture,.hero::after{display:none}
   .hero-body{padding:44px 20px 36px}
@@ -247,3 +252,55 @@ p{margin:0}
   .foot-brand{grid-column:1/-1}
 }
 @media (max-width:380px){.booking .phone-input-row{grid-template-columns:1fr}.services{grid-template-columns:1fr}}
+
+/* Pages intérieures (destinations, transferts, événements, guides, pages légales) */
+.page-body{max-width:920px;padding-top:52px;padding-bottom:20px}
+.page-body>h1,.page-body .hero h1{font-size:clamp(34px,5vw,56px);margin:8px 0 18px;max-width:22ch}
+.page-body>p,.page-body .hero p{color:var(--ink-2);max-width:68ch}
+.page-body>p+p{margin-top:12px}
+.page-body p{color:var(--ink-2)}
+.page-body strong,.page-body b{color:var(--ink)}
+.page-body .eyebrow,.page-body .small:first-child,.page-body>p:first-child{color:var(--gold);font-size:13px;font-weight:700;letter-spacing:.06em}
+.page-body .intro,.page-body .lead{font-size:19px;color:var(--ink-2)}
+.page-body .hero{background:none;min-height:0;height:auto;display:block;overflow:visible}
+.page-body .hero::after{display:none}
+.page-body .cta{display:inline-flex;align-items:center;gap:8px;min-height:52px;padding:0 22px;margin:22px 10px 4px 0;border-radius:14px;background:var(--gold);color:var(--gold-ink);font-weight:800;text-decoration:none}
+.page-body .cta:hover{background:var(--gold-2)}
+.page-body .cta:not(.primary)+.cta,.page-body .cta.primary~.cta{background:none;border:1px solid rgba(201,173,115,.55);color:var(--ink)}
+.page-body section{border-top:1px solid var(--line);padding:34px 0 8px;margin-top:34px}
+.page-body section.hero{border:0;padding:0;margin:0}
+.page-body h2{font-size:clamp(25px,3vw,32px);margin:0 0 14px}
+.page-body>h2{margin-top:44px}
+.page-body h3{font-size:20px;margin:22px 0 8px}
+.page-body section p+p{margin-top:12px}
+.page-body a:not(.cta){color:var(--gold);text-underline-offset:3px}
+.page-body nav:not(.lang),.page-body .links,.page-body .related,.page-body .sources,.page-body .dest-pill-nav{display:flex;flex-wrap:wrap;gap:10px;margin:20px 0 6px}
+.page-body nav:not(.lang) a,.page-body .links a,.page-body .related a,.page-body .sources a{display:inline-flex;align-items:center;min-height:42px;padding:0 16px;border-radius:999px;background:var(--surface);border:1px solid var(--line);color:var(--ink)!important;text-decoration:none;font-weight:600;font-size:15px}
+.page-body nav:not(.lang) a:hover,.page-body .links a:hover,.page-body .related a:hover,.page-body .sources a:hover{border-color:var(--gold)}
+.page-body nav.lang{display:none}
+.page-body .related{border-top:1px solid var(--line);padding-top:26px;margin-top:34px}
+.page-body .muted{color:var(--ink-3)}
+.page-body .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:16px}
+.page-body .card,.page-body .panel{background:var(--surface);border-radius:var(--r);padding:20px 22px}
+.page-body .card h3{margin-top:6px}
+.page-body section.panel{border:0;margin-top:18px;padding:26px}
+.page-body .month{display:inline-block;color:var(--gold);font-weight:800;font-size:14px}
+.page-body .city .event{display:grid;grid-template-columns:110px 1fr;gap:2px 16px;padding:14px 0;border-top:1px solid var(--line)}
+.page-body .city .event>span:not(.month){color:var(--ink);font-weight:700}
+.page-body .city .event p{grid-column:2;margin:0;font-size:15px}
+.page-body ul{padding-left:20px;color:var(--ink-2)}
+.page-body li{margin:6px 0}
+.page-body small{color:var(--ink-3)}
+.page-cta{margin-top:56px}
+.page-cta .pro{grid-template-columns:minmax(0,1.3fr) minmax(0,.7fr)}
+@media (max-width:820px){
+  .page-body{padding-top:30px}
+  .page-body .grid{grid-template-columns:1fr}
+  .page-body .city .event{grid-template-columns:1fr}
+  .page-body .city .event p{grid-column:1}
+  .page-cta .pro{grid-template-columns:1fr}
+}
+.lang-toggle a{color:var(--ink-3);font-weight:700;font-size:13px;padding:4px 8px;text-decoration:none}
+.lang-toggle a+a{border-left:1px solid var(--line)}
+.lang-toggle a[aria-current="page"]{color:var(--gold)}
+@media (max-width:820px){.main-nav .nav-lang a{flex:1;text-align:center;border:1px solid var(--line);border-radius:10px;padding:10px 6px;font-size:15px;border-bottom:1px solid var(--line)}.main-nav .nav-lang a+a{border-left:1px solid var(--line)}.main-nav .nav-lang a[aria-current="page"]{border-color:var(--gold)}}

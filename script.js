@@ -19,9 +19,7 @@ const validPhone = value => {
 function validatePhone() {
   const value = phoneField.value.trim();
   phoneField.setCustomValidity(!value || validPhone(value) ? '' :
-    (window.epsLanguage?.() === 'en'
-      ? 'Enter a valid phone number, with country code for international numbers.'
-      : 'Saisissez un numéro de téléphone valide, avec l’indicatif pays pour les numéros internationaux.'));
+    T('Saisissez un numéro de téléphone valide, avec l’indicatif pays pour les numéros internationaux.'));
 }
 phoneField.addEventListener('input', validatePhone);
 phoneField.addEventListener('change', validatePhone);
@@ -132,7 +130,7 @@ form.addEventListener('submit', event => {
     customerEmail: String(data.get('customer_email') || '').trim(),
     customerPhone: ((String(data.get('phone_country_code') || '').trim() + ' ' + String(data.get('customer_phone') || '').trim()).trim()),
     notes: String(data.get('notes') || '').trim(),
-    language: window.epsLanguage?.() === 'en' ? 'en' : 'fr',
+    language: (window.epsLanguage?.() || 'fr') === 'fr' ? 'fr' : 'en',
     website: String(data.get('website') || ''),
     partnerCode: window.epsPartner?.code || ''
   };
@@ -150,16 +148,16 @@ function renderReview() {
   addDetail('Départ', currentRequest.departure);
   if (currentRequest.destination) addDetail('Arrivée', currentRequest.destination);
   if (currentRequest.flightNumber) addDetail('Numéro de vol', currentRequest.flightNumber);
-  addDetail('Date et heure', currentRequest.date.split('-').reverse().join('/') + (window.epsLanguage?.() === 'en' ? ' at ' : ' à ') + currentRequest.time);
-  if (currentRequest.durationHours) addDetail('Durée', currentRequest.durationHours + (window.epsLanguage?.() === 'en' ? ' hours' : ' h'));
+  addDetail('Date et heure', currentRequest.date.split('-').reverse().join('/') + T(' à ') + currentRequest.time);
+  if (currentRequest.durationHours) addDetail('Durée', currentRequest.durationHours + T(' h'));
   addDetail('Passagers / bagages', currentRequest.passengers + ' / ' + currentRequest.luggage);
   addDetail('Siège enfant', T(currentRequest.childSeat === 'none' ? 'Aucun' : currentRequest.childSeat === 'to_confirm' ? 'À préciser' : currentRequest.childSeat));
   addDetail('Véhicule', T(currentRequest.vehicle));
   addDetail('Client', currentRequest.customerName);
   addDetail('E-mail', currentRequest.customerEmail);
   addDetail('Téléphone', currentRequest.customerPhone);
-  if (currentRequest.estimate) { const e = currentRequest.estimate; addDetail(e.partner ? 'Tarif partenaire TTC' : 'Tarif indicatif TTC', e.amount.toLocaleString('fr-FR', {style:'currency',currency:'EUR'}) + (e.partner ? ' — ' + e.partner : e.event ? (e.season ? ' — haute saison' : ' — tarif événementiel (' + e.event + ')') : '')); }
-  else addDetail('Tarif', 'Sur devis après étude du trajet');
+  if (currentRequest.estimate) { const e = currentRequest.estimate; addDetail(e.partner ? 'Tarif partenaire TTC' : 'Tarif indicatif TTC', e.amount.toLocaleString('fr-FR', {style:'currency',currency:'EUR'}) + (e.partner ? ' — ' + e.partner : e.event ? (e.season ? ' — ' + T('haute saison') : ' — ' + T('tarif événementiel') + ' (' + e.event + ')') : '')); }
+  else addDetail('Tarif', T('Sur devis après étude du trajet'));
   if (currentRequest.notes) addDetail('Informations utiles', currentRequest.notes);
   if (currentRequest.type === 'Transfert' && currentRequest.departure && currentRequest.destination) {
     // Google Maps directions URL: no Maps API key, subscription or billing.
@@ -176,12 +174,12 @@ function renderReview() {
     link.target = '_blank';
     link.rel = 'noopener noreferrer';
     link.style.cssText = 'display:inline-block;padding:12px 20px;border:1px solid #d5b476;border-radius:999px;color:#e3c889;text-decoration:none;font-weight:600';
-    link.textContent = window.epsLanguage?.() === 'en' ? 'Preview route on Google Maps ↗' : 'Aperçu de l’itinéraire sur Google Maps ↗';
+    link.textContent = T('Aperçu de l’itinéraire sur Google Maps ↗');
     const note = document.createElement('p');
     note.style.cssText = 'font-size:11px;color:#aaa;margin:8px 0 0';
-    note.textContent = window.epsLanguage?.() === 'en' ? 'Route preview only; fare confirmed by EPS.' : 'Aperçu uniquement ; tarif confirmé par EPS.';
+    note.textContent = T('Aperçu uniquement ; tarif confirmé par EPS.');
     const map = document.createElement('iframe');
-    map.title = window.epsLanguage?.() === 'en' ? 'Map of departure and arrival' : 'Carte du départ et de l’arrivée';
+    map.title = T('Carte du départ et de l’arrivée');
     map.loading = 'lazy';
     map.referrerPolicy = 'no-referrer';
     map.style.cssText = 'display:none;width:100%;height:270px;border:1px solid #8c7852;border-radius:12px;margin:0 0 14px';
@@ -205,9 +203,7 @@ function renderReview() {
         osm.searchParams.set('marker', a.lat + ',' + a.lon);
         map.src = osm.toString();
         map.style.display = 'block';
-        note.textContent = window.epsLanguage?.() === 'en'
-          ? 'Map shows the pickup area. Open Google Maps for the actual driving route; EPS confirms the fare.'
-          : 'La carte situe le départ. Ouvrir Google Maps pour voir le trajet routier ; EPS confirme le tarif.';
+        note.textContent = T('La carte situe le départ. Ouvrir Google Maps pour voir le trajet routier ; EPS confirme le tarif.');
       }).catch(() => {});
 
   }
@@ -323,7 +319,7 @@ document.querySelectorAll('#reservation-form [name="departure"], #reservation-fo
           q: query,
           limit: '10',
           addressdetails: '1',
-          'accept-language': document.documentElement.lang === 'en' ? 'en,fr' : 'fr,en'
+          'accept-language': (document.documentElement.lang || 'fr') + ',fr,en'
         });
         // Worldwide search, with French results promoted to the top.
         const response = await fetch('https://nominatim.openstreetmap.org/search?' + params.toString(), {

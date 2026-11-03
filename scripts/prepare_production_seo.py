@@ -9,6 +9,7 @@ import xml.etree.ElementTree as ET
 
 ORIGIN = "https://www.elite-prestige-services.fr"
 PREVIEW = "https://eliteprestigeservices.github.io/eps-preview"
+PREVIEW_PATH = re.compile(r'(href|src|action)="/eps-preview(?:/|(?="))')
 NS = "http://www.sitemaps.org/schemas/sitemap/0.9"
 ROBOTS = re.compile(r'<meta\b(?=[^>]*\bname\s*=\s*[\"\'](?:robots|googlebot)[\"\'])[^>]*>', re.I)
 CANONICAL = re.compile(r'<link\b(?=[^>]*\brel\s*=\s*[\"\']canonical[\"\'])[^>]*>', re.I)
@@ -65,6 +66,12 @@ def prepare(root):
         if count != 1:
             raise ValueError(f"Missing head in {path}")
         path.write_text(html, encoding="utf-8")
+    # Liens internes de préproduction (« /eps-preview/… ») : 404 sur le vrai domaine. Réécrits sur toutes les pages publiées.
+    for page in root.rglob("*.html"):
+        html = page.read_text(encoding="utf-8")
+        fixed = PREVIEW_PATH.sub(r'\1="/', html)
+        if fixed != html:
+            page.write_text(fixed, encoding="utf-8")
     ET.register_namespace("", NS)
     sitemap = ET.Element(f"{{{NS}}}urlset")
     for url in urls:
@@ -88,6 +95,9 @@ def check(root):
             raise ValueError(f"Invalid production SEO: {url}: {meta.canonicals}, {meta.robots}")
         if PREVIEW in html:
             raise ValueError(f"Preview link remains: {url}")
+    for page in root.rglob("*.html"):
+        if PREVIEW_PATH.search(page.read_text(encoding="utf-8")):
+            raise ValueError(f"Preview path link remains: {page}")
     for directory in ("admin", "client", "chauffeur", "test-reservation", "test-dispatch", "test-validation-chauffeurs", "dispatch-demo"):
         for page in (root / directory).rglob("*.html"):
             if not any("noindex" in rule for rule in Metadata(page.read_text(encoding="utf-8")).robots):

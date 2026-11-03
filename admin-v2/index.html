@@ -1114,7 +1114,7 @@ function openOrderForm(o, existing) {
     fld('Numéro de vol', h('input', { name: 'flight_number', maxlength: '24', value: val('flight_number') })),
     h('h3', { style: 'margin:18px 0 10px' }, 'Véhicule et prix'),
     h('div', { class: 'grid2' }, fld('Véhicule', h('select', { name: 'vehicle' }, vehicles.map(x => h('option', { selected: veh === x }, x)))),
-      fld('Immatriculation', h('input', { name: 'plate', maxlength: '12', value: val('plate') || remembered('plate', ''), placeholder: 'AB-123-CD', style: 'text-transform:uppercase' }))),
+      fld('Immatriculation', h('input', { name: 'plate', maxlength: '12', value: val('plate') || remembered('plate', 'GV-855-VN'), placeholder: 'AB-123-CD', style: 'text-transform:uppercase' }))),
     fld('Chauffeur', h('input', { name: 'driver_name', maxlength: '80', value: val('driver_name') || remembered('driver', 'Anthony Doche') })),
     h('div', { class: 'grid2' }, fld('Prix TTC convenu (€)', h('input', { name: 'price', type: 'text', inputmode: 'decimal', value: o.price_cents != null && o.price_cents !== '' ? String(o.price_cents / 100) : '' })),
       fld('Règlement', h('select', { name: 'payment_method' }, h('option', { value: '' }, '—'), PAY_METHODS.map(x => h('option', { selected: val('payment_method') === x }, x))))),

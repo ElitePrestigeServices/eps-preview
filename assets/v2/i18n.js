@@ -25,6 +25,11 @@
     ['Chauffeur basé à Cannes', 'Chauffeur based in Cannes', 'Autista con base a Cannes', 'Chófer con base en Cannes'],
     ['Logo Elite Prestige Services', 'Elite Prestige Services logo', 'Logo Elite Prestige Services', 'Logotipo de Elite Prestige Services'],
     // Billets
+    ['Trajets fréquents', 'Popular routes', 'Tragitti frequenti', 'Trayectos frecuentes'],
+    ['Environ 35 min', 'About 35 min', 'Circa 35 min', 'Unos 35 min'],
+    ['Environ 30 min', 'About 30 min', 'Circa 30 min', 'Unos 30 min'],
+    ['Environ 55 min', 'About 55 min', 'Circa 55 min', 'Unos 55 min'],
+    ['Environ 1 h 30', 'About 1 h 30', 'Circa 1 h 30', 'Unos 1 h 30'],
     ['Les trajets les plus demandés', 'Most popular transfers', 'I tragitti più richiesti', 'Los trayectos más solicitados'],
     ['Prix TTC par véhicule, pas par personne. Touchez un trajet pour le réserver.', 'Prices include VAT, per vehicle, not per person. Tap a route to book it.', 'Prezzi IVA inclusa, per veicolo e non a persona. Tocca un tragitto per prenotarlo.', 'Precios con IVA, por vehículo y no por persona. Toca un trayecto para reservarlo.'],
     ['À partir de', 'From', 'A partire da', 'Desde'],

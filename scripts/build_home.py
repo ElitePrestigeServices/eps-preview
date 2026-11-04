@@ -6,7 +6,7 @@ tickets=[('Aéroport de Nice','Cannes','Aéroport de Nice Côte d’Azur','Canne
  ('Aéroport de Nice','Monaco','Aéroport de Nice Côte d’Azur','Monaco',150,'Environ 30 min'),
  ('Cannes','Monaco','Cannes','Monaco',230,'Environ 55 min'),
  ('Cannes','Saint-Tropez','Cannes','Saint-Tropez',320,'Environ 1 h 30')]
-T=''.join(f'<button type="button" class="ticket" data-dep="{d}" data-dest="{a}"><span class="from">Prix fixe</span><span class="route"><i>{x}</i><i>{y}</i></span><span class="meta">{m} · berline Business</span><span class="perf" aria-hidden="true"></span><span class="price"><span>Réserver ce trajet</span></span></button>' for x,y,d,a,p,m in tickets)
+T=''.join(f'<button type="button" class="ticket" data-dep="{d}" data-dest="{a}"><span class="route"><i>{x}</i><i>{y}</i></span><span class="meta">{m}</span><svg class=\"go\" viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M5 12h14M13 6l6 6-6 6\"/></svg></button>' for x,y,d,a,p,m in tickets)
 services=[('aviation-privee-aeroport-nice/','aviation','Transferts aéroports','Aéroport Nice Côte d’Azur et Cannes-Mandelieu, vols commerciaux et aviation d’affaires.'),
  ('hotels-conciergeries-cote-dazur/','hotels','Hôtels & conciergeries','Arrivées et départs des hôtels 5 étoiles et palaces de Cannes, Nice et Monaco.'),
  ('yachting-transferts-ports-cote-dazur/','yachting','Yachting','Ports de Cannes, Antibes, Monaco et Saint-Tropez, à l’heure de votre embarquement.'),
@@ -38,7 +38,7 @@ html=f'''<!doctype html>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="preload" as="image" href="assets/v2/hero.webp" media="(min-width:821px)">
-<link rel="stylesheet" href="assets/v2/site.css?v=20261104i">
+<link rel="stylesheet" href="assets/v2/site.css?v=20261104j">
 </head>
 <body>
 <header class="site-head"><div class="wrap">
@@ -65,9 +65,8 @@ html=f'''<!doctype html>
 <ul class="facts wrap"><li>24 h/24, 7 j/7</li><li>Prix confirmé avant la course</li><li>Chauffeur basé à Cannes</li></ul>
 
 <section class="sec" id="trajets" aria-labelledby="trajets-t"><div class="wrap">
-  <div class="sec-head"><div><h2 id="trajets-t">Les trajets les plus demandés</h2><p class="lead">Prix TTC par véhicule, pas par personne. Touchez un trajet pour le réserver.</p></div></div>
+  <div class="sec-head"><div><h2 id="trajets-t">Trajets fréquents</h2><p class="lead">Prix TTC par véhicule, pas par personne. Touchez un trajet pour le réserver.</p></div></div>
   <div class="tickets">{T}</div>
-  <p class="tickets-note">Prix fixe par véhicule, affiché avant la validation de votre réservation. Berline, van Mercedes Classe V ou First Class sur chaque trajet.</p>
 </div></section>
 
 <section class="sec" id="services" aria-labelledby="services-t" style="padding-top:0"><div class="wrap">
@@ -130,7 +129,7 @@ html=f'''<!doctype html>
   <div class="foot-legal"><span>© Elite Prestige Services</span><span><a href="mentions-legales/">Mentions légales</a> · <a href="cgv/">CGV</a> · <a href="cgu/">CGU</a> · <a href="confidentialite/">Confidentialité</a></span></div>
 </div></footer>
 {cta2}
-<script src="assets/v2/i18n.js?v=20261104c"></script><script src="pricing.js?v=20261104-veh"></script><script src="script.js?v=20261104-veh"></script>
+<script src="assets/v2/i18n.js?v=20261104d"></script><script src="pricing.js?v=20261104-veh"></script><script src="script.js?v=20261104-veh"></script>
 <script>
 (function(){{
  const form=document.getElementById('reservation-form');if(!form)return;

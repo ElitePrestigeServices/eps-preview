@@ -72,22 +72,16 @@ p{margin:0}
 @media (max-width:560px){.facts{font-size:13px;margin-left:20px;margin-right:20px}.facts li{padding:12px 6px}}
 
 /* Billets (trajets les plus demandés) */
-.tickets{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
-.ticket{position:relative;display:flex;flex-direction:column;text-align:left;border:0;cursor:pointer;background:var(--gold);color:var(--gold-ink);border-radius:var(--r);padding:20px 20px 18px;overflow:hidden;transition:transform .18s ease,background .18s}
-.ticket:hover{transform:translateY(-3px);background:var(--gold-2)}
-@media (prefers-reduced-motion:reduce){.ticket{transition:none}.ticket:hover{transform:none}}
-.ticket::before,.ticket::after{content:"";position:absolute;top:calc(100% - 59px);width:22px;height:22px;border-radius:50%;background:var(--bg)}
-.ticket::before{left:-11px}.ticket::after{right:-11px}
-.ticket .from{font-size:13px;font-weight:700;opacity:.7}
-.ticket .route{font:600 22px/1.2 var(--serif);margin-top:6px;min-height:2.4em}
-.ticket .route i{display:block;font-style:normal}
-.ticket .route i+i::before{content:"";display:inline-block;width:14px;height:2px;background:currentColor;opacity:.6;vertical-align:middle;margin-right:8px}
-.ticket .meta{font-size:13px;font-weight:600;opacity:.75;margin-top:8px}
-.ticket .perf{border-top:2px dashed rgba(26,20,8,.3);margin:16px -20px 12px}
-.ticket .price{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
-.ticket .price b{font:600 34px/1 var(--serif);letter-spacing:-.02em}
-.ticket .price span{font-size:13px;font-weight:700}
-.tickets-note{color:var(--ink-3);font-size:14px;margin-top:16px}
+.tickets{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:40px;border-top:1px solid var(--line)}
+.ticket{display:flex;align-items:center;gap:16px;width:100%;text-align:left;border:0;border-bottom:1px solid var(--line);background:none;color:var(--ink);cursor:pointer;padding:20px 4px;font:inherit;transition:color .2s}
+.ticket .route{flex:1;min-width:0;font:600 20px/1.25 var(--serif)}
+.ticket .route i{font-style:normal}
+.ticket .route i+i::before{content:"–";margin:0 .4em;color:var(--gold)}
+.ticket .meta{font-size:14px;color:var(--ink-2);white-space:nowrap}
+.ticket .go{width:20px;height:20px;flex:none;fill:none;stroke:var(--gold);stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:transform .2s}
+.ticket:hover .route,.ticket:focus-visible .route{color:var(--gold)}
+.ticket:hover .go{transform:translateX(4px)}
+@media (prefers-reduced-motion:reduce){.ticket,.ticket .go{transition:none}.ticket:hover .go{transform:none}}
 
 /* Services */
 .services{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
@@ -237,16 +231,10 @@ p{margin:0}
   .hero-actions{display:none}
   .eps-cta-bar{display:flex}
   .eps-wa-float{display:none}
-  .tickets{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-  .ticket{padding:14px 14px 12px}
-  .ticket .from{font-size:11px}
-  .ticket .route{min-height:0;font-size:17px;margin-top:4px}
-  .ticket .route i+i::before{width:10px;margin-right:6px}
-  .ticket .meta{font-size:12px;margin-top:6px}
-  .ticket .perf{margin:12px -14px 10px}
-  .ticket::before,.ticket::after{top:calc(100% - 46px);width:16px;height:16px}
-  .ticket::before{left:-8px}.ticket::after{right:-8px}
-  .ticket .price span{font-size:12px}
+  .tickets{grid-template-columns:1fr}
+  .ticket{padding:16px 2px;gap:12px}
+  .ticket .route{font-size:17px}
+  .ticket .meta{font-size:13px}
   .services{grid-template-columns:1fr 1fr;gap:12px}
   .service .tx{padding:14px}
   .service p{display:none}

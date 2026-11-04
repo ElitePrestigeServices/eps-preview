@@ -42,6 +42,7 @@
 - 2026-11-04 02:50 : Electric Class affichée « Dès 130 € » (EQE = tarif Business, EQS = tarif First) sur l’accueil et les 21 pages FR/EN/IT/ES.
 - 2026-11-04 02:55 : numéro VTC retiré du pied de page (gardé dans mentions légales et bon de commande).
 - 2026-11-04 03:05 : photos véhicules recadrées (voitures entières, plus grandes), carrousel à glisser sur mobile.
+- 2026-11-04 03:15 : admin — liens à envoyer (Ouvrir / WhatsApp / SMS / mail / partager / copier), « Voir le site » dans Plus s’ouvre par-dessus le pilotage.
 - Reste à faire, enrichir les pages (67/74 sous 400 mots), titres trop longs, demande d’avis Google après course.
 
 ## 26/10/2026 — ChatGPT — Correction SEO de publication

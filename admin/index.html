@@ -1067,14 +1067,30 @@ function renderSettings(v) {
     h('span', { class: 'main' }, h('div', { class: 't' }, p.name), h('div', { class: 's' }, fmtDay(p.start_date) + ' – ' + fmtDay(p.end_date))),
     h('span', { class: 'end' }, h('b', {}, '+' + Number(p.surcharge_percent) + ' %')))));
   if (!periods.length) l.append(h('div', { class: 'empty-note' }, 'Aucune période majorée à venir.'));
-  const link = (t, s, href) => h('a', { class: 'row', href, target: href.startsWith('http') ? '_blank' : null, rel: 'noopener' }, h('span', { class: 'main' }, h('div', { class: 't' }, t), h('div', { class: 's' }, s)), chev());
+  const link = (t, s, href, msg) => h('button', { class: 'row', onclick: () => openShareLink(t, href, msg) }, h('span', { class: 'main' }, h('div', { class: 't' }, t), h('div', { class: 's' }, s)), chev());
   v.append(h('div', { class: 'grid-desk' },
     h('div', {}, h('h2', { style: 'margin-top:4px' }, 'Périodes majorées'), l, h('p', { class: 'hint' }, 'Les clients directs paient la plus forte majoration de la période. Les partenaires gardent leur tarif fixe. Pour ajouter ou modifier une période, demande-le à Claude.')),
-    h('div', {}, h('h2', { style: 'margin-top:4px' }, 'Liens utiles'), h('div', { class: 'list' },
-      link('Voir le site', 'elite-prestige-services.fr', SITE),
-      link('Page « Merci » des cartes de visite', 'elite-prestige-services.fr/carte/', SITE + 'carte/'),
-      link('Espace chauffeur', 'Ce que voient tes chauffeurs', SITE + 'chauffeur/')),
+    h('div', {}, h('h2', { style: 'margin-top:4px' }, 'Liens à envoyer'), h('div', { class: 'list' },
+      link('Le site', 'elite-prestige-services.fr', SITE, 'Bonjour, voici le site d’Elite Prestige Services, chauffeur privé sur la Côte d’Azur : ' + SITE),
+      link('Réserver un trajet', 'Formulaire de réservation', SITE + '#reservation', 'Bonjour, vous pouvez réserver votre chauffeur ici, le devis au prix fixe arrive par e-mail : ' + SITE + '#reservation'),
+      link('Page « Merci » des cartes de visite', 'elite-prestige-services.fr/carte/', SITE + 'carte/', 'Merci pour votre confiance ! Retrouvez-nous ici : ' + SITE + 'carte/'),
+      link('Espace chauffeur', 'Inscription et dossier des chauffeurs', SITE + 'chauffeur/', 'Bonjour, voici l’espace chauffeur Elite Prestige Services pour créer ton compte et déposer ton dossier : ' + SITE + 'chauffeur/')),
+      h('p', { class: 'hint' }, 'Touche un lien pour l’ouvrir ou l’envoyer par WhatsApp, SMS ou mail.'),
       h('div', { class: 'btns' }, h('button', { class: 'btn danger', onclick: async () => { await db.auth.signOut(); guard(); } }, 'Se déconnecter')))));
+}
+function openShareLink(title, url, msg) {
+  const enc = encodeURIComponent;
+  const a = (label, href, cls) => h('a', { class: 'btn ' + (cls || 'quiet'), href, target: href.startsWith('http') ? '_blank' : null, rel: 'noopener' }, label);
+  const body = h('div', {},
+    h('p', { class: 'hint', style: 'margin-top:0;word-break:break-all' }, url),
+    h('div', { class: 'btns' },
+      h('button', { class: 'btn primary', onclick: () => window.open(url, '_blank', 'noopener') }, 'Ouvrir'),
+      a('Envoyer par WhatsApp', 'https://wa.me/?text=' + enc(msg)),
+      a('Envoyer par SMS', 'sms:?&body=' + enc(msg)),
+      a('Envoyer par mail', 'mailto:?subject=' + enc('Elite Prestige Services') + '&body=' + enc(msg)),
+      navigator.share ? h('button', { class: 'btn quiet', onclick: () => navigator.share({ title: 'Elite Prestige Services', text: msg }).catch(() => {}) }, 'Autre application…') : null,
+      h('button', { class: 'btn quiet', onclick: async () => { try { await navigator.clipboard.writeText(url); toast('Lien copié.'); } catch { toast('Copie impossible.', true); } } }, 'Copier le lien')));
+  openSheet(title, body);
 }
 function renderMore(v) {
   const c = counts();
@@ -1084,7 +1100,8 @@ function renderMore(v) {
     item('crm', 'Prospection', 'Robot d’envoi, prospects, message'),
     item('drivers', 'Chauffeurs', 'Documents et attribution des courses'),
     item('inbox', 'Messages', 'Demandes des clients, notifications', c.inbox),
-    item('settings', 'Réglages', 'Périodes majorées, liens, déconnexion')));
+    item('settings', 'Réglages', 'Liens à envoyer, périodes majorées, déconnexion'),
+    h('button', { class: 'row', onclick: () => window.open(SITE, '_blank', 'noopener') }, h('span', { class: 'main' }, h('div', { class: 't' }, 'Voir le site'), h('div', { class: 's' }, 'S’ouvre par-dessus, le pilotage reste ouvert')), chev())));
 }
 
 /* ================= Bons de commande ================= */

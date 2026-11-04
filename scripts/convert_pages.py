@@ -61,7 +61,7 @@ def footer(lang, wa):
             f'</div><div class="foot-legal"><span>{t["lic"]}</span><span><a href="/mentions-legales/">{lg[0]}</a> · <a href="/cgv/">{lg[1]}</a> · <a href="/cgu/">{lg[2]}</a> · <a href="/confidentialite/">{lg[3]}</a></span></div></div></footer>')
 
 HEADLINKS = ('<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>'
-             '<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">'
+             '<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">'
              f'<link rel="stylesheet" href="/assets/v2/site.css?v={CSSV}"><meta name="theme-color" content="#0f1a16">')
 
 def run():

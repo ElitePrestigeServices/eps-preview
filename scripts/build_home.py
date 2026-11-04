@@ -36,9 +36,9 @@ html=f'''<!doctype html>
 <meta name="theme-color" content="#0f1a16">\n<link rel="icon" href="assets/v2/icon-32.png" sizes="32x32">\n<link rel="apple-touch-icon" href="assets/v2/icon-180.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="preload" as="image" href="assets/v2/hero.webp" media="(min-width:821px)">
-<link rel="stylesheet" href="assets/v2/site.css?v=20261104e">
+<link rel="stylesheet" href="assets/v2/site.css?v=20261104f">
 </head>
 <body>
 <header class="site-head"><div class="wrap">

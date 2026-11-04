@@ -35,6 +35,7 @@
 - Prospection : Anthony arrête l’immobilier (04/11). 97 contacts agences/locations de villas passés en contact_type « écarté » (31 avaient déjà reçu le mail) ; le robot (v16) et le pilotage les ignorent ; filtre « Immobilier » retiré.
 - Dossier chauffeur : 11 pièces obligatoires (ajout permis recto/verso, inscription registre VTC avec expiration, Kbis/SIRET) ; liste affichée dès la candidature ; validation du compte bloquée tant que les 11 ne sont pas validées. Formulaire de réservation : indicatif téléphone = drapeau + code seulement. Pilotage : suggestions de lieux (villes, aéroports) dans « Nouvelle demande » et le bon de commande.
 - Logo pour Google : favicons 48/96/192 px (Google exige un multiple de 48 px) sur toutes les pages + /favicon.ico ; logo du JSON-LD = assets/v2/logo-eps.png. Page Merci : nouveau logo ; fiche contact .vcf avec logo, sans numéro de rue.
+- Nouvelle page /chauffeur-prive-cote-dazur-depuis-paris/ (04/11) : vise les Parisiens en vacances (arrivée avion Nice, TGV Cannes/Nice/Antibes/Saint-Raphaël, retour, Paris en voiture sur devis). Pas de « chauffeur à Paris » : Anthony n’a pas de chauffeur sur place, demandes vers Paris très rares. Ajoutée au sitemap (85 URL) et à la page destinations.
 - Reste à faire, enrichir les pages (67/74 sous 400 mots), titres trop longs, demande d’avis Google après course.
 
 ## 26/10/2026 — ChatGPT — Correction SEO de publication

@@ -76,7 +76,7 @@ p{margin:0}
 .ticket{position:relative;display:flex;flex-direction:column;text-align:left;border:0;cursor:pointer;background:var(--gold);color:var(--gold-ink);border-radius:var(--r);padding:20px 20px 18px;overflow:hidden;transition:transform .18s ease,background .18s}
 .ticket:hover{transform:translateY(-3px);background:var(--gold-2)}
 @media (prefers-reduced-motion:reduce){.ticket{transition:none}.ticket:hover{transform:none}}
-.ticket::before,.ticket::after{content:"";position:absolute;top:calc(100% - 74px);width:22px;height:22px;border-radius:50%;background:var(--bg)}
+.ticket::before,.ticket::after{content:"";position:absolute;top:calc(100% - 59px);width:22px;height:22px;border-radius:50%;background:var(--bg)}
 .ticket::before{left:-11px}.ticket::after{right:-11px}
 .ticket .from{font-size:13px;font-weight:700;opacity:.7}
 .ticket .route{font:600 22px/1.2 var(--serif);margin-top:6px;min-height:2.4em}
@@ -237,8 +237,16 @@ p{margin:0}
   .hero-actions{display:none}
   .eps-cta-bar{display:flex}
   .eps-wa-float{display:none}
-  .tickets{grid-template-columns:1fr;gap:12px}
-  .ticket .route{min-height:0}
+  .tickets{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .ticket{padding:14px 14px 12px}
+  .ticket .from{font-size:11px}
+  .ticket .route{min-height:0;font-size:17px;margin-top:4px}
+  .ticket .route i+i::before{width:10px;margin-right:6px}
+  .ticket .meta{font-size:12px;margin-top:6px}
+  .ticket .perf{margin:12px -14px 10px}
+  .ticket::before,.ticket::after{top:calc(100% - 46px);width:16px;height:16px}
+  .ticket::before{left:-8px}.ticket::after{right:-8px}
+  .ticket .price span{font-size:12px}
   .services{grid-template-columns:1fr 1fr;gap:12px}
   .service .tx{padding:14px}
   .service p{display:none}

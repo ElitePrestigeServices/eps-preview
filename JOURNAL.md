@@ -66,3 +66,4 @@
 - Aucun tarif, réservation, CRM, Supabase ou contenu SEO structurel modifié.
 
 - 04/11/2026 (Claude) : sitemap — ajout de /chauffeur-evenements-nice/ et /chauffeur-prive-frejus-saint-raphael/ (pages indexables mais absentes des sitemaps). 87 URL publiques.
+- 04/11/2026 (Claude) : Search Console (rapport du 23/10) : seulement 4 URL en 404, dont une seule vraie ancienne page WordPress, /vehicules-2/ → redirection immédiate vers l'accueil (page noindex + meta refresh, sans .htaccess pour ne pas écraser celui du serveur). /cgi-bin/ et /wp-content/uploads/* : bruit, ignorés.

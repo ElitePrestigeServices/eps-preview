@@ -67,3 +67,4 @@
 
 - 04/11/2026 (Claude) : sitemap — ajout de /chauffeur-evenements-nice/ et /chauffeur-prive-frejus-saint-raphael/ (pages indexables mais absentes des sitemaps). 87 URL publiques.
 - 04/11/2026 (Claude) : Search Console (rapport du 23/10) : seulement 4 URL en 404, dont une seule vraie ancienne page WordPress, /vehicules-2/ → redirection immédiate vers l'accueil (page noindex + meta refresh, sans .htaccess pour ne pas écraser celui du serveur). /cgi-bin/ et /wp-content/uploads/* : bruit, ignorés.
+- 04/11/2026 (Claude) : lien d'avis Google fourni par Anthony (https://share.google/02KCW6rcn95Ri3FVt) → bouton « avis Google » activé sur /carte/ ; ajout de « Demander un avis Google » dans Admin › Liens à envoyer (message FR/EN prêt pour WhatsApp/SMS/mail).

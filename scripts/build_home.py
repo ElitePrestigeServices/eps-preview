@@ -44,7 +44,7 @@ html=f'''<!doctype html>
 <header class="site-head"><div class="wrap">
   <a class="mark" href="#accueil"><img src="assets/v2/logo-eps-256.webp" alt="" width="38" height="38"><span><b>Elite Prestige Services</b><small>Chauffeur privé · Côte d’Azur</small></span></a>
   <nav class="main-nav" id="main-nav" aria-label="Navigation principale">
-    <a href="#trajets">Tarifs</a><a href="#services">Services</a><a href="#vehicules">Véhicules</a><a href="#entreprises">Entreprises</a><a href="#agenda">Événements</a>
+    <a href="#trajets">Trajets</a><a href="#services">Services</a><a href="#vehicules">Véhicules</a><a href="#entreprises">Entreprises</a><a href="#agenda">Événements</a>
     <a class="mobile-only" href="#reservation">Réserver</a><a class="mobile-only" href="admin/">Accès admin</a><a class="mobile-only" href="chauffeur/">Accès chauffeur</a>
     <div class="lang-toggle mobile-only nav-lang" role="group" aria-label="Langue / Language" data-no-i18n><button type="button" data-lang="fr" aria-pressed="true" lang="fr">FR</button><button type="button" data-lang="en" aria-pressed="false" lang="en">EN</button><button type="button" data-lang="it" aria-pressed="false" lang="it">IT</button><button type="button" data-lang="es" aria-pressed="false" lang="es">ES</button></div>
   </nav>
@@ -96,16 +96,18 @@ html=f'''<!doctype html>
 
 <section class="sec" id="entreprises" aria-labelledby="pro-t" style="padding-top:0"><div class="wrap"><div class="pro">
   <div>
-    <h2 id="pro-t">Hôtels, conciergeries et entreprises</h2>
+    <h2 id="pro-t">Entreprises, agences et hôtels</h2>
     <p class="lead" style="margin-top:14px">Un chauffeur de confiance pour vos clients et vos équipes, avec un interlocuteur unique.</p>
     <ul>
       <li><span><b>Tarif fixe toute l’année</b>.</span></li>
       <li><span><b>Lien de réservation à votre nom</b> pour vos clients, suivi de chaque course.</span></li>
-      <li><span><b>Délégations et congrès</b> : plusieurs véhicules, transferts aéroport et mise à disposition.</span></li>
+      <li><span><b>Agences événementielles et productions</b> : Festival de Cannes, Lions, MIPIM, plusieurs véhicules, facture société.</span></li>
+      <li><span><b>Délégations et congrès</b> : transferts aéroport et mise à disposition.</span></li>
     </ul>
   </div>
   <div class="pro-side">
-    <a class="btn btn-gold" href="mailto:contact@elite-prestige-services.fr?subject=Partenariat%20Elite%20Prestige%20Services">Devenir partenaire</a>
+    <a class="btn btn-gold" href="chauffeur-entreprises-evenements/">Entreprises &amp; événements</a>
+    <a class="btn btn-line" href="mailto:contact@elite-prestige-services.fr?subject=Partenariat%20Elite%20Prestige%20Services">Devenir partenaire</a>
     <a class="btn btn-line" href="{WA}" target="_blank" rel="noopener">{WASVG}En parler sur WhatsApp</a>
     <p>contact@elite-prestige-services.fr</p>
   </div>

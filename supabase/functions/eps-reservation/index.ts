@@ -1,4 +1,5 @@
 // EPS booking API — Supabase migration. No client-side database write access.
+// 04/11/2026 (v21) : le prix fixe affiché au client sur le site (calculé dans le navigateur) est repris dans l'alerte admin (à vérifier) et dans l'accusé de réception client.
 // 03/11/2026 : code partenaire (agences) — vérifié côté serveur, enregistré dans eps_reservations.partner_code.
 const url=Deno.env.get('SUPABASE_URL')||'';
 const service=Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')||'';
@@ -55,6 +56,11 @@ Deno.serve(async req=>{
    if(pr.ok){const rows=await pr.json();if(rows[0]){partner_code=rows[0].code;partner_name=rows[0].name}}
   }catch(e){console.error('EPS reservation partner',String(e))}
  }
+ // Prix affiché sur le site (calcul navigateur, non garanti) : informatif seulement.
+ const eur=(n:number)=>Math.round(n)+' €';
+ const amt=Number(input?.estimate?.amount);
+ const opts=Array.isArray(input?.estimateOptions)?input.estimateOptions.slice(0,3).filter((o:any)=>['Business Class','Business Van','First Class'].includes(o?.vehicle)&&Number(o?.amount)>0&&Number(o?.amount)<5000):[];
+ const shown=Number.isFinite(amt)&&amt>0&&amt<5000?eur(amt)+' TTC ('+d.vehicle+')':opts.length?opts.map((o:any)=>o.vehicle+' '+eur(Number(o.amount))).join(' · ')+' TTC':'';
  const reference=d.id.slice(0,8).toUpperCase();
  const headers={apikey:service,Authorization:'Bearer '+service,'Content-Type':'application/json',Prefer:'resolution=ignore-duplicates,return=representation'};
  const db=await fetch(url+'/rest/v1/eps_reservations?on_conflict=id',{method:'POST',headers,body:JSON.stringify([{...d,reference,status:'reçue',partner_code}])});
@@ -62,11 +68,11 @@ Deno.serve(async req=>{
  const resend=Deno.env.get('RESEND_API_KEY'),from='Elite Prestige Services <reservation@elite-prestige-services.fr>',to=Deno.env.get('EPS_TO_EMAIL')||'contact@elite-prestige-services.fr';
  let receiptSent=false,adminAlertSent=false,emailError='';
  if(resend){
-  const text=['Nouvelle demande EPS '+reference,...(partner_code?['PARTENAIRE : '+partner_name+' ('+partner_code+') — tarif fixe, commission 10 %']:[]),'Client : '+d.customer_name,'E-mail : '+d.customer_email,'Téléphone : '+d.customer_phone,'Prestation : '+d.type,'Départ : '+d.departure,'Destination : '+d.destination,'Date : '+d.date+' '+d.time,'Véhicule : '+d.vehicle,'Passagers : '+d.passengers,'Notes : '+d.notes,'Aucun paiement effectué.'].join('\n');
+  const text=['Nouvelle demande EPS '+reference,...(partner_code?['PARTENAIRE : '+partner_name+' ('+partner_code+') — tarif fixe, commission 10 %']:[]),'Client : '+d.customer_name,'E-mail : '+d.customer_email,'Téléphone : '+d.customer_phone,'Prestation : '+d.type,'Départ : '+d.departure,'Destination : '+d.destination,'Date : '+d.date.split('-').reverse().join('/')+' à '+d.time,'Véhicule : '+d.vehicle,'Passagers : '+d.passengers,...(shown?['Prix affiché sur le site : '+shown+' — à vérifier avant le devis']:['Prix : sur devis (trajet hors grille)']),'Notes : '+d.notes,'Aucun paiement effectué.'].join('\n');
   try{
    const admin=await fetch('https://api.resend.com/emails',{method:'POST',headers:{Authorization:'Bearer '+resend,'Content-Type':'application/json','Idempotency-Key':'eps-supabase-reservation-admin-'+d.id},body:JSON.stringify({from,to:[to],reply_to:'contact@elite-prestige-services.fr',subject:(partner_code?'[Partenaire '+partner_code+'] ':'')+'Nouvelle réservation EPS — '+reference,text})});
    adminAlertSent=admin.ok;if(!admin.ok){emailError='Alerte admin Resend HTTP '+admin.status;console.error('EPS reservation admin email',admin.status)}
-   const customer=await fetch('https://api.resend.com/emails',{method:'POST',headers:{Authorization:'Bearer '+resend,'Content-Type':'application/json','Idempotency-Key':'eps-supabase-reservation-client-'+d.id},body:JSON.stringify({from,to:[d.customer_email],reply_to:'contact@elite-prestige-services.fr',subject:'Votre demande EPS — '+reference,text:'Bonjour '+d.customer_name+',\n\nNous avons reçu votre demande de réservation '+reference+' pour le '+d.date+' à '+d.time+'. Nous vous transmettrons votre devis après vérification. Aucun paiement effectué.\n\nElite Prestige Services'})});
+   const customer=await fetch('https://api.resend.com/emails',{method:'POST',headers:{Authorization:'Bearer '+resend,'Content-Type':'application/json','Idempotency-Key':'eps-supabase-reservation-client-'+d.id},body:JSON.stringify({from,to:[d.customer_email],reply_to:'contact@elite-prestige-services.fr',subject:'Votre demande EPS — '+reference,text:'Bonjour '+d.customer_name+',\n\nNous avons reçu votre demande de réservation '+reference+' pour le '+d.date.split('-').reverse().join('/')+' à '+d.time+'. '+(shown?'Prix fixe indiqué : '+shown+'. ':'')+'Nous vous transmettrons votre devis après vérification. Aucun paiement effectué.\n\nElite Prestige Services'})});
    receiptSent=customer.ok;if(!customer.ok){emailError+=(emailError?' · ':'')+'Accusé client Resend HTTP '+customer.status;console.error('EPS reservation client email',customer.status)}
   }catch(e){emailError='Erreur e-mail : '+String(e).slice(0,160);console.error('EPS reservation mail',String(e))}
  }else emailError='RESEND_API_KEY manquante';

@@ -407,11 +407,15 @@ function suggest(b) {
     const hourly = { 'Business Class': 100, 'Business Van': 120, 'First Class': 150, 'Electric Class': 150 }[b.vehicle] || 100;
     return { amount: Math.ceil(hours * hourly / 5) * 5, why: hours + ' h × ' + hourly + ' € de l’heure' };
   }
-  const e = window.epsEstimatePrice?.({ type: b.type || 'Transfert', departure: b.departure, destination: b.destination, date: b.date, time: b.time, vehicle: b.vehicle });
+  // Véhicule non choisi par le client : on se base sur la berline (ou le van à partir de 4 passagers).
+  const priced = ['Business Class', 'Business Van', 'First Class', 'Electric Class'].includes(b.vehicle);
+  const veh = priced ? (b.vehicle === 'Electric Class' ? 'Business Class' : b.vehicle) : (Number(b.passengers) > 3 ? 'Business Van' : 'Business Class');
+  const e = window.epsEstimatePrice?.({ type: b.type || 'Transfert', departure: b.departure, destination: b.destination, date: b.date, time: b.time, vehicle: veh });
   if (!e) return null;
-  if (partner) return { amount: e.base, why: 'Tarif partenaire fixe (' + partner.name + '), sans majoration' };
-  if (e.percent) return { amount: e.amount, why: e.base + ' € + ' + e.percent + ' % ' + (e.event ? '(' + e.event + ')' : '(dernière minute)') };
-  return { amount: e.amount, why: 'Tarif de base du site' };
+  const note = priced ? '' : ' — véhicule non choisi, base ' + veh;
+  if (partner) return { amount: e.base, why: 'Tarif partenaire fixe (' + partner.name + '), sans majoration' + note };
+  if (e.percent) return { amount: e.amount, why: e.base + ' € + ' + e.percent + ' % ' + (e.event ? '(' + e.event + ')' : '(dernière minute)') + note };
+  return { amount: e.amount, why: 'Tarif de base du site' + note };
 }
 const pendingRequests = () => S.requests.filter(x => x.status === 'en_attente');
 const unreadNotifs = () => S.notifs.filter(n => !n.read_at);

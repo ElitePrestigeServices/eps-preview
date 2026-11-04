@@ -101,12 +101,12 @@ html=f'''<!doctype html>
     <ul>
       <li><span><b>Tarif fixe toute l’année</b>.</span></li>
       <li><span><b>Lien de réservation à votre nom</b> pour vos clients, suivi de chaque course.</span></li>
-      <li><span><b>Agences événementielles et productions</b> : Festival de Cannes, Lions, MIPIM, plusieurs véhicules, facture société.</span></li>
-      <li><span><b>Délégations et congrès</b> : transferts aéroport et mise à disposition.</span></li>
+      <li><span><b>Agences événementielles et productions :</b> Festival de Cannes, Lions, MIPIM, plusieurs véhicules, facture société.</span></li>
+      <li><span><b>Délégations et congrès :</b> transferts aéroport et mise à disposition.</span></li>
     </ul>
   </div>
   <div class="pro-side">
-    <a class="btn btn-gold" href="chauffeur-entreprises-evenements/">Entreprises &amp; événements</a>
+    <a class="btn btn-gold" href="chauffeur-entreprises-evenements/" data-href-en="en/corporate-events-chauffeur/">Entreprises &amp; événements</a>
     <a class="btn btn-line" href="mailto:contact@elite-prestige-services.fr?subject=Partenariat%20Elite%20Prestige%20Services">Devenir partenaire</a>
     <a class="btn btn-line" href="{WA}" target="_blank" rel="noopener">{WASVG}En parler sur WhatsApp</a>
     <p>contact@elite-prestige-services.fr</p>
@@ -130,7 +130,7 @@ html=f'''<!doctype html>
   <div class="foot-legal"><span>© Elite Prestige Services</span><span><a href="mentions-legales/">Mentions légales</a> · <a href="cgv/">CGV</a> · <a href="cgu/">CGU</a> · <a href="confidentialite/">Confidentialité</a></span></div>
 </div></footer>
 {cta2}
-<script src="assets/v2/i18n.js?v=20261103"></script><script src="pricing.js?v=20261103"></script><script src="script.js?v=20261103-tel"></script>
+<script src="assets/v2/i18n.js?v=20261104b"></script><script src="pricing.js?v=20261103"></script><script src="script.js?v=20261104-recap"></script>
 <script>
 (function(){{
  const form=document.getElementById('reservation-form');if(!form)return;

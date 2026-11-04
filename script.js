@@ -135,6 +135,10 @@ form.addEventListener('submit', event => {
     partnerCode: window.epsPartner?.code || ''
   };
   currentRequest.estimate = window.epsEstimatePrice?.(currentRequest) || null;
+  // Sans préférence de véhicule : on montre le prix fixe de chaque catégorie pour aider à choisir.
+  currentRequest.estimateOptions = (!currentRequest.estimate && currentRequest.vehicle === 'Sans préférence')
+    ? ['Business Class', 'Business Van', 'First Class'].map(v => ({ vehicle: v, estimate: window.epsEstimatePrice?.({ ...currentRequest, vehicle: v }) || null })).filter(o => o.estimate).map(o => ({ vehicle: o.vehicle, amount: o.estimate.amount }))
+    : [];
   renderReview();
   review.hidden = false;
   review.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -156,7 +160,9 @@ function renderReview() {
   addDetail('Client', currentRequest.customerName);
   addDetail('E-mail', currentRequest.customerEmail);
   addDetail('Téléphone', currentRequest.customerPhone);
-  if (currentRequest.estimate) { const e = currentRequest.estimate; addDetail(e.partner ? 'Tarif partenaire TTC' : 'Tarif indicatif TTC', e.amount.toLocaleString('fr-FR', {style:'currency',currency:'EUR'}) + (e.partner ? ' — ' + e.partner : '')); }
+  const eur = n => Number(n).toLocaleString('fr-FR', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 });
+  if (currentRequest.estimate) { const e = currentRequest.estimate; addDetail(e.partner ? 'Tarif partenaire TTC' : 'Prix fixe TTC', eur(e.amount) + (e.partner ? ' — ' + e.partner : '')); }
+  else if (currentRequest.estimateOptions?.length) addDetail('Prix fixe TTC', currentRequest.estimateOptions.map(o => T(o.vehicle) + ' ' + eur(o.amount)).join(' · '));
   else addDetail('Tarif', T('Sur devis après étude du trajet'));
   if (currentRequest.notes) addDetail('Informations utiles', currentRequest.notes);
   if (currentRequest.type === 'Transfert' && currentRequest.departure && currentRequest.destination) {
@@ -177,7 +183,7 @@ function renderReview() {
     link.textContent = T('Aperçu de l’itinéraire sur Google Maps ↗');
     const note = document.createElement('p');
     note.style.cssText = 'font-size:11px;color:#aaa;margin:8px 0 0';
-    note.textContent = T('Aperçu uniquement ; tarif confirmé par EPS.');
+    note.textContent = T('Aperçu de l’itinéraire ; votre prix est confirmé par e-mail avec le devis.');
     const map = document.createElement('iframe');
     map.title = T('Carte du départ et de l’arrivée');
     map.loading = 'lazy';

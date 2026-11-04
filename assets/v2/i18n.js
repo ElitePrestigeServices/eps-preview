@@ -7,6 +7,8 @@
     // En-tête et navigation
     ['Chauffeur privé · Côte d’Azur', 'Private chauffeur · French Riviera', 'Autista privato · Costa Azzurra', 'Chófer privado · Costa Azul'],
     ['Tarifs', 'Prices', 'Tariffe', 'Tarifas'],
+    ['Trajets', 'Routes', 'Tragitti', 'Trayectos'],
+    ['Prix fixe', 'Fixed price', 'Prezzo fisso', 'Precio fijo'],
     ['Services', 'Services', 'Servizi', 'Servicios'],
     ['Véhicules', 'Vehicles', 'Veicoli', 'Vehículos'],
     ['Entreprises', 'Business', 'Aziende', 'Empresas'],
@@ -119,6 +121,8 @@
     ['Client', 'Customer', 'Cliente', 'Cliente'],
     ['Informations utiles', 'Useful information', 'Informazioni utili', 'Información útil'],
     ['Tarif', 'Price', 'Tariffa', 'Tarifa'],
+    ['Prix fixe TTC', 'Fixed price incl. VAT', 'Prezzo fisso IVA inclusa', 'Precio fijo con IVA'],
+    ['Aperçu de l’itinéraire ; votre prix est confirmé par e-mail avec le devis.', 'Route preview; your price is confirmed by email with the quote.', 'Anteprima del percorso; il prezzo ti viene confermato via e-mail con il preventivo.', 'Vista previa del trayecto; su precio se confirma por correo con el presupuesto.'],
     ['Tarif indicatif TTC', 'Estimated price incl. VAT', 'Tariffa indicativa IVA inclusa', 'Tarifa orientativa con IVA'],
     ['Tarif partenaire TTC', 'Partner price incl. VAT', 'Tariffa partner IVA inclusa', 'Tarifa de socio con IVA'],
     ['haute saison', 'high season', 'alta stagione', 'temporada alta'],
@@ -141,6 +145,13 @@
     ['L’envoi a échoué. Vous pouvez réessayer ; aucune réservation n’a été confirmée.', 'Sending failed. You can try again; no booking has been confirmed.', 'Invio non riuscito. Puoi riprovare; nessuna prenotazione è stata confermata.', 'El envío ha fallado. Puede intentarlo de nuevo; no se ha confirmado ninguna reserva.'],
     ['L’envoi n’est pas encore disponible. Vos coordonnées n’ont pas été transmises.', 'Sending is not available yet. Your details have not been sent.', 'L’invio non è ancora disponibile. I tuoi dati non sono stati trasmessi.', 'El envío aún no está disponible. Sus datos no se han enviado.'],
     // Entreprises
+    ['Entreprises, agences et hôtels', 'Companies, agencies and hotels', 'Aziende, agenzie e hotel', 'Empresas, agencias y hoteles'],
+    ['Agences événementielles et productions :', 'Event agencies and productions:', 'Agenzie di eventi e produzioni:', 'Agencias de eventos y productoras:'],
+    ['Festival de Cannes, Lions, MIPIM, plusieurs véhicules, facture société.', 'Cannes Film Festival, Lions, MIPIM, several vehicles, company invoice.', 'Festival di Cannes, Lions, MIPIM, più veicoli, fattura aziendale.', 'Festival de Cannes, Lions, MIPIM, varios vehículos, factura a la empresa.'],
+    ['Délégations et congrès :', 'Delegations and conferences:', 'Delegazioni e congressi:', 'Delegaciones y congresos:'],
+    ['transferts aéroport et mise à disposition.', 'airport transfers and hourly hire.', 'transfer aeroporto e autista a ore.', 'traslados al aeropuerto y servicio por horas.'],
+    ['Entreprises & événements', 'Corporate & events', 'Aziende ed eventi', 'Empresas y eventos'],
+    ['Prix fixe par véhicule, affiché avant la validation de votre réservation. Berline, van Mercedes Classe V ou First Class sur chaque trajet.', 'Fixed price per vehicle, shown before you confirm your booking. Saloon, Mercedes V-Class van or First Class on every route.', 'Prezzo fisso per veicolo, mostrato prima della conferma della prenotazione. Berlina, van Mercedes Classe V o First Class su ogni tragitto.', 'Precio fijo por vehículo, mostrado antes de confirmar la reserva. Berlina, van Mercedes Clase V o First Class en cada trayecto.'],
     ['Hôtels, conciergeries et entreprises', 'Hotels, concierges and companies', 'Hotel, concierge e aziende', 'Hoteles, conserjerías y empresas'],
     ['Un chauffeur de confiance pour vos clients et vos équipes, avec un interlocuteur unique.', 'A trusted chauffeur for your guests and teams, with a single point of contact.', 'Un autista di fiducia per i tuoi clienti e i tuoi team, con un unico referente.', 'Un chófer de confianza para sus clientes y equipos, con un único interlocutor.'],
     ['Tarif fixe toute l’année', 'Fixed price all year round', 'Tariffa fissa tutto l’anno', 'Tarifa fija todo el año'],
@@ -212,6 +223,7 @@
         el.setAttribute(a, tr(el.dataset[k]));
       }
     });
+    document.querySelectorAll('[data-href-en]').forEach(a => { if (a.dataset.hrefFr == null) a.dataset.hrefFr = a.getAttribute('href'); a.setAttribute('href', lang === 'en' ? a.dataset.hrefEn : a.dataset.hrefFr); });
     if (pageMeta.title) document.title = pageMeta.title[LANGS.indexOf(lang)] || pageMeta.title[0];
   }
   window.epsLanguage = () => lang;

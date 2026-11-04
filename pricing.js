@@ -26,12 +26,12 @@
   // On applique la PLUS FORTE majoration (salon, saison ou dernière minute), sans cumul.
   // Les partenaires (code agence) ont le tarif de base toute l'année, sans aucune majoration.
   let events = [
-    { name: 'MIPIM 2027', start: '2027-03-15', end: '2027-03-19', percent: 35 },
-    { name: 'Festival de Cannes 2027', start: '2027-05-11', end: '2027-05-22', percent: 50 },
-    { name: 'Grand Prix de Monaco 2027', start: '2027-06-03', end: '2027-06-07', percent: 50 },
-    { name: 'Cannes Lions 2027', start: '2027-06-21', end: '2027-06-25', percent: 35 },
+    { name: 'MIPIM 2027', start: '2027-03-15', end: '2027-03-19', percent: 20 },
+    { name: 'Festival de Cannes 2027', start: '2027-05-11', end: '2027-05-22', percent: 25 },
+    { name: 'Grand Prix de Monaco 2027', start: '2027-06-03', end: '2027-06-07', percent: 25 },
+    { name: 'Cannes Lions 2027', start: '2027-06-21', end: '2027-06-25', percent: 20 },
     { name: 'Haute saison été 2027', start: '2027-07-01', end: '2027-08-31', percent: 15, kind: 'saison' },
-    { name: 'Cannes Yachting Festival 2027', start: '2027-09-07', end: '2027-09-12', percent: 30 }
+    { name: 'Cannes Yachting Festival 2027', start: '2027-09-07', end: '2027-09-12', percent: 15 }
   ];
   const CONFIG_URL = 'https://lrtuztxjngdvrnjuwxfr.supabase.co/functions/v1/eps-pricing-config';
   let partnerCode = '';

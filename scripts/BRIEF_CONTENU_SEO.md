@@ -16,7 +16,7 @@ Utilisé pour enrichir les pages du site (français d'abord, puis traductions EN
 - Aéroport de Nice ↔ Cannes : 130 € / 160 € / 200 €
 - Aéroport de Nice ↔ Monaco : 150 € / 195 € / 240 €
 - Cannes ↔ Monaco : 230 € / 260 € / 330 €
-- Cannes ↔ Saint-Tropez : 230 € / 320 € / 450 €
+- Cannes ↔ Saint-Tropez : 320 € / 370 € / 460 €
 - Cannes ↔ aéroport de Cannes-Mandelieu : 95 € / 115 € / 120 €
 - Autres trajets : sur devis. Majoration en juillet-août (+15 %) et pendant les grands événements (MIPIM, Festival de Cannes, Grand Prix de Monaco, Cannes Lions, Yachting Festival) : la plus forte s'applique, jamais cumulée. Toujours écrire « à partir de ».
 

@@ -5,7 +5,7 @@ WASVG='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.
 tickets=[('Aéroport de Nice','Cannes','Aéroport de Nice Côte d’Azur','Cannes',130,'Environ 35 min'),
  ('Aéroport de Nice','Monaco','Aéroport de Nice Côte d’Azur','Monaco',150,'Environ 30 min'),
  ('Cannes','Monaco','Cannes','Monaco',230,'Environ 55 min'),
- ('Cannes','Saint-Tropez','Cannes','Saint-Tropez',230,'Environ 1 h 30')]
+ ('Cannes','Saint-Tropez','Cannes','Saint-Tropez',320,'Environ 1 h 30')]
 T=''.join(f'<button type="button" class="ticket" data-dep="{d}" data-dest="{a}"><span class="from">À partir de</span><span class="route"><i>{x}</i><i>{y}</i></span><span class="meta">{m} · berline Business</span><span class="perf" aria-hidden="true"></span><span class="price"><b>{p} €</b><span>Réserver ce trajet</span></span></button>' for x,y,d,a,p,m in tickets)
 services=[('aviation-privee-aeroport-nice/','aviation','Transferts aéroports','Aéroport Nice Côte d’Azur et Cannes-Mandelieu, vols commerciaux et aviation d’affaires.'),
  ('hotels-conciergeries-cote-dazur/','hotels','Hôtels & conciergeries','Arrivées et départs des hôtels 5 étoiles et palaces de Cannes, Nice et Monaco.'),

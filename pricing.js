@@ -8,7 +8,7 @@
     'cannes|monaco': { 'Business Class': 230, 'Business Van': 260, 'First Class': 330 },
     // 03/11/2026 : van Monaco 260 → 230 et Saint-Tropez 360 → 320 (écart van/berline ramené vers +35 %) ; ajout aéroport de Nice ↔ Monaco.
     'monaco|nice': { 'Business Class': 150, 'Business Van': 195, 'First Class': 240 },
-    'cannes|saint-tropez': { 'Business Class': 230, 'Business Van': 320, 'First Class': 450 }
+    'cannes|saint-tropez': { 'Business Class': 320, 'Business Van': 370, 'First Class': 460 }
   };
   // Relevés Blacklane transmis le 26/09/2026. Références de marché, pas tarifs EPS validés.
   // Les trajets aéroport sont directionnels : les prix retour restent à confirmer.

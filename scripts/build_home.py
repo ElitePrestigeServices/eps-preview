@@ -67,7 +67,7 @@ html=f'''<!doctype html>
 <section class="sec" id="trajets" aria-labelledby="trajets-t"><div class="wrap">
   <div class="sec-head"><div><h2 id="trajets-t">Les trajets les plus demandés</h2><p class="lead">Prix TTC par véhicule, pas par personne. Touchez un trajet pour le réserver.</p></div></div>
   <div class="tickets">{T}</div>
-  <p class="tickets-note">Tarifs de base en berline Business. Van Mercedes Classe V et First Class sur les mêmes trajets ; majoration pendant les grands événements et en juillet-août.</p>
+  <p class="tickets-note">Tarifs de base en berline Business. Van Mercedes Classe V et First Class sur les mêmes trajets.</p>
 </div></section>
 
 <section class="sec" id="services" aria-labelledby="services-t" style="padding-top:0"><div class="wrap">
@@ -99,7 +99,7 @@ html=f'''<!doctype html>
     <h2 id="pro-t">Hôtels, conciergeries et entreprises</h2>
     <p class="lead" style="margin-top:14px">Un chauffeur de confiance pour vos clients et vos équipes, avec un interlocuteur unique.</p>
     <ul>
-      <li><span><b>Tarif fixe toute l’année</b>, sans majoration pendant les événements.</span></li>
+      <li><span><b>Tarif fixe toute l’année</b>.</span></li>
       <li><span><b>Lien de réservation à votre nom</b> pour vos clients, suivi de chaque course.</span></li>
       <li><span><b>Délégations et congrès</b> : plusieurs véhicules, transferts aéroport et mise à disposition.</span></li>
     </ul>

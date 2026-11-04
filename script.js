@@ -156,7 +156,7 @@ function renderReview() {
   addDetail('Client', currentRequest.customerName);
   addDetail('E-mail', currentRequest.customerEmail);
   addDetail('Téléphone', currentRequest.customerPhone);
-  if (currentRequest.estimate) { const e = currentRequest.estimate; addDetail(e.partner ? 'Tarif partenaire TTC' : 'Tarif indicatif TTC', e.amount.toLocaleString('fr-FR', {style:'currency',currency:'EUR'}) + (e.partner ? ' — ' + e.partner : e.event ? (e.season ? ' — ' + T('haute saison') : ' — ' + T('tarif événementiel') + ' (' + e.event + ')') : '')); }
+  if (currentRequest.estimate) { const e = currentRequest.estimate; addDetail(e.partner ? 'Tarif partenaire TTC' : 'Tarif indicatif TTC', e.amount.toLocaleString('fr-FR', {style:'currency',currency:'EUR'}) + (e.partner ? ' — ' + e.partner : '')); }
   else addDetail('Tarif', T('Sur devis après étude du trajet'));
   if (currentRequest.notes) addDetail('Informations utiles', currentRequest.notes);
   if (currentRequest.type === 'Transfert' && currentRequest.departure && currentRequest.destination) {

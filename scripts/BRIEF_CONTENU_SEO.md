@@ -15,7 +15,7 @@ Utilisé pour enrichir les pages du site (français d'abord, puis traductions EN
 ## Prix de base TTC (à partir de, par véhicule : Business Class / Business Van / First Class)
 - Aéroport de Nice ↔ Cannes : 130 € / 160 € / 200 €
 - Aéroport de Nice ↔ Monaco : 150 € / 195 € / 240 €
-- Cannes ↔ Monaco : 170 € / 230 € / 330 €
+- Cannes ↔ Monaco : 230 € / 260 € / 330 €
 - Cannes ↔ Saint-Tropez : 230 € / 320 € / 450 €
 - Cannes ↔ aéroport de Cannes-Mandelieu : 95 € / 115 € / 120 €
 - Autres trajets : sur devis. Majoration en juillet-août (+15 %) et pendant les grands événements (MIPIM, Festival de Cannes, Grand Prix de Monaco, Cannes Lions, Yachting Festival) : la plus forte s'applique, jamais cumulée. Toujours écrire « à partir de ».

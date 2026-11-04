@@ -5,7 +5,7 @@
   const fares = {
     'cannes|nice': { 'Business Class': 130, 'Business Van': 160, 'First Class': 200 },
     'cannes|cannes-mandelieu-airport': { 'Business Class': 95, 'Business Van': 115, 'First Class': 120 },
-    'cannes|monaco': { 'Business Class': 170, 'Business Van': 230, 'First Class': 330 },
+    'cannes|monaco': { 'Business Class': 230, 'Business Van': 260, 'First Class': 330 },
     // 03/11/2026 : van Monaco 260 → 230 et Saint-Tropez 360 → 320 (écart van/berline ramené vers +35 %) ; ajout aéroport de Nice ↔ Monaco.
     'monaco|nice': { 'Business Class': 150, 'Business Van': 195, 'First Class': 240 },
     'cannes|saint-tropez': { 'Business Class': 230, 'Business Van': 320, 'First Class': 450 }

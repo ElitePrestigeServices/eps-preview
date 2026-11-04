@@ -4,7 +4,7 @@ WA='https://wa.me/33745495321?text=Bonjour%2C%20je%20souhaite%20un%20devis%20pou
 WASVG='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.1l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.7.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.8 11.9 11.9 0 0 0 4.6 4c1.7.7 2.4.8 3.2.7.5-.1 1.5-.6 1.8-1.2s.2-1.1.1-1.2l-.5-.3Z"/></svg>'
 tickets=[('Aéroport de Nice','Cannes','Aéroport de Nice Côte d’Azur','Cannes',130,'Environ 35 min'),
  ('Aéroport de Nice','Monaco','Aéroport de Nice Côte d’Azur','Monaco',150,'Environ 30 min'),
- ('Cannes','Monaco','Cannes','Monaco',170,'Environ 55 min'),
+ ('Cannes','Monaco','Cannes','Monaco',230,'Environ 55 min'),
  ('Cannes','Saint-Tropez','Cannes','Saint-Tropez',230,'Environ 1 h 30')]
 T=''.join(f'<button type="button" class="ticket" data-dep="{d}" data-dest="{a}"><span class="from">À partir de</span><span class="route"><i>{x}</i><i>{y}</i></span><span class="meta">{m} · berline Business</span><span class="perf" aria-hidden="true"></span><span class="price"><b>{p} €</b><span>Réserver ce trajet</span></span></button>' for x,y,d,a,p,m in tickets)
 services=[('aviation-privee-aeroport-nice/','aviation','Transferts aéroports','Aéroport Nice Côte d’Azur et Cannes-Mandelieu, vols commerciaux et aviation d’affaires.'),

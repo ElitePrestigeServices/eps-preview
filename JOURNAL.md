@@ -36,6 +36,7 @@
 - Dossier chauffeur : 11 pièces obligatoires (ajout permis recto/verso, inscription registre VTC avec expiration, Kbis/SIRET) ; liste affichée dès la candidature ; validation du compte bloquée tant que les 11 ne sont pas validées. Formulaire de réservation : indicatif téléphone = drapeau + code seulement. Pilotage : suggestions de lieux (villes, aéroports) dans « Nouvelle demande » et le bon de commande.
 - Logo pour Google : favicons 48/96/192 px (Google exige un multiple de 48 px) sur toutes les pages + /favicon.ico ; logo du JSON-LD = assets/v2/logo-eps.png. Page Merci : nouveau logo ; fiche contact .vcf avec logo, sans numéro de rue.
 - Nouvelle page /chauffeur-prive-cote-dazur-depuis-paris/ (04/11) : vise les Parisiens en vacances (arrivée avion Nice, TGV Cannes/Nice/Antibes/Saint-Raphaël, retour, Paris en voiture sur devis). Pas de « chauffeur à Paris » : Anthony n’a pas de chauffeur sur place, demandes vers Paris très rares. Ajoutée au sitemap (85 URL) et à la page destinations.
+- SEO (04/11 nuit) : 6 pages clés réécrites (630-730 mots, FAQ, prix du brief, liens internes) : Cannes, Nice, Monaco, Saint-Tropez, aéroport Nice→Cannes, Nice→Monaco ; leurs versions EN/IT/ES mises à jour. Faits et prix autorisés : scripts/BRIEF_CONTENU_SEO.md ; file d’attente : scripts/SEO_PLAN.md ; tâche programmée « EPS – boost SEO des pages » tous les 2 jours à 2 h 41 (4 pages par passage).
 - Reste à faire, enrichir les pages (67/74 sous 400 mots), titres trop longs, demande d’avis Google après course.
 
 ## 26/10/2026 — ChatGPT — Correction SEO de publication

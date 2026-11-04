@@ -121,6 +121,7 @@
     ['Client', 'Customer', 'Cliente', 'Cliente'],
     ['Informations utiles', 'Useful information', 'Informazioni utili', 'Información útil'],
     ['Tarif', 'Price', 'Tariffa', 'Tarifa'],
+    ['Choisir un véhicule', 'Choose a vehicle', 'Scegli un veicolo', 'Elija un vehículo'],
     ['Prix fixe TTC', 'Fixed price incl. VAT', 'Prezzo fisso IVA inclusa', 'Precio fijo con IVA'],
     ['Aperçu de l’itinéraire ; votre prix est confirmé par e-mail avec le devis.', 'Route preview; your price is confirmed by email with the quote.', 'Anteprima del percorso; il prezzo ti viene confermato via e-mail con il preventivo.', 'Vista previa del trayecto; su precio se confirma por correo con el presupuesto.'],
     ['Tarif indicatif TTC', 'Estimated price incl. VAT', 'Tariffa indicativa IVA inclusa', 'Tarifa orientativa con IVA'],
@@ -224,6 +225,7 @@
       }
     });
     document.querySelectorAll('[data-href-en]').forEach(a => { if (a.dataset.hrefFr == null) a.dataset.hrefFr = a.getAttribute('href'); a.setAttribute('href', lang === 'en' ? a.dataset.hrefEn : a.dataset.hrefFr); });
+    try { document.dispatchEvent(new CustomEvent('eps:language', { detail: lang })); } catch (_) {}
     if (pageMeta.title) document.title = pageMeta.title[LANGS.indexOf(lang)] || pageMeta.title[0];
   }
   window.epsLanguage = () => lang;

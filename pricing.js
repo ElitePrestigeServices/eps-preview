@@ -115,7 +115,8 @@
       'cannes-centre|saint-tropez': 'cannes|saint-tropez',
       'monaco|nice-airport': 'monaco|nice'
     };
-    const base = fares[routes[pair]]?.[request.vehicle];
+    // Electric Class : tarif Business Class (EQE) ; l'EQS est confirmé au tarif First dans le devis.
+    const base = fares[routes[pair]]?.[request.vehicle === 'Electric Class' ? 'Business Class' : request.vehicle];
     if (!base || !request.date || !request.time) return null;
     const hours = (pickupParis(request.date, request.time) - Date.now()) / 3600000;
     if (!Number.isFinite(hours) || hours < 2) return null;

@@ -130,7 +130,7 @@ html=f'''<!doctype html>
   <div class="foot-legal"><span>© Elite Prestige Services</span><span><a href="mentions-legales/">Mentions légales</a> · <a href="cgv/">CGV</a> · <a href="cgu/">CGU</a> · <a href="confidentialite/">Confidentialité</a></span></div>
 </div></footer>
 {cta2}
-<script src="assets/v2/i18n.js?v=20261104b"></script><script src="pricing.js?v=20261103"></script><script src="script.js?v=20261104-recap"></script>
+<script src="assets/v2/i18n.js?v=20261104c"></script><script src="pricing.js?v=20261104-veh"></script><script src="script.js?v=20261104-veh"></script>
 <script>
 (function(){{
  const form=document.getElementById('reservation-form');if(!form)return;

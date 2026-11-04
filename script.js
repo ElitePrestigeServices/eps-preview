@@ -263,6 +263,26 @@ sendButton.addEventListener('click', async () => {
   }
 });
 
+/* Prix fixe affiché dans la liste des véhicules dès que le trajet, la date et l'heure sont connus. */
+(() => {
+  const f = document.getElementById('reservation-form'); if (!f) return;
+  const sel = f.querySelector('select[name="vehicle"]'); if (!sel) return;
+  const eur = n => Number(n).toLocaleString('fr-FR', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 });
+  const update = () => {
+    const g = n => String(f.querySelector('[name="' + n + '"]')?.value || '').trim();
+    const type = f.querySelector('.tabs .selected')?.dataset.type || 'Transfert';
+    [...sel.options].forEach(o => {
+      if (!o.value) return;
+      if (o.dataset.label == null) o.dataset.label = o.textContent;
+      const e = window.epsEstimatePrice?.({ type, departure: g('departure'), destination: g('destination'), date: g('date'), time: g('time'), vehicle: o.value === 'Electric Class' ? 'Business Class' : o.value, partnerCode: window.epsPartner?.code || '' });
+      o.textContent = T(o.dataset.label) + (e ? ' · ' + eur(e.amount) : '');
+    });
+  };
+  ['input', 'change'].forEach(ev => f.addEventListener(ev, e => { if (e.target !== sel) setTimeout(update, 0); }));
+  f.querySelectorAll('.tabs button').forEach(b => b.addEventListener('click', () => setTimeout(update, 0)));
+  document.addEventListener('eps:language', update);
+})();
+
 /* Suggestions de villes internationales ; la saisie libre reste possible. */
 const localLocations = [...document.querySelectorAll('#eps-locations option')].map(option => option.value);
 const normalizePlace = value => value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();

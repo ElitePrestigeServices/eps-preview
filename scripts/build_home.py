@@ -16,7 +16,7 @@ cars=[('business-class','Business Class','Mercedes Classe E, EQE ou équivalent'
  ('business-van','Business Van','Mercedes Classe V Extra-Long ou équivalent','7 passagers','7 bagages','160 €'),
  ('first-class','First Class','Mercedes Classe S, EQS ou équivalent','3 passagers','3 bagages','200 €'),
  ('electric-class','Electric Class','Mercedes EQE, EQS ou équivalent, 100 % électrique','3 passagers','3 bagages','130 €')]
-C=''.join(f'<article class="car"><img src="assets/v2/{i}-cadre.webp" alt="{n} — {m}" width="665" height="416" loading="lazy" decoding="async"><div class="tx"><h3>{n}</h3><p class="model">{m}</p><p class="cap"><span>{a}</span><span>{b}</span></p><div class="from"><span>Prix fixe</span><button type="button" data-vehicle="{n}">Choisir</button></div></div></article>' for i,n,m,a,b,p in cars)
+C=''.join(f'<article class="car"><img src="assets/v2/{i}-cadre.webp" alt="{n} — {m}" width="665" height="416" loading="lazy" decoding="async"><div class="tx"><h3>{n}</h3><p class="model">{m}</p><p class="cap"><span>{a}</span><span>{b}</span></p><div class="from"><button type="button" data-vehicle="{n}">Choisir</button></div></div></article>' for i,n,m,a,b,p in cars)
 agenda=[('agenda-evenements-cote-dazur/#cannes','Cannes',[('Mars','MIPIM'),('Mai','Festival de Cannes'),('Juin','Cannes Lions'),('Octobre','MIPCOM')]),
  ('agenda-evenements-cote-dazur/#monaco','Monaco',[('Avril','Monte-Carlo Masters'),('Mai / juin','Grand Prix'),('Septembre','Monaco Yacht Show')]),
  ('agenda-evenements-cote-dazur/#saint-tropez','Saint-Tropez',[('Mai','Les Bravades'),('Été','Concerts'),('Sept. / oct.','Les Voiles')]),

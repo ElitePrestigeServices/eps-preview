@@ -181,7 +181,7 @@
     ['Contact', 'Contact', 'Contatti', 'Contacto'],
     ['Espace admin', 'Admin area', 'Area admin', 'Área de administración'],
     ['Espace chauffeur', 'Driver area', 'Area autisti', 'Área de chóferes'],
-    ['© Elite Prestige Services · VTC EVTC006240319', '© Elite Prestige Services · VTC licence EVTC006240319', '© Elite Prestige Services · licenza VTC EVTC006240319', '© Elite Prestige Services · licencia VTC EVTC006240319'],
+    ['© Elite Prestige Services', '© Elite Prestige Services', '© Elite Prestige Services', '© Elite Prestige Services'],
     ['Mentions légales', 'Legal notice', 'Note legali', 'Aviso legal'],
     ['CGV', 'Terms of sale', 'Condizioni di vendita', 'Condiciones de venta'],
     ['CGU', 'Terms of use', 'Condizioni d’uso', 'Condiciones de uso'],

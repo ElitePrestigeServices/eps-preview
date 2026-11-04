@@ -40,6 +40,7 @@
 - Bon de commande : « Imprimer ou PDF » ne marchait pas dans l’app installée sur iPhone (window.print bloqué). Remplacé par un vrai PDF A4 généré sur le téléphone (html2pdf.js 0.10.1, cdnjs) : « PDF (imprimer, enregistrer) » ouvre le menu de partage iOS, « Partager le PDF » l’envoie (WhatsApp, mail…), « Imprimer » reste sur ordinateur. Modifier / Annuler / Supprimer sortis de la vue du bon (contrôle) : bouton « ⋯ » discret en haut à droite → « Gérer le bon ». Même PDF dans l’espace chauffeur.
 - 2026-11-04 02:40 : police des titres Fraunces → Playfair Display (j/J classiques), chiffres alignés, bandeau 24h/24 · prix · chauffeur en 3 colonnes égales.
 - 2026-11-04 02:50 : Electric Class affichée « Dès 130 € » (EQE = tarif Business, EQS = tarif First) sur l’accueil et les 21 pages FR/EN/IT/ES.
+- 2026-11-04 02:55 : numéro VTC retiré du pied de page (gardé dans mentions légales et bon de commande).
 - Reste à faire, enrichir les pages (67/74 sous 400 mots), titres trop longs, demande d’avis Google après course.
 
 ## 26/10/2026 — ChatGPT — Correction SEO de publication

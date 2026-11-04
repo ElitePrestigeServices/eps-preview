@@ -41,6 +41,7 @@
 - 2026-11-04 02:40 : police des titres Fraunces → Playfair Display (j/J classiques), chiffres alignés, bandeau 24h/24 · prix · chauffeur en 3 colonnes égales.
 - 2026-11-04 02:50 : Electric Class affichée « Dès 130 € » (EQE = tarif Business, EQS = tarif First) sur l’accueil et les 21 pages FR/EN/IT/ES.
 - 2026-11-04 02:55 : numéro VTC retiré du pied de page (gardé dans mentions légales et bon de commande).
+- 2026-11-04 03:05 : photos véhicules recadrées (voitures entières, plus grandes), carrousel à glisser sur mobile.
 - Reste à faire, enrichir les pages (67/74 sous 400 mots), titres trop longs, demande d’avis Google après course.
 
 ## 26/10/2026 — ChatGPT — Correction SEO de publication

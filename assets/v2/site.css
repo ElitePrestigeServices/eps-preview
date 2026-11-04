@@ -102,8 +102,8 @@ p{margin:0}
 
 /* Flotte */
 .fleet{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
-.car{background:linear-gradient(180deg,#050807 0%,#050807 58%,var(--surface) 58%);border-radius:var(--r);overflow:hidden;display:flex;flex-direction:column}
-.car img{aspect-ratio:3/2;object-fit:cover;width:100%}
+.car{background:var(--surface);border-radius:var(--r);overflow:hidden;display:flex;flex-direction:column}
+.car img{aspect-ratio:665/416;object-fit:contain;width:100%;background:#000}
 .car .tx{padding:4px 18px 18px;display:flex;flex-direction:column;gap:6px;flex:1;background:var(--surface)}
 .car .model{color:var(--ink-2);font-size:15px}
 .car .cap{display:flex;gap:14px;color:var(--ink-3);font-size:14px;font-weight:600;margin-top:2px}
@@ -243,11 +243,10 @@ p{margin:0}
   .service .tx{padding:14px}
   .service p{display:none}
   .service h3{font-size:18px}
-  .fleet{grid-template-columns:1fr;gap:12px}
-  .car{display:grid;grid-template-columns:42% 1fr;background:var(--surface)}
-  .car img{height:100%;aspect-ratio:auto;object-fit:cover;background:#050807}
-  .car .tx{padding:14px}
-  .car .from{flex-direction:column;align-items:flex-start}
+  .fleet{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;margin:0 -20px;padding:0 20px 6px;scroll-padding:0 20px;scrollbar-width:none}
+  .fleet::-webkit-scrollbar{display:none}
+  .car{flex:0 0 84%;scroll-snap-align:start}
+  .car .tx{padding:6px 16px 16px}
   .booking{padding:18px;border-radius:20px}
   .booking .form-grid{gap:0 10px}
   .agenda{grid-template-columns:1fr}

@@ -76,3 +76,4 @@
 - 04/11/2026 (Claude) : enrichissement de 47 pages secondaires (FR, EN, IT) à 420-600 mots via un brief commun (tarifs autorisés uniquement, pas de date précise, FAQ « sur devis » supprimée). Toutes les pages du sitemap dépassent désormais 400 mots.
 - 04/11/2026 (Claude) : audit méta — 29 titres raccourcis sous 62 caractères (suffixe « | EPS »), descriptions trop longues/courtes réécrites, description manquante ajoutée (guides-internationaux) ; accueil : « Devis sur demande » remplacé par le prix d'appel (dès 130 €).
 - 04/11/2026 (Claude) : CGV §4 Annulation validée par Anthony — gratuite > 24 h ; 50 % entre 24 h et 4 h ; 100 % < 4 h ou no-show ; modification gratuite > 24 h (remplace « sans frais jusqu’à 4 h »).
+- 04/11/2026 (Claude) : conditions d'annulation rappelées sur la page /devis/ (avec lien CGV, au-dessus du bouton de validation) et dans le mail de devis (fonction eps-send-quote-email v14, copie dans supabase/functions/).

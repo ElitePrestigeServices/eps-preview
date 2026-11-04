@@ -64,3 +64,5 @@
 
 - Correction de `locale.js` : ajout des traductions manquantes des cartes/pastilles Services et Flotte, modèles Mercedes, capacités passagers/bagages, boutons RÉSERVER / EN SAVOIR PLUS et libellés/accessibilité associés.
 - Aucun tarif, réservation, CRM, Supabase ou contenu SEO structurel modifié.
+
+- 04/11/2026 (Claude) : sitemap — ajout de /chauffeur-evenements-nice/ et /chauffeur-prive-frejus-saint-raphael/ (pages indexables mais absentes des sitemaps). 87 URL publiques.

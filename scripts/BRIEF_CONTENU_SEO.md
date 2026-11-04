@@ -10,21 +10,19 @@ Utilisé pour enrichir les pages du site (français d'abord, puis traductions EN
 - Sièges bébé et réhausseurs sur demande (à préciser à la réservation).
 - Réservation : formulaire du site (/#reservation) ou WhatsApp. Devis au prix fixe TTC envoyé par e-mail, paiement sécurisé par carte (lien Stripe). Prix par véhicule, pas par personne. Le chauffeur suit l'heure réelle d'arrivée grâce au numéro de vol ou de train.
 - Réponses en français ou en anglais.
-- Hôtels, conciergeries, agences : tarif fixe toute l'année, sans majoration événement, lien de réservation à leur nom.
+- Hôtels, conciergeries, agences : tarif fixe toute l'année, lien de réservation à leur nom.
 
-## Prix de base TTC (à partir de, par véhicule : Business Class / Business Van / First Class)
-- Aéroport de Nice ↔ Cannes : 130 € / 160 € / 200 €
-- Aéroport de Nice ↔ Monaco : 150 € / 195 € / 240 €
-- Cannes ↔ Monaco : 230 € / 260 € / 330 €
-- Cannes ↔ Saint-Tropez : 320 € / 370 € / 460 €
-- Cannes ↔ aéroport de Cannes-Mandelieu : 95 € / 115 € / 120 €
-- Autres trajets : sur devis. Majoration en juillet-août (+15 %) et pendant les grands événements (MIPIM, Festival de Cannes, Grand Prix de Monaco, Cannes Lions, Yachting Festival) : la plus forte s'applique, jamais cumulée. Toujours écrire « à partir de ».
+## Prix — RÈGLE ABSOLUE (décision d'Anthony, 04/11/2026)
+- AUCUN montant en euros sur les pages publiques : ni dans le texte, ni dans les titres, ni dans les meta descriptions, ni dans les FAQ. Comme les grands acteurs (Chabé, Ambassador), le prix s'affiche uniquement dans le formulaire de réservation.
+- Ne jamais parler de majoration, de haute saison ou de supplément événement.
+- Formulations autorisées : « prix fixe par véhicule, affiché avant la validation de la réservation », « prix par véhicule, pas par personne », « sur devis » pour les mises à disposition et longues distances. Les mots « prix » et « tarif » restent utiles pour le référencement.
+- Les montants réels sont dans pricing.js (usage interne uniquement).
 
 ## Règles de rédaction
 - Français naturel, vouvoiement, phrases courtes, utile pour un client qui réserve. Pas de superlatifs creux (« le meilleur », « n°1 »), pas de faux avis, pas d'années d'expérience, pas de chiffres inventés.
 - Durées de trajet : toujours « environ », hors trafic (ex. Aéroport de Nice → Cannes environ 35 min ; → Monaco environ 30 min ; Cannes → Monaco environ 55 min ; Cannes → Saint-Tropez environ 1 h 30).
 - Infos locales exactes seulement (Croisette, Palais des Festivals, Port Canto, Vieux-Port, Promenade des Anglais, Casino de Monte-Carlo, Port Hercule, Place des Lices, Pampelonne, A8, Moyenne Corniche…). En cas de doute, ne pas l'écrire.
-- Viser 600 à 900 mots par page, avec : intro qui répond tout de suite (quoi, où, prix de départ) ; sections H2 utiles (trajets fréquents avec prix, aéroport/gare, hôtels et lieux, événements, véhicules, comment réserver) ; une FAQ de 4 à 6 questions réelles ; 3 à 6 liens internes vers d'autres pages EPS (chemins absolus « /slug/ ») ; 1 à 2 boutons `<a class="cta" href="/#reservation">…</a>`.
+- Viser 600 à 900 mots par page, avec : intro qui répond tout de suite (quoi, où, prix fixe) ; sections H2 utiles (trajets fréquents avec durées, aéroport/gare, hôtels et lieux, événements, véhicules, comment réserver) ; une FAQ de 4 à 6 questions réelles ; 3 à 6 liens internes vers d'autres pages EPS (chemins absolus « /slug/ ») ; 1 à 2 boutons `<a class="cta" href="/#reservation">…</a>`.
 - Garder la structure HTML simple : `<p class="eyebrow">`, `<h1>`, `<p class="intro">`, `<a class="cta">`, `<section><h2>…</h2><p>…</p></section>`, `<h3>` pour les questions de FAQ, `<div class="related">` pour les liens. Pas de style inline, pas d'image, pas de script.
 - Un seul H1. Garder le sens du H1 existant (mot-clé principal de la page), on peut l'améliorer.
-- Title ≤ 65 caractères finissant par « | EPS » ou « | Elite Prestige Services » ; meta description ≤ 155 caractères, avec un prix « dès … € » quand il existe.
+- Title ≤ 65 caractères finissant par « | EPS » ou « | Elite Prestige Services » ; meta description ≤ 155 caractères, sans montant ; mentionner « prix fixe ».

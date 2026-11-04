@@ -6,7 +6,7 @@ tickets=[('Aéroport de Nice','Cannes','Aéroport de Nice Côte d’Azur','Canne
  ('Aéroport de Nice','Monaco','Aéroport de Nice Côte d’Azur','Monaco',150,'Environ 30 min'),
  ('Cannes','Monaco','Cannes','Monaco',230,'Environ 55 min'),
  ('Cannes','Saint-Tropez','Cannes','Saint-Tropez',320,'Environ 1 h 30')]
-T=''.join(f'<button type="button" class="ticket" data-dep="{d}" data-dest="{a}"><span class="from">À partir de</span><span class="route"><i>{x}</i><i>{y}</i></span><span class="meta">{m} · berline Business</span><span class="perf" aria-hidden="true"></span><span class="price"><b>{p} €</b><span>Réserver ce trajet</span></span></button>' for x,y,d,a,p,m in tickets)
+T=''.join(f'<button type="button" class="ticket" data-dep="{d}" data-dest="{a}"><span class="from">Prix fixe</span><span class="route"><i>{x}</i><i>{y}</i></span><span class="meta">{m} · berline Business</span><span class="perf" aria-hidden="true"></span><span class="price"><span>Réserver ce trajet</span></span></button>' for x,y,d,a,p,m in tickets)
 services=[('aviation-privee-aeroport-nice/','aviation','Transferts aéroports','Aéroport Nice Côte d’Azur et Cannes-Mandelieu, vols commerciaux et aviation d’affaires.'),
  ('hotels-conciergeries-cote-dazur/','hotels','Hôtels & conciergeries','Arrivées et départs des hôtels 5 étoiles et palaces de Cannes, Nice et Monaco.'),
  ('yachting-transferts-ports-cote-dazur/','yachting','Yachting','Ports de Cannes, Antibes, Monaco et Saint-Tropez, à l’heure de votre embarquement.'),
@@ -16,7 +16,7 @@ cars=[('business-class','Business Class','Mercedes Classe E, EQE ou équivalent'
  ('business-van','Business Van','Mercedes Classe V Extra-Long ou équivalent','7 passagers','7 bagages','160 €'),
  ('first-class','First Class','Mercedes Classe S, EQS ou équivalent','3 passagers','3 bagages','200 €'),
  ('electric-class','Electric Class','Mercedes EQE, EQS ou équivalent, 100 % électrique','3 passagers','3 bagages','130 €')]
-C=''.join(f'<article class="car"><img src="assets/v2/{i}-cadre.webp" alt="{n} — {m}" width="665" height="416" loading="lazy" decoding="async"><div class="tx"><h3>{n}</h3><p class="model">{m}</p><p class="cap"><span>{a}</span><span>{b}</span></p><div class="from"><span>{("Dès <b>"+p+"</b>") if p else "Sur demande"}</span><button type="button" data-vehicle="{n}">Choisir</button></div></div></article>' for i,n,m,a,b,p in cars)
+C=''.join(f'<article class="car"><img src="assets/v2/{i}-cadre.webp" alt="{n} — {m}" width="665" height="416" loading="lazy" decoding="async"><div class="tx"><h3>{n}</h3><p class="model">{m}</p><p class="cap"><span>{a}</span><span>{b}</span></p><div class="from"><span>Prix fixe</span><button type="button" data-vehicle="{n}">Choisir</button></div></div></article>' for i,n,m,a,b,p in cars)
 agenda=[('agenda-evenements-cote-dazur/#cannes','Cannes',[('Mars','MIPIM'),('Mai','Festival de Cannes'),('Juin','Cannes Lions'),('Octobre','MIPCOM')]),
  ('agenda-evenements-cote-dazur/#monaco','Monaco',[('Avril','Monte-Carlo Masters'),('Mai / juin','Grand Prix'),('Septembre','Monaco Yacht Show')]),
  ('agenda-evenements-cote-dazur/#saint-tropez','Saint-Tropez',[('Mai','Les Bravades'),('Été','Concerts'),('Sept. / oct.','Les Voiles')]),
@@ -67,7 +67,7 @@ html=f'''<!doctype html>
 <section class="sec" id="trajets" aria-labelledby="trajets-t"><div class="wrap">
   <div class="sec-head"><div><h2 id="trajets-t">Les trajets les plus demandés</h2><p class="lead">Prix TTC par véhicule, pas par personne. Touchez un trajet pour le réserver.</p></div></div>
   <div class="tickets">{T}</div>
-  <p class="tickets-note">Tarifs de base en berline Business. Van Mercedes Classe V et First Class sur les mêmes trajets.</p>
+  <p class="tickets-note">Prix fixe par véhicule, affiché avant la validation de votre réservation. Berline, van Mercedes Classe V ou First Class sur chaque trajet.</p>
 </div></section>
 
 <section class="sec" id="services" aria-labelledby="services-t" style="padding-top:0"><div class="wrap">

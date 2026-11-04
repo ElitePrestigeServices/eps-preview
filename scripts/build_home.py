@@ -44,7 +44,7 @@ html=f'''<!doctype html>
 <header class="site-head"><div class="wrap">
   <a class="mark" href="#accueil"><img src="assets/v2/logo-eps-256.webp" alt="" width="38" height="38"><span><b>Elite Prestige Services</b><small>Chauffeur privé · Côte d’Azur</small></span></a>
   <nav class="main-nav" id="main-nav" aria-label="Navigation principale">
-    <a href="#trajets">Trajets</a><a href="#services">Services</a><a href="#vehicules">Véhicules</a><a href="#entreprises">Entreprises</a><a href="#agenda">Événements</a>
+    <a href="#services">Services</a><a href="#vehicules">Véhicules</a><a href="#entreprises">Entreprises</a><a href="#agenda">Événements</a>
     <a class="mobile-only" href="#reservation">Réserver</a><a class="mobile-only" href="admin/">Accès admin</a><a class="mobile-only" href="chauffeur/">Accès chauffeur</a>
     <div class="lang-toggle mobile-only nav-lang" role="group" aria-label="Langue / Language" data-no-i18n><button type="button" data-lang="fr" aria-pressed="true" lang="fr">FR</button><button type="button" data-lang="en" aria-pressed="false" lang="en">EN</button><button type="button" data-lang="it" aria-pressed="false" lang="it">IT</button><button type="button" data-lang="es" aria-pressed="false" lang="es">ES</button></div>
   </nav>
@@ -64,10 +64,6 @@ html=f'''<!doctype html>
 </section>
 <ul class="facts wrap"><li>24 h/24, 7 j/7</li><li>Prix confirmé avant la course</li><li>Chauffeur basé à Cannes</li></ul>
 
-<section class="sec" id="trajets" aria-labelledby="trajets-t"><div class="wrap">
-  <div class="sec-head"><div><h2 id="trajets-t">Trajets fréquents</h2><p class="lead">Prix TTC par véhicule, pas par personne. Touchez un trajet pour le réserver.</p></div></div>
-  <div class="tickets">{T}</div>
-</div></section>
 
 <section class="sec" id="services" aria-labelledby="services-t" style="padding-top:0"><div class="wrap">
   <div class="sec-head"><div><h2 id="services-t">Nos services</h2><p class="lead">Aéroports, hôtels, ports et événements : un chauffeur privé pour chaque déplacement sur la Côte d’Azur.</p></div></div>

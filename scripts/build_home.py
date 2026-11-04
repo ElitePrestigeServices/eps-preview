@@ -15,7 +15,7 @@ S=''.join(f'<a class="service" href="{u}"><div class="ph"><img src="assets/v2/{i
 cars=[('business-class','Business Class','Mercedes Classe E, EQE ou équivalent','3 passagers','3 bagages','130 €'),
  ('business-van','Business Van','Mercedes Classe V Extra-Long ou équivalent','7 passagers','7 bagages','160 €'),
  ('first-class','First Class','Mercedes Classe S, EQS ou équivalent','3 passagers','3 bagages','200 €'),
- ('electric-class','Electric Class','Mercedes EQE, EQS ou équivalent, 100 % électrique','3 passagers','3 bagages',None)]
+ ('electric-class','Electric Class','Mercedes EQE, EQS ou équivalent, 100 % électrique','3 passagers','3 bagages','130 €')]
 C=''.join(f'<article class="car"><img src="assets/v2/{i}.webp" alt="{n} — {m}" width="800" height="537" loading="lazy" decoding="async"><div class="tx"><h3>{n}</h3><p class="model">{m}</p><p class="cap"><span>{a}</span><span>{b}</span></p><div class="from"><span>{("Dès <b>"+p+"</b>") if p else "Sur demande"}</span><button type="button" data-vehicle="{n}">Choisir</button></div></div></article>' for i,n,m,a,b,p in cars)
 agenda=[('agenda-evenements-cote-dazur/#cannes','Cannes',[('Mars','MIPIM'),('Mai','Festival de Cannes'),('Juin','Cannes Lions'),('Octobre','MIPCOM')]),
  ('agenda-evenements-cote-dazur/#monaco','Monaco',[('Avril','Monte-Carlo Masters'),('Mai / juin','Grand Prix'),('Septembre','Monaco Yacht Show')]),

@@ -6,7 +6,7 @@ Utilisé pour enrichir les pages du site (français d'abord, puis traductions EN
 - Elite Prestige Services : chauffeur privé VTC basé à Cannes, inscrit au registre VTC (EVTC006240319). Société dirigée par Anthony.
 - Zone : toute la Côte d'Azur — Cannes, Nice, Monaco, Antibes / Juan-les-Pins, Saint-Tropez, Mougins, Èze, Menton, Saint-Jean-Cap-Ferrat, Fréjus / Saint-Raphaël ; aéroports Nice Côte d'Azur (T1 et T2) et Cannes-Mandelieu ; longues distances sur devis (Marseille, Toulon, Italie).
 - Disponible 24 h/24, 7 j/7, sur réservation préalable uniquement (VTC).
-- Véhicules : Business Class (Mercedes Classe E / EQE ou équivalent, 3 passagers, 3 bagages) ; Business Van (Mercedes Classe V Extra-Long ou équivalent, 7 passagers, 7 bagages) ; First Class (Mercedes Classe S / EQS ou équivalent, 3 passagers) ; Electric Class (Mercedes EQE / EQS 100 % électrique, 3 passagers, tarif sur demande).
+- Véhicules : Business Class (Mercedes Classe E / EQE ou équivalent, 3 passagers, 3 bagages) ; Business Van (Mercedes Classe V Extra-Long ou équivalent, 7 passagers, 7 bagages) ; First Class (Mercedes Classe S / EQS ou équivalent, 3 passagers) ; Electric Class (Mercedes EQE / EQS 100 % électrique, 3 passagers : tarif Business Class en EQE, tarif First Class en EQS).
 - Sièges bébé et réhausseurs sur demande (à préciser à la réservation).
 - Réservation : formulaire du site (/#reservation) ou WhatsApp. Devis au prix fixe TTC envoyé par e-mail, paiement sécurisé par carte (lien Stripe). Prix par véhicule, pas par personne. Le chauffeur suit l'heure réelle d'arrivée grâce au numéro de vol ou de train.
 - Réponses en français ou en anglais.

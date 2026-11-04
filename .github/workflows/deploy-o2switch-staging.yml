@@ -41,6 +41,8 @@ jobs:
             exit 1
           }
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
       - name: Installer les outils de déploiement
         run: sudo apt-get update -qq && sudo apt-get install -y -qq lftp imagemagick ca-certificates && sudo update-ca-certificates
       - name: Compléter la chaîne FTPS avec les certificats officiels vérifiés
@@ -123,3 +125,8 @@ jobs:
           echo "Publication EPS dans /$EPS_TARGET_SUBDIR/ terminée."
       - name: Vérifier le SEO sur le domaine public
         run: python3 scripts/verify_production_seo.py
+      - name: Signaler les pages modifiées à Bing (IndexNow)
+        continue-on-error: true
+        run: |
+          CHANGED=$(git diff --name-only HEAD~1 HEAD 2>/dev/null || true)
+          python3 scripts/indexnow_ping.py $CHANGED

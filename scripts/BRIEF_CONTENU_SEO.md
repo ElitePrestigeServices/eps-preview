@@ -26,3 +26,7 @@ Utilisé pour enrichir les pages du site (français d'abord, puis traductions EN
 - Garder la structure HTML simple : `<p class="eyebrow">`, `<h1>`, `<p class="intro">`, `<a class="cta">`, `<section><h2>…</h2><p>…</p></section>`, `<h3>` pour les questions de FAQ, `<div class="related">` pour les liens. Pas de style inline, pas d'image, pas de script.
 - Un seul H1. Garder le sens du H1 existant (mot-clé principal de la page), on peut l'améliorer.
 - Title ≤ 65 caractères finissant par « | EPS » ou « | Elite Prestige Services » ; meta description ≤ 155 caractères, sans montant ; mentionner « prix fixe ».
+
+## Mots-clés à faire apparaître naturellement (demande d'Anthony, 05/11/2026)
+- Le nom « Elite Prestige Services » n'est pas encore connu : les pages doivent sortir sur les mots que tapent les clients. Dans chaque page, employer naturellement les variantes utiles au lieu concerné : VTC, chauffeur privé, transfert, transfert aéroport, transport, navette, taxi (uniquement en comparaison : « plutôt qu'un taxi ou une navette » — EPS est un VTC sur réservation, jamais présenté comme un taxi), aéroport de Nice / Nice Côte d'Azur, gare, tourisme / visite / excursion (mise à disposition sur devis), nom de la ville + « Côte d'Azur ».
+- Pas de bourrage : une variante par paragraphe au plus, phrases naturelles.

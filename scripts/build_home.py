@@ -122,7 +122,7 @@ html=f'''<!doctype html>
     <div><h3>Transferts</h3><ul><li><a href="transfert-aeroport-nice-cannes/">Aéroport de Nice → Cannes</a></li><li><a href="transfert-nice-monaco/">Nice → Monaco</a></li><li><a href="transfert-aeroport-nice-saint-tropez/">Aéroport de Nice → Saint-Tropez</a></li><li><a href="aviation-privee-cannes-mandelieu/">Aéroport de Cannes-Mandelieu</a></li></ul></div>
     <div><h3>Contact</h3><ul><li><a href="{WA}" target="_blank" rel="noopener">WhatsApp</a></li><li><a href="mailto:contact@elite-prestige-services.fr">contact@elite-prestige-services.fr</a></li><li><a href="admin/">Espace admin</a></li><li><a href="chauffeur/">Espace chauffeur</a></li></ul></div>
   </div>
-  <div class="foot-legal"><span>© Elite Prestige Services</span><span><a href="mentions-legales/">Mentions légales</a> · <a href="cgv/">CGV</a> · <a href="cgu/">CGU</a> · <a href="confidentialite/">Confidentialité</a></span></div>
+  <div class="foot-legal"><span>© Elite Prestige Services · Site réalisé par <a href="https://clicandsite.fr/">ClicandSite</a></span><span><a href="mentions-legales/">Mentions légales</a> · <a href="cgv/">CGV</a> · <a href="cgu/">CGU</a> · <a href="confidentialite/">Confidentialité</a></span></div>
 </div></footer>
 {cta2}
 <script src="assets/v2/i18n.js?v=20261104d"></script><script src="pricing.js?v=20261104-veh"></script><script src="script.js?v=20261104-veh"></script>

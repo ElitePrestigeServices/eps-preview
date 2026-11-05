@@ -48,6 +48,9 @@ def cta_band(lang, wa):
     return (f'<section class="page-cta wrap" aria-label="{t["book"]}"><div class="pro"><div><h2>{t["cta_t"]}</h2><p class="lead" style="margin-top:12px">{t["cta_p"]}</p></div>'
             f'<div class="pro-side"><a class="btn btn-gold" href="/#reservation">{t["cta_b"]}</a><a class="btn btn-line" href="{wa}" target="_blank" rel="noopener">{WASVG}{t["cta_w"]}</a></div></div></section>')
 
+CREDIT = {"fr": "Site réalisé par", "en": "Website by", "it": "Sito realizzato da", "es": "Sitio creado por"}
+
+
 def footer(lang, wa):
     t = T[lang]; c = CITY[lang]
     dest = [('/chauffeur-prive-cannes/', c[0]), ('/chauffeur-prive-nice/', c[1]), ('/chauffeur-prive-monaco/', c[2]), ('/chauffeur-prive-saint-tropez/', c[3]), ('/destinations/', t['f_all'])]
@@ -58,7 +61,7 @@ def footer(lang, wa):
             f'<div class="foot-brand"><img src="/assets/v2/logo-eps-256.webp" alt="" width="56" height="56" loading="lazy" style="margin-bottom:14px"><b>Elite Prestige Services</b><p>{t["f_txt"]}</p></div>'
             f'<div><h3>{t["f_dest"]}</h3><ul>{li(dest)}</ul></div><div><h3>{t["f_tr"]}</h3><ul>{li(tr)}</ul></div>'
             f'<div><h3>{t["f_c"]}</h3><ul><li><a href="{wa}" target="_blank" rel="noopener">WhatsApp</a></li><li><a href="mailto:contact@elite-prestige-services.fr">contact@elite-prestige-services.fr</a></li><li><a href="/admin/">{t["f_adm"]}</a></li><li><a href="/chauffeur/">{t["f_drv"]}</a></li></ul></div>'
-            f'</div><div class="foot-legal"><span>{t["lic"]}</span><span><a href="/mentions-legales/">{lg[0]}</a> · <a href="/cgv/">{lg[1]}</a> · <a href="/cgu/">{lg[2]}</a> · <a href="/confidentialite/">{lg[3]}</a></span></div></div></footer>')
+            f'</div><div class="foot-legal"><span>{t["lic"]} · {CREDIT.get(lang, CREDIT["fr"])} <a href="https://clicandsite.fr/">ClicandSite</a></span><span><a href="/mentions-legales/">{lg[0]}</a> · <a href="/cgv/">{lg[1]}</a> · <a href="/cgu/">{lg[2]}</a> · <a href="/confidentialite/">{lg[3]}</a></span></div></div></footer>')
 
 HEADLINKS = ('<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>'
              '<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">'

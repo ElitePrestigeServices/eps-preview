@@ -309,3 +309,16 @@ p{margin:0}
 .booking .form-grid:has(.eps-time-field) input[type=date]{min-width:0;width:100%;padding-left:12px;padding-right:8px}
 .booking .eps-time-picker{gap:3px}
 .booking .eps-time-picker select{flex:1 1 0;min-width:0;padding-left:8px;padding-right:19px;background-position:right 6px center}
+
+/* Avis Google (accueil) */
+.rv-score{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:12px 18px}
+.rv-score:hover{border-color:var(--gold)}
+.rv-num{font-family:var(--serif);font-size:34px;font-weight:600;line-height:1}
+.rv-count{color:var(--ink-2);font-size:14px;font-weight:600}
+.rv-stars{display:inline-flex;gap:2px}.rv-stars svg{width:18px;height:18px;fill:var(--gold)}
+.rv-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.rv-card{margin:0;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:24px;display:flex;flex-direction:column;gap:14px}
+.rv-card blockquote{margin:0;color:var(--ink);font-size:16px;line-height:1.6;flex:1}
+.rv-card figcaption{display:flex;flex-direction:column;gap:2px;font-size:14px}.rv-card figcaption span{color:var(--ink-3)}
+.rv-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:22px}
+@media (max-width:820px){.rv-grid{grid-template-columns:1fr}.rv-actions .btn{flex:1 1 100%}}

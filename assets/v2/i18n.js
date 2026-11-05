@@ -203,6 +203,16 @@
     ['CGV', 'Terms of sale', 'Condizioni di vendita', 'Condiciones de venta'],
     ['CGU', 'Terms of use', 'Condizioni d’uso', 'Condiciones de uso'],
     ['Confidentialité', 'Privacy', 'Privacy', 'Privacidad'],
+    // Avis Google
+    ['Ce que disent nos clients', 'What our clients say', 'Cosa dicono i nostri clienti', 'Lo que dicen nuestros clientes'],
+    ['Les avis laissés sur notre fiche Google.', 'Reviews left on our Google listing (in French).', 'Le recensioni lasciate sulla nostra scheda Google (in francese).', 'Las opiniones dejadas en nuestra ficha de Google (en francés).'],
+    ['4 avis Google', '4 Google reviews', '4 recensioni Google', '4 opiniones de Google'],
+    ['5 étoiles sur 5', '5 out of 5 stars', '5 stelle su 5', '5 de 5 estrellas'],
+    ['Janvier 2025 · Avis Google', 'January 2025 · Google review', 'Gennaio 2025 · Recensione Google', 'Enero de 2025 · Opinión de Google'],
+    ['Février 2025 · Avis Google', 'February 2025 · Google review', 'Febbraio 2025 · Recensione Google', 'Febrero de 2025 · Opinión de Google'],
+    ['Novembre 2024 · Avis Google', 'November 2024 · Google review', 'Novembre 2024 · Recensione Google', 'Noviembre de 2024 · Opinión de Google'],
+    ['Voir tous les avis sur Google', 'See all reviews on Google', 'Vedi tutte le recensioni su Google', 'Ver todas las opiniones en Google'],
+    ['Laisser un avis', 'Leave a review', 'Lascia una recensione', 'Dejar una opinión'],
     ['Réserver →', 'Book →', 'Prenota →', 'Reservar →']
   ];
   const map = new Map(D.map(r => [r[0], r]));

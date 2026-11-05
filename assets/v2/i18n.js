@@ -18,7 +18,7 @@
     ['Accès chauffeur', 'Driver access', 'Accesso autisti', 'Acceso chóferes'],
     ['Ouvrir le menu', 'Open menu', 'Apri il menu', 'Abrir el menú'],
     // Héros
-    ['Chauffeur privé à Cannes, Nice, Monaco et Saint-Tropez', 'Private chauffeur in Cannes, Nice, Monaco and Saint-Tropez', 'Autista privato a Cannes, Nizza, Monaco e Saint-Tropez', 'Chófer privado en Cannes, Niza, Mónaco y Saint-Tropez'],
+    ['VTC et chauffeur privé à Cannes, Nice, Monaco · Transferts aéroport', 'Private chauffeur and airport transfers in Cannes, Nice and Monaco', 'Autista privato NCC e transfer aeroportuali a Cannes, Nizza e Monaco', 'Chófer privado VTC y traslados al aeropuerto en Cannes, Niza y Mónaco'],
     ['Réserver un chauffeur', 'Book a chauffeur', 'Prenota un autista', 'Reservar un chófer'],
     ['24 h/24, 7 j/7', '24/7', '24 ore su 24, 7 giorni su 7', '24 h, 7 días a la semana'],
     ['Prix confirmé avant la course', 'Price confirmed before the ride', 'Prezzo confermato prima della corsa', 'Precio confirmado antes del trayecto'],

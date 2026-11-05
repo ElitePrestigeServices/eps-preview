@@ -58,7 +58,7 @@ html=f'''<!doctype html>
   <picture><source media="(max-width:1100px)" srcset="assets/v2/hero-1100.webp"><img class="hero-img" src="assets/v2/hero.webp" alt="" width="1872" height="1056" fetchpriority="high"></picture>
   <div class="hero-body">
     <img class="hero-logo" src="assets/v2/logo-eps-256.webp" alt="Logo Elite Prestige Services" width="120" height="120">
-    <h1>Elite Prestige Services<span>Chauffeur privé à Cannes, Nice, Monaco et Saint-Tropez</span></h1>
+    <h1>Elite Prestige Services<span>VTC et chauffeur privé à Cannes, Nice, Monaco · Transferts aéroport</span></h1>
     <div class="hero-actions"><a class="btn btn-gold" href="#reservation"><span class="hide-m">Réserver un chauffeur</span><span class="hide-d">Réserver</span></a><a class="btn btn-line" href="{WA}" target="_blank" rel="noopener">{WASVG}WhatsApp</a></div>
   </div>
 </section>

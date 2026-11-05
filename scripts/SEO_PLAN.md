@@ -14,12 +14,12 @@ mettre à jour leurs versions traduites si elles existent (balises hreflang), pu
 - [x] aviation-privee-aeroport-nice (05/11/2026)
 - [x] hotels-conciergeries-cote-dazur (05/11/2026)
 - [x] yachting-transferts-ports-cote-dazur (05/11/2026)
+- [x] chauffeur-evenements-vip-cote-dazur (05/11/2026)
+- [x] transfert-aeroport-nice-saint-tropez (05/11/2026)
+- [x] chauffeur-festival-cannes (05/11/2026)
+- [x] chauffeur-grand-prix-monaco (05/11/2026)
 
 ## À faire (ordre de priorité)
-- [ ] chauffeur-evenements-vip-cote-dazur
-- [ ] transfert-aeroport-nice-saint-tropez
-- [ ] chauffeur-festival-cannes
-- [ ] chauffeur-grand-prix-monaco
 - [ ] chauffeur-prive-mougins
 - [ ] chauffeur-prive-eze
 - [ ] chauffeur-prive-menton

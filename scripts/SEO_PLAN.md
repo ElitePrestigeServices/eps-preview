@@ -22,12 +22,12 @@ mettre à jour leurs versions traduites si elles existent (balises hreflang), pu
 - [x] chauffeur-prive-eze (05/11/2026)
 - [x] chauffeur-prive-menton (05/11/2026)
 - [x] chauffeur-prive-saint-jean-cap-ferrat (05/11/2026)
+- [x] transfert-aeroport-nice-antibes (05/11/2026)
+- [x] transfert-aeroport-nice-saint-jean-cap-ferrat (05/11/2026)
+- [x] transfert-aeroport-nice-menton (05/11/2026)
+- [x] transfert-aeroport-nice-mougins (05/11/2026)
 
 ## À faire (ordre de priorité)
-- [ ] transfert-aeroport-nice-antibes
-- [ ] transfert-aeroport-nice-saint-jean-cap-ferrat
-- [ ] transfert-aeroport-nice-menton
-- [ ] transfert-aeroport-nice-mougins
 - [ ] transfert-aeroport-nice-eze
 - [ ] chauffeur-prive-cannes-yachting-ports
 - [ ] chauffeur-prive-palais-des-festivals-cannes

@@ -551,7 +551,7 @@ async function pdfAction(number, btn, wantShare) {
   try {
     const blob = await orderPdfBlob(number);
     const file = new File([blob], number + '.pdf', { type: 'application/pdf' });
-    if ((wantShare || isMobile()) && navigator.canShare?.({ files: [file] })) { await navigator.share({ files: [file], title: 'Bon de commande ' + number }); }
+    if ((wantShare || isMobile()) && navigator.canShare?.({ files: [file] })) { await navigator.share({ files: [file] }); }
     else { const u = URL.createObjectURL(blob); const a = h('a', { href: u, download: number + '.pdf' }); document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(u), 5000); if (wantShare) toast('PDF téléchargé : tu peux le joindre à un message.'); }
   } catch (e) { if (e?.name !== 'AbortError') toast(e?.message || 'Création du PDF impossible', true); }
   finally { btn.disabled = false; btn.textContent = label; }

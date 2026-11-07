@@ -50,6 +50,10 @@ mettre à jour leurs versions traduites si elles existent (balises hreflang), pu
 - [x] emirates-chauffeur-prive-nice (05/11/2026)
 - [x] guides-internationaux (05/11/2026)
 - [x] destinations (05/11/2026)
+- [x] chauffeur-prive-cote-dazur-depuis-paris (07/11/2026, file vide → page FR la plus courte)
+- [x] chauffeur-prive-saint-tropez (07/11/2026, 2e enrichissement)
+- [x] chauffeur-prive-monaco (07/11/2026, 2e enrichissement)
+- [x] transfert-aeroport-nice-antibes (07/11/2026, 2e enrichissement)
 
 ## À faire (ordre de priorité)
-(file vide au 05/11/2026 — passages suivants : enrichir les 4 pages FR les plus courtes, hors pages légales)
+(file vide au 07/11/2026 — passages suivants : enrichir les 4 pages FR les plus courtes, hors pages légales)

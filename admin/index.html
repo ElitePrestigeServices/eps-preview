@@ -1322,7 +1322,26 @@ const standalone = () => window.matchMedia('(display-mode: standalone)').matches
 /* ================= Démarrage ================= */
 $('refresh').onclick = async () => { await reload(); toast('À jour.'); };
 window.addEventListener('hashchange', () => { const t = location.hash.slice(1); if (titles[t] && t !== tab && !$('app').classList.contains('hidden')) go(t); });
+/* Déconnexion automatique après 8 h sans utilisation (téléphone perdu ou prêté). */
+const IDLE_MS = 8 * 3600e3, LAST_KEY = 'eps-admin-last-activity';
+let lastTouch = 0;
+function touch(force = false) { const n = Date.now(); if (!force && n - lastTouch < 60e3) return; lastTouch = n; try { localStorage.setItem(LAST_KEY, String(n)); } catch {} }
+async function idleCheck() {
+  const { data: { session } } = await db.auth.getSession();
+  if (!session) return false;
+  let t = 0; try { t = Number(localStorage.getItem(LAST_KEY)) || 0; } catch {}
+  if (t && Date.now() - t < IDLE_MS) return false;
+  await db.auth.signOut({ scope: 'local' });
+  try { localStorage.removeItem(LAST_KEY); } catch {}
+  $('app').classList.add('hidden'); $('login').classList.remove('hidden');
+  $('loginmsg').textContent = 'Déconnecté automatiquement après 8 h sans utilisation. Reconnecte-toi.';
+  return true;
+}
+['pointerdown', 'keydown', 'scroll'].forEach(ev => window.addEventListener(ev, () => { if (!$('app').classList.contains('hidden')) touch(); }, { passive: true, capture: true }));
+document.addEventListener('visibilitychange', async () => { if (document.visibilityState === 'visible' && !(await idleCheck()) && !$('app').classList.contains('hidden')) touch(true); });
+setInterval(idleCheck, 5 * 60e3);
 async function guard() {
+  if (await idleCheck()) return;
   const { data: { user } } = await db.auth.getUser();
   const { data: admin } = user ? await db.rpc('eps_is_admin') : { data: false };
   $('login').classList.toggle('hidden', !!admin); $('app').classList.toggle('hidden', !admin);
@@ -1333,7 +1352,7 @@ $('loginform').onsubmit = async e => {
   e.preventDefault(); $('loginmsg').textContent = '';
   const r = await db.auth.signInWithPassword({ email: $('email').value, password: $('password').value });
   $('password').value = '';
-  if (r.error) $('loginmsg').textContent = 'Connexion refusée : vérifie l’e-mail et le mot de passe.'; else guard();
+  if (r.error) $('loginmsg').textContent = 'Connexion refusée : vérifie l’e-mail et le mot de passe.'; else { touch(true); guard(); }
 };
 window.epsPricingReady?.then(() => { if (!$('app').classList.contains('hidden') && tab === 'courses') render(); });
 guard();

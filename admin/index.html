@@ -1078,10 +1078,23 @@ function renderSettings(v) {
       link('Le site', 'elite-prestige-services.fr', SITE, 'Bonjour, voici le site d’Elite Prestige Services, chauffeur privé sur la Côte d’Azur : ' + SITE),
       link('Réserver un trajet', 'Formulaire de réservation', SITE + '#reservation', 'Bonjour, vous pouvez réserver votre chauffeur ici, le devis au prix fixe arrive par e-mail : ' + SITE + '#reservation'),
       link('Demander un avis Google', 'À envoyer au client après la course', 'https://g.page/r/CQhK1VrX5BNkEBM/review', 'Bonjour, merci d’avoir voyagé avec Elite Prestige Services ! Si vous avez été satisfait, votre avis Google nous aiderait beaucoup (30 secondes) : https://g.page/r/CQhK1VrX5BNkEBM/review\n\nThank you for riding with Elite Prestige Services! If you enjoyed it, a quick Google review would mean a lot: https://g.page/r/CQhK1VrX5BNkEBM/review'),
+      h('button', { class: 'row', onclick: openQr }, h('span', { class: 'main' }, h('div', { class: 't' }, 'QR code du site'), h('div', { class: 's' }, 'Affichette à imprimer pour la voiture, QR code seul')), chev()),
       link('Page « Merci » des cartes de visite', 'elite-prestige-services.fr/carte/', SITE + 'carte/', 'Merci pour votre confiance ! Retrouvez-nous ici : ' + SITE + 'carte/'),
       link('Espace chauffeur', 'Inscription et dossier des chauffeurs', SITE + 'chauffeur/', 'Bonjour, voici l’espace chauffeur Elite Prestige Services pour créer ton compte et déposer ton dossier : ' + SITE + 'chauffeur/')),
       h('p', { class: 'hint' }, 'Touche un lien pour l’ouvrir ou l’envoyer par WhatsApp, SMS ou mail.'),
       h('div', { class: 'btns' }, h('button', { class: 'btn danger', onclick: async () => { await db.auth.signOut(); guard(); } }, 'Se déconnecter')))));
+}
+/* 07/11/2026 (Claude) : QR code du site + affichette A5 aux couleurs EPS (fichiers dans assets/qr/) */
+function openQr() {
+  const f = n => '../assets/qr/' + n;
+  const dl = (label, file, name, cls) => h('a', { class: 'btn ' + (cls || 'quiet'), href: f(file), download: name }, label);
+  openSheet('QR code du site', h('div', {},
+    h('img', { src: f('eps-affichette-qr-apercu.webp'), alt: 'Affichette QR code Elite Prestige Services', style: 'display:block;width:100%;max-width:300px;margin:0 auto 12px;border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.25)' }),
+    h('p', { class: 'hint', style: 'margin-top:0' }, 'Le QR code ouvre elite-prestige-services.fr. Affichette A5 français / anglais, à poser sur l’appui-tête ou à tendre au client.'),
+    h('div', { class: 'btns' },
+      dl('Affichette A5 à imprimer (PDF)', 'eps-affichette-qr-a5.pdf', 'EPS-affichette-QR-A5.pdf', 'primary'),
+      dl('Affichette en image', 'eps-affichette-qr.png', 'EPS-affichette-QR.png'),
+      dl('QR code seul', 'eps-qr-code.png', 'EPS-QR-code.png'))));
 }
 function openShareLink(title, url, msg) {
   const enc = encodeURIComponent;

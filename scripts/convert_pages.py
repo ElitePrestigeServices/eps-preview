@@ -65,7 +65,7 @@ def footer(lang, wa):
 
 HEADLINKS = ('<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>'
              '<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">'
-             f'<link rel="stylesheet" href="/assets/v2/site.css?v={CSSV}"><meta name="theme-color" content="#0f1a16">')
+             f'<link rel="stylesheet" href="/assets/v2/site.css?v={CSSV}"><meta name="theme-color" content="#0b0b0c">')
 
 def run():
   done = []

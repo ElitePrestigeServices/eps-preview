@@ -33,12 +33,12 @@ html=f'''<!doctype html>
 <meta name="robots" content="noindex,nofollow">
 <title>Aperçu du nouveau site | Elite Prestige Services</title>
 <meta name="description" content="Aperçu privé de la nouvelle page d’accueil Elite Prestige Services.">
-<meta name="theme-color" content="#0f1a16">\n<link rel="icon" href="assets/v2/icon-32.png" sizes="32x32">\n<link rel="apple-touch-icon" href="assets/v2/icon-180.png">
+<meta name="theme-color" content="#0b0b0c">\n<link rel="icon" href="assets/v2/icon-32.png" sizes="32x32">\n<link rel="apple-touch-icon" href="assets/v2/icon-180.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="preload" as="image" href="assets/v2/hero.webp" media="(min-width:821px)">
-<link rel="stylesheet" href="assets/v2/site.css?v=20261104j">
+<link rel="stylesheet" href="assets/v2/site.css?v=20261108onyx">
 </head>
 <body>
 <header class="site-head"><div class="wrap">

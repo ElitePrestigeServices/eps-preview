@@ -1,7 +1,7 @@
 /* Elite Prestige Services — site 2026, même esprit que le pilotage (vert profond, or, Playfair Display + Manrope). */
 :root{
-  --bg:#0f1a16; --bg-2:#0b1411; --surface:#16241f; --surface-2:#1d2e28; --line:#2a3d36;
-  --ink:#ede6d6; --ink-2:#b4bdb6; --ink-3:#7f8c84;
+  --bg:#0b0b0c; --bg-2:#070708; --surface:#161616; --surface-2:#1f1e1c; --line:#2e2c28;
+  --ink:#ede6d6; --ink-2:#bdb6a8; --ink-3:#8a847a;
   --gold:#c9ad73; --gold-2:#dcc48f; --gold-ink:#1a1408;
   --serif:"Playfair Display",Georgia,serif; --sans:"Manrope",system-ui,-apple-system,"Segoe UI",sans-serif;
   --r:20px; --max:1160px;
@@ -31,12 +31,12 @@ p{margin:0}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:54px;padding:0 26px;border-radius:14px;font-weight:700;font-size:16px;text-decoration:none;border:0;cursor:pointer;white-space:nowrap}
 .btn-gold{background:var(--gold);color:var(--gold-ink)}
 .btn-gold:hover{background:var(--gold-2)}
-.btn-line{border:1px solid rgba(201,173,115,.55);color:var(--ink);background:rgba(15,26,22,.35)}
+.btn-line{border:1px solid rgba(201,173,115,.55);color:var(--ink);background:rgba(11,11,12,.35)}
 .btn-line:hover{border-color:var(--gold);color:var(--gold-2)}
 .btn svg{width:20px;height:20px;fill:currentColor}
 
 /* En-tête */
-.site-head{position:sticky;top:0;z-index:50;background:rgba(15,26,22,.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid rgba(42,61,54,.7)}
+.site-head{position:sticky;top:0;z-index:50;background:rgba(11,11,12,.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid rgba(46,44,40,.7)}
 .site-head .wrap{display:flex;align-items:center;gap:18px;height:72px}
 .mark{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--ink);margin-right:auto}
 .mark img{width:38px;height:38px}
@@ -59,7 +59,7 @@ p{margin:0}
 .hero{position:relative;height:min(56.4vw,calc(100vh - 72px));min-height:560px;max-height:1080px;display:grid;align-items:start;overflow:hidden;background:var(--bg-2)}
 .hero picture,.hero .hero-img{position:absolute;inset:0;width:100%;height:100%}
 .hero .hero-img{object-fit:cover;object-position:50% 72%}
-.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(9,15,13,.78) 0%,rgba(9,15,13,.42) 28%,rgba(9,15,13,0) 46%,rgba(15,26,22,0) 86%,var(--bg) 100%)}
+.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(6,6,6,.78) 0%,rgba(6,6,6,.42) 28%,rgba(6,6,6,0) 46%,rgba(11,11,12,0) 86%,var(--bg) 100%)}
 .hero-body{position:relative;z-index:1;padding:clamp(10px,2.2vh,30px) 20px 0;max-width:var(--max);margin:0 auto;width:100%;text-align:center}
 .hero-logo{display:block;width:64px;height:64px;margin:0 auto 14px;filter:drop-shadow(0 4px 18px rgba(0,0,0,.5))}
 .hero h1{font-size:clamp(34px,4.2vw,58px);font-weight:600;letter-spacing:.005em;line-height:1.02;text-shadow:0 2px 30px rgba(0,0,0,.45)}
@@ -190,7 +190,7 @@ p{margin:0}
 .foot-legal{margin-top:36px;padding-top:20px;border-top:1px solid var(--line);color:var(--ink-3);font-size:13px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
 
 /* Barre mobile et WhatsApp */
-.eps-cta-bar{position:fixed;left:0;right:0;bottom:0;z-index:60;display:none;gap:10px;padding:10px 14px calc(10px + env(safe-area-inset-bottom));background:rgba(11,20,17,.96);border-top:1px solid var(--line);backdrop-filter:blur(10px)}
+.eps-cta-bar{position:fixed;left:0;right:0;bottom:0;z-index:60;display:none;gap:10px;padding:10px 14px calc(10px + env(safe-area-inset-bottom));background:rgba(8,8,8,.96);border-top:1px solid var(--line);backdrop-filter:blur(10px)}
 .eps-cta-bar a{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;min-height:50px;border-radius:14px;font-weight:800;text-decoration:none;font-size:16px}
 .eps-cta-book{background:var(--gold);color:var(--gold-ink)!important}
 .eps-cta-wa{border:1px solid rgba(201,173,115,.6);color:var(--ink)!important}

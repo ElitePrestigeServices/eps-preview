@@ -1086,7 +1086,7 @@ function renderSettings(v) {
 }
 /* 07/11/2026 (Claude) : QR code du site + affichette A5 aux couleurs EPS (fichiers dans assets/qr/) */
 function openQr() {
-  const f = n => '../assets/qr/' + n;
+  const f = n => '../assets/qr/' + n + '?v=onyx'; /* 08/11/2026 : affichette passée en noir onyx comme le site */
   const dl = (label, file, name, cls) => h('a', { class: 'btn ' + (cls || 'quiet'), href: f(file), download: name }, label);
   openSheet('QR code du site', h('div', {},
     h('img', { src: f('eps-affichette-qr-apercu.webp'), alt: 'Affichette QR code Elite Prestige Services', style: 'display:block;width:100%;max-width:300px;margin:0 auto 12px;border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.25)' }),

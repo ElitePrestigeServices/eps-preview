@@ -54,7 +54,14 @@ jobs:
           curl --fail --silent --show-error --location --proto '=https' https://letsencrypt.org/certs/gen-y/int-yr1.pem -o "$RUNNER_TEMP/eps-yr1.pem"
           openssl verify -CAfile /etc/ssl/certs/ca-certificates.crt "$RUNNER_TEMP/eps-root-yr.pem"
           openssl verify -CAfile /etc/ssl/certs/ca-certificates.crt -untrusted "$RUNNER_TEMP/eps-root-yr.pem" "$RUNNER_TEMP/eps-yr1.pem"
+          # 08/11/2026 : o2switch présente maintenant un certificat signé par l'intermédiaire YR2 (Let's Encrypt fait tourner YR1 à YR4).
           cat /etc/ssl/certs/ca-certificates.crt "$RUNNER_TEMP/eps-root-yr.pem" "$RUNNER_TEMP/eps-yr1.pem" > "$RUNNER_TEMP/eps-ftps-ca.pem"
+          for n in 2 3 4; do
+            if curl --fail --silent --show-error --location --proto '=https' "https://letsencrypt.org/certs/gen-y/int-yr$n.pem" -o "$RUNNER_TEMP/eps-yr$n.pem" \
+               && openssl verify -CAfile /etc/ssl/certs/ca-certificates.crt -untrusted "$RUNNER_TEMP/eps-root-yr.pem" "$RUNNER_TEMP/eps-yr$n.pem"; then
+              cat "$RUNNER_TEMP/eps-yr$n.pem" >> "$RUNNER_TEMP/eps-ftps-ca.pem"
+            fi
+          done
       - name: Diagnostic certificat FTPS
         run: |
           echo "Certificat présenté par le serveur FTPS :"

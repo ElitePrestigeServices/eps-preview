@@ -1090,9 +1090,10 @@ function openQr() {
   const dl = (label, file, name, cls) => h('a', { class: 'btn ' + (cls || 'quiet'), href: f(file), download: name }, label);
   openSheet('QR code du site', h('div', {},
     h('img', { src: f('eps-affichette-qr-apercu.webp'), alt: 'Affichette QR code Elite Prestige Services', style: 'display:block;width:100%;max-width:300px;margin:0 auto 12px;border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.25)' }),
-    h('p', { class: 'hint', style: 'margin-top:0' }, 'Le QR code ouvre elite-prestige-services.fr. Affichette A5 français / anglais, à poser sur l’appui-tête ou à tendre au client.'),
+    h('p', { class: 'hint', style: 'margin-top:0' }, 'Le QR code ouvre elite-prestige-services.fr. Affichette français / anglais, à poser sur l’appui-tête ou à tendre au client. Le PDF A4 contient 2 affichettes : imprimer en taille réelle (100 %), puis couper sur les pointillés.'),
     h('div', { class: 'btns' },
-      dl('Affichette A5 à imprimer (PDF)', 'eps-affichette-qr-a5.pdf', 'EPS-affichette-QR-A5.pdf', 'primary'),
+      dl('À imprimer sur A4 : 2 affichettes (PDF)', 'eps-affichette-qr-a4-x2.pdf', 'EPS-affichettes-QR-A4.pdf', 'primary'), /* 08/11/2026 (Anthony : « ça imprime en A4 ») */
+      dl('Affichette A5 seule (PDF)', 'eps-affichette-qr-a5.pdf', 'EPS-affichette-QR-A5.pdf'),
       dl('Affichette en image', 'eps-affichette-qr.png', 'EPS-affichette-QR.png'),
       dl('QR code seul', 'eps-qr-code.png', 'EPS-QR-code.png'))));
 }

@@ -54,6 +54,10 @@ mettre à jour leurs versions traduites si elles existent (balises hreflang), pu
 - [x] chauffeur-prive-saint-tropez (07/11/2026, 2e enrichissement)
 - [x] chauffeur-prive-monaco (07/11/2026, 2e enrichissement)
 - [x] transfert-aeroport-nice-antibes (07/11/2026, 2e enrichissement)
+- [x] chauffeur-prive-eze (09/11/2026, 2e enrichissement)
+- [x] chauffeur-voiles-saint-tropez (09/11/2026, 2e enrichissement)
+- [x] transfert-aeroport-nice-saint-jean-cap-ferrat (09/11/2026, 2e enrichissement)
+- [x] chauffeur-prive-saint-jean-cap-ferrat (09/11/2026, 2e enrichissement)
 
 ## À faire (ordre de priorité)
-(file vide au 07/11/2026 — passages suivants : enrichir les 4 pages FR les plus courtes, hors pages légales)
+(file vide au 09/11/2026 — passages suivants : enrichir les 4 pages FR les plus courtes, hors pages légales)

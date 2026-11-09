@@ -101,6 +101,30 @@ async function checkSendingAvailability() {
   }
 }
 
+/* 09/11/2026 (Anthony) : dates et heures bloquées depuis l'Agenda du pilotage → la demande est refusée et on propose WhatsApp. */
+let epsBlocked = [];
+fetch('https://lrtuztxjngdvrnjuwxfr.supabase.co/rest/v1/eps_unavailability?select=day,time_from,time_to&day=gte.' + new Date(Date.now() - 864e5).toISOString().slice(0, 10), { headers: { apikey: 'sb_publishable_GeaRT-N3IE03M19HCB4MVg_RQwbSnYu' }, cache: 'no-store' })
+  .then(r => r.ok ? r.json() : []).then(j => { if (Array.isArray(j)) epsBlocked = j; }).catch(() => {});
+function epsUnavailable(date, time) {
+  const t = String(time || '').slice(0, 5);
+  return epsBlocked.find(u => u.day === date && (!u.time_from || (t && t >= u.time_from.slice(0, 5) && t < u.time_to.slice(0, 5))));
+}
+function epsShowUnavailable(u) {
+  let box = document.getElementById('eps-unavailable');
+  if (!box) { box = document.createElement('div'); box.id = 'eps-unavailable'; box.setAttribute('role', 'alert'); box.style.cssText = 'margin:14px 0;padding:14px 16px;border:1px solid #c9ad73;border-radius:12px;background:rgba(201,173,115,.1);line-height:1.5'; form.append(box); }
+  const en = (document.documentElement.lang || 'fr').slice(0, 2) !== 'fr';
+  box.innerHTML = '';
+  const p = document.createElement('p'); p.style.margin = '0 0 10px';
+  p.textContent = u.time_from
+    ? (en ? 'We are not available at this time. Choose another time, or message us on WhatsApp: we will find a solution.' : 'Nous ne sommes pas disponibles à cette heure-là. Choisissez une autre heure, ou écrivez-nous sur WhatsApp : nous trouverons une solution.')
+    : (en ? 'We are fully booked on this date. Message us on WhatsApp: we will find a solution.' : 'Nous sommes complets à cette date. Écrivez-nous sur WhatsApp : nous trouverons une solution.');
+  const a = document.createElement('a'); a.className = 'btn btn-line'; a.target = '_blank'; a.rel = 'noopener';
+  a.href = 'https://wa.me/33745495321?text=' + encodeURIComponent((en ? 'Hello, I would like a chauffeur on ' : 'Bonjour, je souhaite un chauffeur le ') + form.elements.date.value.split('-').reverse().join('/'));
+  a.textContent = 'WhatsApp';
+  box.append(p, a); box.scrollIntoView({ block: 'center', behavior: 'smooth' });
+}
+form.addEventListener('input', () => { const b = document.getElementById('eps-unavailable'); if (b) b.remove(); });
+
 form.addEventListener('submit', event => {
   event.preventDefault();
   updateFlightField();
@@ -112,6 +136,7 @@ form.addEventListener('submit', event => {
     minuteSelect?.reportValidity();
     return;
   }
+  { const u = epsUnavailable(String(form.elements.date.value || ''), timeValue?.value); if (u) { epsShowUnavailable(u); return; } }
   const data = new FormData(form);
   currentRequest = {
     requestId: crypto.randomUUID(),

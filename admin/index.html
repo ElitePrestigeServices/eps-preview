@@ -345,10 +345,10 @@ const fld = (label, el, hint) => h('label', { class: 'field' }, h('span', {}, la
 
 /* ================= Données ================= */
 const S = { res: [], drafts: [], quotes: [], pays: [], partners: [], requests: [], periods: [], notifs: [],
-  contacts: null, campaigns: [], recips: [], opps: [], robot: null, drivers: null, docs: [], missions: [], orders: [] };
+  contacts: null, campaigns: [], recips: [], opps: [], robot: null, drivers: null, docs: [], missions: [], orders: [], unav: [] };
 const by = (arr, id) => arr.find(x => x.reservation_id === id);
 async function loadCore() {
-  const [r, d, q, p, pa, cr, pe, no, bc] = await Promise.all([
+  const [r, d, q, p, pa, cr, pe, no, bc, un] = await Promise.all([
     db.from('eps_reservations').select('id,reference,created_at,status,type,departure,destination,flight_number,date,time,duration_hours,passengers,luggage,child_seat,vehicle,customer_name,customer_email,customer_phone,notes,partner_code,archived_at').is('archived_at', null).order('date', { ascending: true }).limit(500),
     db.from('eps_quote_drafts').select('reservation_id,amount_cents,note,status,updated_at'),
     db.from('eps_reservation_quotes').select('reservation_id,amount_cents,state,sent_at,accepted_at'),
@@ -357,13 +357,14 @@ async function loadCore() {
     db.from('eps_customer_requests').select('id,reservation_id,request_type,message,status,created_at,processed_at').order('created_at', { ascending: false }).limit(100),
     db.from('pricing_events').select('name,start_date,end_date,surcharge_percent,enabled,kind').order('start_date', { ascending: true }),
     db.from('eps_admin_notifications').select('id,kind,source_id,summary,created_at,read_at').order('created_at', { ascending: false }).limit(50),
-    db.from('eps_order_forms').select('*').order('pickup_date', { ascending: false }).order('pickup_time', { ascending: false }).limit(500)
+    db.from('eps_order_forms').select('*').order('pickup_date', { ascending: false }).order('pickup_time', { ascending: false }).limit(500),
+    db.from('eps_unavailability').select('id,day,time_from,time_to,note').gte('day', agAdd(parisToday(), -60)).order('day').order('time_from', { nullsFirst: true })
   ]);
   const err = [r, d, q, p].find(x => x.error);
   if (err) { toast('Lecture impossible : ' + err.error.message, true); return; }
   S.res = r.data; S.drafts = d.data; S.quotes = q.data; S.pays = p.data;
   S.partners = pa.error ? [] : pa.data; S.requests = cr.error ? [] : cr.data;
-  S.periods = pe.error ? [] : pe.data; S.notifs = no.error ? [] : no.data; S.orders = bc.error ? [] : bc.data;
+  S.periods = pe.error ? [] : pe.data; S.notifs = no.error ? [] : no.data; S.orders = bc.error ? [] : bc.data; S.unav = un.error ? [] : un.data;
 }
 async function loadCrm() {
   const [c, k, rc, o, st] = await Promise.all([
@@ -499,6 +500,30 @@ function agRow(it) {
       h('div', { class: 's' }, [b.customer_name, b.vehicle, b.passengers ? b.passengers + ' pass.' : '', b.flight_number ? 'Vol ' + b.flight_number : '', dr ? 'Chauffeur : ' + dr : ''].filter(Boolean).join(' · '))),
     h('span', { class: 'end' }, h('b', {}, it.t || '—'), st.label), chev());
 }
+const agDayOff = d => S.unav.find(u => u.day === d && !u.time_from);
+async function agBlockDay(d) {
+  if (!confirm('Bloquer toute la journée du ' + agLong(d) + ' ? Le site refusera les réservations ce jour-là (les courses déjà prévues ne bougent pas).')) return;
+  const x = await db.from('eps_unavailability').insert({ day: d }).select('id,day,time_from,time_to,note').single();
+  if (x.error) return toast(x.error.message, true);
+  S.unav.push(x.data); toast('Date bloquée sur le site.'); render();
+}
+function agBlockHour(d) {
+  const from = h('input', { type: 'time', value: '09:00', step: 900, required: true }), to = h('input', { type: 'time', value: '10:00', step: 900, required: true }), note = h('input', { type: 'text', placeholder: 'Facultatif : course perso, rendez-vous…', maxlength: 120 });
+  from.oninput = () => { const [hh, mm] = from.value.split(':').map(Number); if (!isNaN(hh)) to.value = String(Math.min(23, hh + 1)).padStart(2, '0') + ':' + String(mm || 0).padStart(2, '0'); };
+  const f = h('form', { onsubmit: async e => {
+    e.preventDefault(); if (!from.value || !to.value || to.value <= from.value) return toast('L’heure de fin doit être après l’heure de début.', true);
+    const x = await db.from('eps_unavailability').insert({ day: d, time_from: from.value, time_to: to.value, note: note.value.trim() || null }).select('id,day,time_from,time_to,note').single();
+    if (x.error) return toast(x.error.message, true);
+    S.unav.push(x.data); closeSheet(); toast('Heure bloquée sur le site.'); render();
+  } }, h('p', { class: 'hint', style: 'margin:0 0 12px' }, agLong(d).replace(/^./, c => c.toUpperCase()) + ' : le site refusera les départs sur cette plage et proposera WhatsApp.'),
+    fld('De', from), fld('À', to), fld('Motif (vous seul le voyez)', note), h('div', { class: 'btns' }, h('button', { class: 'btn primary', type: 'submit' }, 'Bloquer')));
+  openSheet('Bloquer une heure', f);
+}
+async function agUnblock(u) {
+  const x = await db.from('eps_unavailability').delete().eq('id', u.id);
+  if (x.error) return toast(x.error.message, true);
+  S.unav = S.unav.filter(y => y.id !== u.id); toast('Débloqué.'); render();
+}
 function renderAgenda(v) {
   const today = parisToday();
   if (!agStart) agStart = agMonday(today);
@@ -516,11 +541,23 @@ function renderAgenda(v) {
     strip.append(h('button', { 'aria-pressed': String(d === agSel), style: 'display:grid;justify-items:center;gap:1px;min-width:56px;padding:8px 6px;line-height:1.15;border-radius:12px' + (d === today ? ';box-shadow:inset 0 -2px 0 var(--gold)' : ''), onclick: () => { agSel = d; render(); } },
       h('span', { style: 'font-size:12px' }, dt.toLocaleDateString('fr-FR', { weekday: 'short', timeZone: 'UTC' })),
       h('b', { style: 'font-size:17px' }, String(dt.getUTCDate())),
-      h('span', { style: 'font-size:11px;font-weight:700;color:var(--gold)' }, n ? n + ' course' + (n > 1 ? 's' : '') : '·')));
+      h('span', { style: 'font-size:11px;font-weight:700;color:' + (agDayOff(d) ? 'var(--alert)' : 'var(--gold)') }, agDayOff(d) ? 'bloqué' : n ? n + ' course' + (n > 1 ? 's' : '') : '·')));
   }
   v.append(strip);
   const day = items.filter(x => x.d === agSel);
   v.append(h('h3', { style: 'margin:6px 0 10px;font:600 18px var(--serif)' }, agLong(agSel).replace(/^./, c => c.toUpperCase())));
+  // 09/11/2026 (Anthony) : bloquer d'un clic la date ou une heure — le formulaire de réservation du site refuse ces créneaux
+  const off = agDayOff(agSel), hrs = S.unav.filter(u => u.day === agSel && u.time_from);
+  const small = { class: 'btn quiet', style: 'width:auto;min-height:40px;padding:0 14px' };
+  v.append(h('div', { style: 'display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px' },
+    h('button', { ...small, onclick: () => off ? agUnblock(off) : agBlockDay(agSel) }, off ? 'Débloquer cette date' : 'Bloquer cette date'),
+    off ? null : h('button', { ...small, onclick: () => agBlockHour(agSel) }, 'Bloquer une heure')));
+  if (off || hrs.length) {
+    const bl = h('div', { class: 'list', style: 'margin-bottom:10px' });
+    if (off) bl.append(h('div', { class: 'row' }, h('span', { class: 'dot alert' }), h('span', { class: 'main' }, h('div', { class: 't' }, 'Journée bloquée'), h('div', { class: 's' }, 'Le site refuse les réservations ce jour-là et propose WhatsApp.')), h('button', { ...small, onclick: () => agUnblock(off) }, 'Débloquer')));
+    hrs.forEach(u => bl.append(h('div', { class: 'row' }, h('span', { class: 'dot alert' }), h('span', { class: 'main' }, h('div', { class: 't' }, 'Indisponible ' + u.time_from.slice(0, 5).replace(':', 'h') + ' – ' + u.time_to.slice(0, 5).replace(':', 'h')), h('div', { class: 's' }, u.note || 'Le site refuse les départs sur cette plage.')), h('button', { ...small, onclick: () => agUnblock(u) }, 'Débloquer'))));
+    v.append(bl);
+  }
   const l = h('div', { class: 'list' });
   day.forEach(it => l.append(agRow(it)));
   if (!day.length) l.append(h('div', { class: 'empty-note' }, agSel < today ? 'Aucune course ce jour-là.' : 'Rien de prévu ce jour-là.'));

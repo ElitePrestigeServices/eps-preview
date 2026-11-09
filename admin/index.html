@@ -141,7 +141,7 @@ h2{font:600 19px/1.2 var(--serif);margin:26px 0 10px}
 
 /* Navigation mobile */
 .tabs{position:fixed;left:0;right:0;bottom:0;z-index:10;background:rgba(11,11,12,.96);backdrop-filter:blur(10px);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom)}
-.tabs .wrap{display:grid;grid-template-columns:repeat(4,1fr);height:var(--tab-h)}
+.tabs .wrap{display:grid;grid-template-columns:repeat(5,1fr);height:var(--tab-h)}
 .tabs button{border:0;background:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:12px;color:var(--ink-3);cursor:pointer;position:relative}
 .tabs svg,.side svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;flex:none}
 .tabs button[aria-current="page"]{color:var(--gold)}
@@ -374,7 +374,8 @@ async function loadCrm() {
     db.rpc('eps_admin_prospecting_status')
   ]);
   if (c.error) { toast('CRM indisponible : ' + c.error.message, true); return; }
-  S.contacts = c.data.filter(x => x.contact_type !== 'écarté'); // immobilier écarté le 04/11/2026 S.campaigns = k.error ? [] : k.data; S.recips = rc.error ? [] : rc.data; S.opps = o.error ? [] : o.data;
+  S.contacts = c.data.filter(x => x.contact_type !== 'écarté'); // immobilier écarté le 04/11/2026
+  S.campaigns = k.error ? [] : k.data; S.recips = rc.error ? [] : rc.data; S.opps = o.error ? [] : o.data;
   S.robot = st.error ? null : st.data;
 }
 async function loadDrivers() {
@@ -424,6 +425,7 @@ const unreadNotifs = () => S.notifs.filter(n => !n.read_at);
 const ICONS = {
   home: '<circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/>',
   courses: '<path d="M4 7h16M4 12h16M4 17h10"/>',
+  agenda: '<rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/>',
   partners: '<circle cx="9" cy="9" r="3"/><circle cx="17" cy="10" r="2.5"/><path d="M3 19c.8-3 3.2-4.5 6-4.5s5.2 1.5 6 4.5M15 15.5c2.6 0 4.6 1.2 5.4 3.5"/>',
   crm: '<path d="M4 6h16v12H4z"/><path d="M4 7l8 6 8-6"/>',
   drivers: '<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="2.5"/><path d="M12 4v5.5M5 15l5-1.5M19 15l-5-1.5"/>',
@@ -432,8 +434,8 @@ const ICONS = {
   settings: '<circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/>',
   more: '<circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/>'
 };
-const NAV = [['home', 'Aujourd’hui'], ['courses', 'Courses'], ['partners', 'Partenaires'], ['orders', 'Bons de commande'], ['crm', 'Prospection'], ['drivers', 'Chauffeurs'], ['inbox', 'Messages'], ['settings', 'Réglages']];
-const TABS = [['home', 'Aujourd’hui'], ['courses', 'Courses'], ['partners', 'Partenaires'], ['more', 'Plus']];
+const NAV = [['home', 'Aujourd’hui'], ['courses', 'Courses'], ['agenda', 'Agenda'], ['partners', 'Partenaires'], ['orders', 'Bons de commande'], ['crm', 'Prospection'], ['drivers', 'Chauffeurs'], ['inbox', 'Messages'], ['settings', 'Réglages']];
+const TABS = [['home', 'Aujourd’hui'], ['courses', 'Courses'], ['agenda', 'Agenda'], ['partners', 'Partenaires'], ['more', 'Plus']];
 const titles = Object.fromEntries([...NAV, ['more', 'Plus']]);
 let tab = 'home';
 function counts() { return { courses: S.res.filter(needsAction).length, inbox: pendingRequests().length + unreadNotifs().length }; }
@@ -448,7 +450,7 @@ function drawNav() {
 async function go(t) {
   tab = t; history.replaceState(null, '', '#' + t); window.scrollTo(0, 0);
   if (t === 'crm' && !S.contacts) { render(true); await loadCrm(); }
-  if (t === 'drivers' && !S.drivers) { render(true); await loadDrivers(); }
+  if ((t === 'drivers' || t === 'agenda') && !S.drivers) { render(true); await loadDrivers(); }
   render();
 }
 function render(loading = false) {
@@ -457,7 +459,82 @@ function render(loading = false) {
   $('subtitle').textContent = tab === 'home' ? new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }) : '';
   const v = $('view'); v.replaceChildren();
   if (loading) { v.append(h('p', { class: 'hint' }, 'Chargement…')); return; }
-  ({ home: renderHome, courses: renderCourses, partners: renderPartners, orders: renderOrders, crm: renderCrm, drivers: renderDrivers, inbox: renderInbox, settings: renderSettings, more: renderMore })[tab](v);
+  ({ home: renderHome, courses: renderCourses, agenda: renderAgenda, partners: renderPartners, orders: renderOrders, crm: renderCrm, drivers: renderDrivers, inbox: renderInbox, settings: renderSettings, more: renderMore })[tab](v);
+}
+
+
+/* ================= Agenda (09/11/2026, demande d'Anthony) =================
+   Planning des courses semaine par semaine : réservations du site, demandes ajoutées à la main et bons de commande
+   (un bon lié à une réservation n'apparaît qu'une fois). Un clic ouvre la course ou le bon. */
+let agStart = null, agSel = null;
+const agAdd = (d, n) => new Date(Date.parse(d + 'T12:00:00Z') + n * 864e5).toISOString().slice(0, 10);
+const agMonday = d => { const w = new Date(Date.parse(d + 'T12:00:00Z')).getUTCDay(); return agAdd(d, -((w + 6) % 7)); };
+const agLong = d => new Date(Date.parse(d + 'T12:00:00Z')).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'UTC' });
+function agItems(from, to) {
+  const out = [];
+  S.res.forEach(b => { if (b.date >= from && b.date <= to) out.push({ k: 'res', d: b.date, t: (b.time || '').slice(0, 5), b }); });
+  const linked = new Set(S.res.map(b => b.id));
+  (S.orders || []).forEach(o => { if (!o.cancelled_at && o.pickup_date >= from && o.pickup_date <= to && !(o.reservation_id && linked.has(o.reservation_id))) out.push({ k: 'bon', d: o.pickup_date, t: (o.pickup_time || '').slice(0, 5), o }); });
+  return out.sort((a, b) => (a.d + a.t).localeCompare(b.d + b.t));
+}
+function agDriver(id) {
+  const m = (S.missions || []).find(x => x.reservation_id === id && x.status !== 'refusée' && x.status !== 'annulée');
+  if (!m) return null;
+  const p = (S.drivers || []).find(x => (x.email || '').toLowerCase() === (m.chauffeur_email || '').toLowerCase());
+  return (p ? [p.first_name, p.last_name].filter(Boolean).join(' ') : m.chauffeur_email) + (m.accepted_at ? '' : ' (proposée)');
+}
+function agRow(it) {
+  if (it.k === 'bon') {
+    const o = it.o;
+    return h('button', { class: 'row', onclick: () => openOrderView(o) },
+      h('span', { class: 'dot ok' }),
+      h('span', { class: 'main' }, h('div', { class: 't' }, shortPlace(o.pickup_place) + ' – ' + shortPlace(o.destination || o.service_type)),
+        h('div', { class: 's' }, [o.customer_name, 'Bon ' + o.number, o.vehicle, o.driver_name].filter(Boolean).join(' · '))),
+      h('span', { class: 'end' }, h('b', {}, it.t || '—'), o.price_cents ? eur(o.price_cents) : ''), chev());
+  }
+  const b = it.b, st = stage(b), dr = agDriver(b.id);
+  return h('button', { class: 'row', onclick: () => openCourse(b.id) },
+    h('span', { class: 'dot ' + st.cls }),
+    h('span', { class: 'main' }, h('div', { class: 't' }, shortPlace(b.departure) + ' – ' + shortPlace(b.destination || b.type)),
+      h('div', { class: 's' }, [b.customer_name, b.vehicle, b.passengers ? b.passengers + ' pass.' : '', b.flight_number ? 'Vol ' + b.flight_number : '', dr ? 'Chauffeur : ' + dr : ''].filter(Boolean).join(' · '))),
+    h('span', { class: 'end' }, h('b', {}, it.t || '—'), st.label), chev());
+}
+function renderAgenda(v) {
+  const today = parisToday();
+  if (!agStart) agStart = agMonday(today);
+  if (!agSel || agSel < agStart || agSel > agAdd(agStart, 6)) agSel = (today >= agStart && today <= agAdd(agStart, 6)) ? today : agStart;
+  const end = agAdd(agStart, 6), items = agItems(agStart, end);
+  const nav = (lbl, f, extra) => h('button', { class: 'btn quiet', style: 'width:auto;min-height:40px;padding:0 14px' + (extra || ''), onclick: f }, lbl);
+  v.append(h('div', { style: 'display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px' },
+    nav('‹', () => { agStart = agAdd(agStart, -7); agSel = null; render(); }),
+    h('b', { style: 'flex:1;min-width:160px' }, 'Semaine du ' + agLong(agStart).replace(/^\w+ /, '')),
+    nav('Aujourd’hui', () => { agStart = agMonday(today); agSel = today; render(); }),
+    nav('›', () => { agStart = agAdd(agStart, 7); agSel = null; render(); })));
+  const strip = h('div', { class: 'seg', role: 'group', 'aria-label': 'Jours de la semaine', style: 'gap:6px' });
+  for (let i = 0; i < 7; i++) {
+    const d = agAdd(agStart, i), n = items.filter(x => x.d === d).length, dt = new Date(Date.parse(d + 'T12:00:00Z'));
+    strip.append(h('button', { 'aria-pressed': String(d === agSel), style: 'display:grid;justify-items:center;gap:1px;min-width:56px;padding:8px 6px;line-height:1.15;border-radius:12px' + (d === today ? ';box-shadow:inset 0 -2px 0 var(--gold)' : ''), onclick: () => { agSel = d; render(); } },
+      h('span', { style: 'font-size:12px' }, dt.toLocaleDateString('fr-FR', { weekday: 'short', timeZone: 'UTC' })),
+      h('b', { style: 'font-size:17px' }, String(dt.getUTCDate())),
+      h('span', { style: 'font-size:11px;font-weight:700;color:var(--gold)' }, n ? n + ' course' + (n > 1 ? 's' : '') : '·')));
+  }
+  v.append(strip);
+  const day = items.filter(x => x.d === agSel);
+  v.append(h('h3', { style: 'margin:6px 0 10px;font:600 18px var(--serif)' }, agLong(agSel).replace(/^./, c => c.toUpperCase())));
+  const l = h('div', { class: 'list' });
+  day.forEach(it => l.append(agRow(it)));
+  if (!day.length) l.append(h('div', { class: 'empty-note' }, agSel < today ? 'Aucune course ce jour-là.' : 'Rien de prévu ce jour-là.'));
+  v.append(l);
+  // La semaine en entier, sous le jour choisi
+  const rest = items.filter(x => x.d !== agSel);
+  if (rest.length) {
+    v.append(h('h3', { style: 'margin:22px 0 10px;font:600 16px var(--sans);color:var(--ink-2)' }, 'Le reste de la semaine'));
+    const w = h('div', { class: 'list' });
+    let cur = '';
+    rest.forEach(it => { if (it.d !== cur) { cur = it.d; w.append(h('div', { class: 'empty-note', style: 'padding:10px 16px;font-weight:700;color:var(--ink);background:var(--bg)' }, agLong(it.d).replace(/^./, c => c.toUpperCase()))); } w.append(agRow(it)); });
+    v.append(w);
+  }
+  v.append(h('div', { class: 'btns', style: 'max-width:420px' }, h('button', { class: 'btn quiet', onclick: openNewCourse }, 'Ajouter une course reçue par téléphone')));
 }
 
 /* ================= Fiche (mobile plein écran, ordinateur à droite) ================= */

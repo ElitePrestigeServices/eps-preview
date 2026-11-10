@@ -980,9 +980,32 @@ function renderCrm(v) {
     h('div', { class: 'seg', role: 'group', 'aria-label': 'État' }, [['todo', 'À contacter'], ['sent', 'Contactés'], ['fail', 'Échecs'], ['stop', 'STOP'], ['all', 'Tous']].map(([k, l]) => h('button', { 'aria-pressed': String(crmFilter === k), onclick: () => { crmFilter = k; crmLimit = 60; render(); } }, l))),
     h('div', { class: 'seg', role: 'group', 'aria-label': 'Type de prospect' }, [['', 'Tous types'], ...SEGMENTS.map(([k, l]) => [k, l]), ['autre', 'Autres']].map(([k, l]) => h('button', { 'aria-pressed': String(crmSeg === k), onclick: () => { crmSeg = k; crmLimit = 60; render(); } }, l))),
     search, listBox,
-    h('div', { class: 'btns', style: 'max-width:420px' }, h('button', { class: 'btn quiet', onclick: openNewContact }, 'Ajouter un prospect')));
+    h('div', { class: 'btns', style: 'max-width:420px' }, h('button', { class: 'btn quiet', onclick: openNewContact }, 'Ajouter un prospect'), h('button', { class: 'btn quiet', onclick: () => openCompose('', null, '') }, 'Écrire un mail')));
   drawList();
   v.append(h('div', { class: 'grid-desk rev' }, right, left));
+}
+/* 10/11/2026 (Anthony) : écrire / répondre depuis le CRM avec contact@elite-prestige-services.fr (plus l'appli Gmail du téléphone). */
+function openCompose(to, contactId, company) {
+  const toI = h('input', { type: 'email', inputmode: 'email', autocapitalize: 'none', value: to || '', placeholder: 'adresse@client.fr' });
+  const subj = h('input', { placeholder: 'Objet' });
+  const txt = h('textarea', { rows: '10' }); txt.value = 'Bonjour,\n\n\n\nAnthony\nElite Prestige Services\n07 45 49 53 21';
+  const st = h('p', { class: 'hint', 'aria-live': 'polite' });
+  const send = h('button', { class: 'btn', onclick: async () => {
+    const t = toI.value.trim(), s = subj.value.trim(), m = txt.value.trim();
+    if (!t || !s || !m) return toast('Remplis le destinataire, l’objet et le message.', true);
+    if (!confirm('Envoyer ce mail à ' + t + ' depuis contact@elite-prestige-services.fr ?')) return;
+    send.disabled = true; st.textContent = 'Envoi en cours…';
+    try {
+      const r = await fetch(SB + '/functions/v1/eps-crm-send', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + await token() }, body: JSON.stringify({ to: t, subject: s, text: m, contact_id: contactId || null }) });
+      const d = await r.json().catch(() => ({}));
+      if (!d.ok) throw Error(d.error || 'Échec de l’envoi');
+      toast(d.message); closeSheet();
+    } catch (e) { st.textContent = 'Erreur : ' + (e.message || e); send.disabled = false; }
+  } }, 'Envoyer');
+  const body = h('div', { class: 'card' },
+    h('p', { class: 'hint', style: 'margin-top:0' }, 'Le mail part de contact@elite-prestige-services.fr. Il est noté dans l’historique du contact.'),
+    fld('À', toI), fld('Objet', subj), fld('Message', txt), st, h('div', { class: 'btns' }, send));
+  openSheet(company ? 'Écrire à ' + company : 'Écrire un mail', body);
 }
 function openContact(id) {
   const c = S.contacts.find(x => x.id === id); if (!c) return;
@@ -996,7 +1019,7 @@ function openContact(id) {
       h('dt', {}, 'Ville'), h('dd', {}, c.city || '—'), h('dt', {}, 'Source'), h('dd', {}, c.source || '—'),
       s.at ? [h('dt', {}, 'Contacté'), h('dd', {}, fmtDate(s.at))] : null,
       s.err ? [h('dt', {}, 'Erreur'), h('dd', {}, s.err)] : null),
-    h('div', { class: 'contact' }, c.phone ? h('a', { href: 'tel:' + c.phone.replace(/[^\d+]/g, '') }, 'Appeler') : null, isEmail(cleanEmail(c.email)) ? h('a', { href: 'mailto:' + c.email }, 'E-mail') : null)));
+    h('div', { class: 'contact' }, c.phone ? h('a', { href: 'tel:' + c.phone.replace(/[^\d+]/g, '') }, 'Appeler') : null, isEmail(cleanEmail(c.email)) ? h('a', { href: '#', onclick: e => { e.preventDefault(); openCompose(cleanEmail(c.email), c.id, c.company_name); } }, 'Écrire') : null)));
   body.append(h('div', { class: 'card' }, h('h3', {}, 'Notes de suivi'), notes,
     h('div', { class: 'btns' }, h('button', { class: 'btn quiet', onclick: async () => {
       const x = await db.from('eps_crm_contacts').update({ notes: notes.value, updated_at: new Date().toISOString() }).eq('id', c.id);

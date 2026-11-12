@@ -48,6 +48,10 @@ def cta_band(lang, wa):
     return (f'<section class="page-cta wrap" aria-label="{t["book"]}"><div class="pro"><div><h2>{t["cta_t"]}</h2><p class="lead" style="margin-top:12px">{t["cta_p"]}</p></div>'
             f'<div class="pro-side"><a class="btn btn-gold" href="/#reservation">{t["cta_b"]}</a><a class="btn btn-line" href="{wa}" target="_blank" rel="noopener">{WASVG}{t["cta_w"]}</a></div></div></section>')
 
+PARTNER = {"fr": ("Partenaire officiel :", "https://clicandsite.fr/cote-d-azur/", "guide de la Côte d’Azur", "Que faire sur la Côte d’Azur"),
+           "en": ("Official partner:", "https://clicandsite.com/french-riviera/", "French Riviera guide", "Things to do on the French Riviera"),
+           "it": ("Partner ufficiale:", "https://clicandsite.com/french-riviera/", "guida della Costa Azzurra", "Cosa fare in Costa Azzurra"),
+           "es": ("Socio oficial:", "https://clicandsite.com/french-riviera/", "guía de la Costa Azul", "Qué hacer en la Costa Azul")}
 CREDIT = {"fr": "Site réalisé par", "en": "Website by", "it": "Sito realizzato da", "es": "Sitio creado por"}
 
 
@@ -57,9 +61,10 @@ def footer(lang, wa):
     tr = list(zip(['/transfert-aeroport-nice-cannes/', '/transfert-nice-monaco/', '/transfert-aeroport-nice-saint-tropez/', '/aviation-privee-cannes-mandelieu/'], t['f_lines']))
     li = lambda xs: ''.join(f'<li><a href="{u}">{l}</a></li>' for u, l in xs)
     lg = t['legal']
+    pp = PARTNER.get(lang, PARTNER['fr'])
     return (f'<footer class="site-foot" id="contact"><div class="wrap"><div class="foot-grid">'
-            f'<div class="foot-brand"><img src="/assets/v2/logo-eps-256.webp" alt="" width="56" height="56" loading="lazy" style="margin-bottom:14px"><b>Elite Prestige Services</b><p>{t["f_txt"]}</p></div>'
-            f'<div><h3>{t["f_dest"]}</h3><ul>{li(dest)}</ul></div><div><h3>{t["f_tr"]}</h3><ul>{li(tr)}</ul></div>'
+            f'<div class="foot-brand"><img src="/assets/v2/logo-eps-256.webp" alt="" width="56" height="56" loading="lazy" style="margin-bottom:14px"><b>Elite Prestige Services</b><p>{t["f_txt"]}</p><p class="foot-partner" style="margin-top:12px">{pp[0]} <a href="{pp[1]}"><span style="font-weight:600;color:var(--gold)">Clic&amp;Site</span></a>, {pp[2]}</p></div>'
+            f'<div><h3>{t["f_dest"]}</h3><ul>{li(dest)}<li><a href="{pp[1]}" title="Clic&amp;Site">{pp[3]}</a></li></ul></div><div><h3>{t["f_tr"]}</h3><ul>{li(tr)}</ul></div>'
             f'<div><h3>{t["f_c"]}</h3><ul><li><a href="{wa}" target="_blank" rel="noopener">WhatsApp</a></li><li><a href="mailto:contact@elite-prestige-services.fr">contact@elite-prestige-services.fr</a></li><li><a href="/admin/">{t["f_adm"]}</a></li><li><a href="/chauffeur/">{t["f_drv"]}</a></li></ul></div>'
             f'</div><div class="foot-legal"><span>{t["lic"]} · {CREDIT.get(lang, CREDIT["fr"])} <a href="https://mycreativesite.fr/"><img src="https://mycreativesite.fr/img/m-badge.webp" alt="" width="16" height="16" loading="lazy" style="width:16px;height:16px;vertical-align:-3px;margin-right:5px;display:inline-block">MyCreativeSite</a></span><span><a href="/mentions-legales/">{lg[0]}</a> · <a href="/cgv/">{lg[1]}</a> · <a href="/cgu/">{lg[2]}</a> · <a href="/confidentialite/">{lg[3]}</a></span></div></div></footer>')
 

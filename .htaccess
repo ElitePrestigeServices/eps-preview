@@ -1,0 +1,11 @@
+# 12/11/2026 (Claude, audit) : une seule adresse officielle, https://www.elite-prestige-services.fr/
+# (avant : le site répondait aussi sans « www », en doublon pour Google).
+# test.elite-prestige-services.fr n'est pas concerné.
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteCond %{HTTP_HOST} ^elite-prestige-services\.fr$ [NC]
+RewriteRule ^(.*)$ https://www.elite-prestige-services.fr/$1 [R=301,L]
+RewriteCond %{HTTP_HOST} ^www\.elite-prestige-services\.fr$ [NC]
+RewriteCond %{HTTPS} !=on
+RewriteRule ^(.*)$ https://www.elite-prestige-services.fr/$1 [R=301,L]
+</IfModule>

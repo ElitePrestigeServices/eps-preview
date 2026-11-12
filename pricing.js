@@ -11,10 +11,21 @@
     'cannes|saint-tropez': { 'Business Class': 320, 'Business Van': 370, 'First Class': 460 },
     // 12/11/2026 : stations de ski des Alpes-Maritimes (≈ 90 km et 1 h 30 depuis l'aéroport de Nice, route de montagne,
     // retour à vide). Repère marché : van aéroport de Nice → Isola 2000 ≈ 240-280 USD sur les plateformes.
-    'isola-2000|nice': { 'Business Class': 230, 'Business Van': 270, 'First Class': 340 },
-    'auron|nice': { 'Business Class': 230, 'Business Van': 270, 'First Class': 340 },
-    'cannes|isola-2000': { 'Business Class': 290, 'Business Van': 340, 'First Class': 420 },
-    'auron|cannes': { 'Business Class': 290, 'Business Van': 340, 'First Class': 420 }
+    // 12/11/2026 (2e passage) : +20 € environ pour la route d'hiver (chaînes, temps de trajet), validé par Anthony.
+    'isola-2000|nice': { 'Business Class': 250, 'Business Van': 290, 'First Class': 360 },
+    'auron|nice': { 'Business Class': 250, 'Business Van': 290, 'First Class': 360 },
+    'cannes|isola-2000': { 'Business Class': 310, 'Business Van': 360, 'First Class': 450 },
+    'auron|cannes': { 'Business Class': 310, 'Business Van': 360, 'First Class': 450 }
+  };
+  // Forfait « journée ski » : aller le matin + retour le soir le même jour, même véhicule (≈ 1,6 × l'aller simple).
+  const skiDayFares = {
+    'isola-2000|nice': { 'Business Class': 400, 'Business Van': 460, 'First Class': 580 },
+    'auron|nice': { 'Business Class': 400, 'Business Van': 460, 'First Class': 580 },
+    'cannes|isola-2000': { 'Business Class': 500, 'Business Van': 580, 'First Class': 720 },
+    'auron|cannes': { 'Business Class': 500, 'Business Van': 580, 'First Class': 720 }
+  };
+  window.epsIsSkiRoute = function (departure, destination) {
+    return [departure, destination].some(v => /\b(isola|auron)\b/.test(normalize(v)));
   };
   // Relevés Blacklane transmis le 26/09/2026. Références de marché, pas tarifs EPS validés.
   // Les trajets aéroport sont directionnels : les prix retour restent à confirmer.
@@ -128,7 +139,8 @@
       'auron|cannes-centre': 'auron|cannes'
     };
     // Electric Class : tarif Business Class (EQE) ; l'EQS est confirmé au tarif First dans le devis.
-    const base = fares[routes[pair]]?.[request.vehicle === 'Electric Class' ? 'Business Class' : request.vehicle];
+    const table = request.skiDay && skiDayFares[routes[pair]] ? skiDayFares : fares;
+    const base = table[routes[pair]]?.[request.vehicle === 'Electric Class' ? 'Business Class' : request.vehicle];
     if (!base || !request.date || !request.time) return null;
     const hours = (pickupParis(request.date, request.time) - Date.now()) / 3600000;
     if (!Number.isFinite(hours) || hours < 2) return null;
@@ -142,5 +154,5 @@
     return { amount: Math.ceil(base * (1 + percent / 100) / 5) * 5,
       base, event: applied?.name || null, season: applied?.kind === 'saison', urgency, percent, indicative: true };
   };
-  Object.defineProperty(window, 'epsPricingConfig', { get: () => ({ fares, events, airportReferences }) });
+  Object.defineProperty(window, 'epsPricingConfig', { get: () => ({ fares, skiDayFares, events, airportReferences }) });
 })();

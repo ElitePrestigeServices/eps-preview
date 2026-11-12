@@ -159,6 +159,11 @@ form.addEventListener('submit', event => {
     website: String(data.get('website') || ''),
     partnerCode: window.epsPartner?.code || ''
   };
+  { const ret = type === 'Transfert' && window.epsIsSkiRoute?.(currentRequest.departure, currentRequest.destination) ? String(data.get('ski_day') || '') : '';
+    if (ret) {
+      currentRequest.skiDay = ret;
+      currentRequest.notes = ('FORFAIT JOURNÉE SKI aller-retour, retour à ' + ret + (currentRequest.notes ? '. ' + currentRequest.notes : '')).slice(0, 1000);
+    } }
   currentRequest.estimate = window.epsEstimatePrice?.(currentRequest) || null;
   // Sans préférence de véhicule : on montre le prix fixe de chaque catégorie pour aider à choisir.
   currentRequest.estimateOptions = (!currentRequest.estimate && currentRequest.vehicle === 'Sans préférence')
@@ -178,6 +183,7 @@ function renderReview() {
   if (currentRequest.destination) addDetail('Arrivée', currentRequest.destination);
   if (currentRequest.flightNumber) addDetail('Numéro de vol', currentRequest.flightNumber);
   addDetail('Date et heure', currentRequest.date.split('-').reverse().join('/') + T(' à ') + currentRequest.time);
+  if (currentRequest.skiDay) addDetail('Forfait journée ski', T('Aller-retour, retour à ') + currentRequest.skiDay);
   if (currentRequest.durationHours) addDetail('Durée', currentRequest.durationHours + T(' h'));
   addDetail('Passagers / bagages', currentRequest.passengers + ' / ' + currentRequest.luggage);
   addDetail('Siège enfant', T(currentRequest.childSeat === 'none' ? 'Aucun' : currentRequest.childSeat === 'to_confirm' ? 'À préciser' : currentRequest.childSeat));
@@ -299,7 +305,7 @@ sendButton.addEventListener('click', async () => {
     [...sel.options].forEach(o => {
       if (!o.value) return;
       if (o.dataset.label == null) o.dataset.label = o.textContent;
-      const e = window.epsEstimatePrice?.({ type, departure: g('departure'), destination: g('destination'), date: g('date'), time: g('time'), vehicle: o.value === 'Electric Class' ? 'Business Class' : o.value, partnerCode: window.epsPartner?.code || '' });
+      const e = window.epsEstimatePrice?.({ type, departure: g('departure'), destination: g('destination'), date: g('date'), time: g('time'), vehicle: o.value === 'Electric Class' ? 'Business Class' : o.value, skiDay: g('ski_day'), partnerCode: window.epsPartner?.code || '' });
       o.textContent = T(o.dataset.label) + (e ? ' · ' + eur(e.amount) : '');
     });
   };

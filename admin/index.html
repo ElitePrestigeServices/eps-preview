@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
-<script src="../pricing.js?v=20261112-ski"></script>
+<script src="../pricing.js?v=20261112-ski2"></script>
 <style>
 :root{
   --bg:#0b0b0c; --surface:#161616; --surface-2:#1f1e1c; --line:#2e2c28;
@@ -412,7 +412,7 @@ function suggest(b) {
   // Véhicule non choisi par le client : on se base sur la berline (ou le van à partir de 4 passagers).
   const priced = ['Business Class', 'Business Van', 'First Class', 'Electric Class'].includes(b.vehicle);
   const veh = priced ? (b.vehicle === 'Electric Class' ? 'Business Class' : b.vehicle) : (Number(b.passengers) > 3 ? 'Business Van' : 'Business Class');
-  const e = window.epsEstimatePrice?.({ type: b.type || 'Transfert', departure: b.departure, destination: b.destination, date: b.date, time: b.time, vehicle: veh });
+  const e = window.epsEstimatePrice?.({ type: b.type || 'Transfert', departure: b.departure, destination: b.destination, date: b.date, time: b.time, vehicle: veh, skiDay: /FORFAIT JOURNÉE SKI/.test(b.notes || '') ? '1' : '' });
   if (!e) return null;
   const note = priced ? '' : ' — véhicule non choisi, base ' + veh;
   if (partner) return { amount: e.base, why: 'Tarif partenaire fixe (' + partner.name + '), sans majoration' + note };

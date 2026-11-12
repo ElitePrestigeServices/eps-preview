@@ -8,7 +8,13 @@
     'cannes|monaco': { 'Business Class': 230, 'Business Van': 260, 'First Class': 330 },
     // 03/11/2026 : van Monaco 260 → 230 et Saint-Tropez 360 → 320 (écart van/berline ramené vers +35 %) ; ajout aéroport de Nice ↔ Monaco.
     'monaco|nice': { 'Business Class': 150, 'Business Van': 195, 'First Class': 240 },
-    'cannes|saint-tropez': { 'Business Class': 320, 'Business Van': 370, 'First Class': 460 }
+    'cannes|saint-tropez': { 'Business Class': 320, 'Business Van': 370, 'First Class': 460 },
+    // 12/11/2026 : stations de ski des Alpes-Maritimes (≈ 90 km et 1 h 30 depuis l'aéroport de Nice, route de montagne,
+    // retour à vide). Repère marché : van aéroport de Nice → Isola 2000 ≈ 240-280 USD sur les plateformes.
+    'isola-2000|nice': { 'Business Class': 230, 'Business Van': 270, 'First Class': 340 },
+    'auron|nice': { 'Business Class': 230, 'Business Van': 270, 'First Class': 340 },
+    'cannes|isola-2000': { 'Business Class': 290, 'Business Van': 340, 'First Class': 420 },
+    'auron|cannes': { 'Business Class': 290, 'Business Van': 340, 'First Class': 420 }
   };
   // Relevés Blacklane transmis le 26/09/2026. Références de marché, pas tarifs EPS validés.
   // Les trajets aéroport sont directionnels : les prix retour restent à confirmer.
@@ -86,6 +92,8 @@
         /^cannes(?: alpes maritimes)?(?: provence alpes cote d azur)? france$/.test(v)) return 'cannes-centre';
     if (/^monaco(?: france)?$/.test(v)) return 'monaco';
     if (/^saint tropez(?: france)?$/.test(v)) return 'saint-tropez';
+    if (/\bisola\b/.test(v)) return 'isola-2000';
+    if (/\bauron\b/.test(v)) return 'auron';
     return null;
   }
   function pickupParis(date, time) {
@@ -113,7 +121,11 @@
       'cannes-centre|mandelieu-airport': 'cannes|cannes-mandelieu-airport',
       'cannes-centre|monaco': 'cannes|monaco',
       'cannes-centre|saint-tropez': 'cannes|saint-tropez',
-      'monaco|nice-airport': 'monaco|nice'
+      'monaco|nice-airport': 'monaco|nice',
+      'isola-2000|nice-airport': 'isola-2000|nice',
+      'auron|nice-airport': 'auron|nice',
+      'cannes-centre|isola-2000': 'cannes|isola-2000',
+      'auron|cannes-centre': 'auron|cannes'
     };
     // Electric Class : tarif Business Class (EQE) ; l'EQS est confirmé au tarif First dans le devis.
     const base = fares[routes[pair]]?.[request.vehicle === 'Electric Class' ? 'Business Class' : request.vehicle];

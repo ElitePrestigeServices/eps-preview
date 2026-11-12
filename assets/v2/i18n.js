@@ -177,6 +177,12 @@
     [': plusieurs véhicules, transferts aéroport et mise à disposition.', ': several vehicles, airport transfers and hourly hire.', ': più veicoli, transfer aeroporto e autista a ore.', ': varios vehículos, traslados al aeropuerto y servicio por horas.'],
     ['Devenir partenaire', 'Become a partner', 'Diventa partner', 'Hágase socio'],
     ['En parler sur WhatsApp', 'Talk to us on WhatsApp', 'Parliamone su WhatsApp', 'Hablemos por WhatsApp'],
+    // Partenaire Clic&Site
+    ['Partenaire officiel :', 'Official partner:', 'Partner ufficiale:', 'Socio oficial:'],
+    [', guide de la Côte d’Azur', ', French Riviera guide', ', guida della Costa Azzurra', ', guía de la Costa Azul'],
+    ['Que faire sur la Côte d’Azur', 'Things to do on the French Riviera', 'Cosa fare in Costa Azzurra', 'Qué hacer en la Costa Azul'],
+    ['Sorties, visites et bonnes adresses :', 'Outings, sightseeing and good addresses:', 'Uscite, visite e buoni indirizzi:', 'Salidas, visitas y buenas direcciones:'],
+    ['le guide de notre partenaire officiel Clic&Site →', 'the guide by our official partner Clic&Site →', 'la guida del nostro partner ufficiale Clic&Site →', 'la guía de nuestro socio oficial Clic&Site →'],
     // Agenda
     ['Événements de la Côte d’Azur', 'French Riviera events', 'Eventi della Costa Azzurra', 'Eventos de la Costa Azul'],
     ['Les grands rendez-vous de la Riviera et leurs mois habituels. Réservez tôt : les chauffeurs partent vite.', 'The Riviera’s major events and their usual months. Book early: chauffeurs are in high demand.', 'I grandi appuntamenti della Riviera e i loro mesi abituali. Prenota presto: gli autisti vanno a ruba.', 'Las grandes citas de la Riviera y sus meses habituales. Reserve pronto: los chóferes se agotan rápido.'],
@@ -248,6 +254,7 @@
         el.setAttribute(a, tr(el.dataset[k]));
       }
     });
+    document.querySelectorAll('[data-href-intl]').forEach(a => { if (a.dataset.hrefFr == null) a.dataset.hrefFr = a.getAttribute('href'); a.setAttribute('href', lang === 'fr' ? a.dataset.hrefFr : a.dataset.hrefIntl); });
     document.querySelectorAll('[data-href-en]').forEach(a => { if (a.dataset.hrefFr == null) a.dataset.hrefFr = a.getAttribute('href'); a.setAttribute('href', lang === 'en' ? a.dataset.hrefEn : a.dataset.hrefFr); });
     try { document.dispatchEvent(new CustomEvent('eps:language', { detail: lang })); } catch (_) {}
     if (pageMeta.title) document.title = pageMeta.title[LANGS.indexOf(lang)] || pageMeta.title[0];

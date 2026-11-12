@@ -112,20 +112,21 @@ html=f'''<!doctype html>
   <div class="sec-head"><div><h2 id="agenda-t">Événements de la Côte d’Azur</h2><p class="lead">Les grands rendez-vous de la Riviera et leurs mois habituels. Réservez tôt : les chauffeurs partent vite.</p></div><a class="btn btn-line" href="agenda-evenements-cote-dazur/">Voir l’agenda complet</a></div>
   <div class="agenda">{A}</div>
   <p class="small-note">Mois indicatifs : vérifiez le calendrier officiel de chaque édition.</p>
+  <p class="small-note" style="margin-top:6px">Sorties, visites et bonnes adresses : <a href="https://clicandsite.fr/cote-d-azur/" data-href-intl="https://clicandsite.com/french-riviera/" style="color:var(--gold)">le guide de notre partenaire officiel Clic&amp;Site →</a></p>
 </div></section>
 </main>
 
 <footer class="site-foot" id="contact"><div class="wrap">
   <div class="foot-grid">
-    <div class="foot-brand"><img src="assets/v2/logo-eps-256.webp" alt="" width="56" height="56" loading="lazy" style="margin-bottom:14px"><b>Elite Prestige Services</b><p>Chauffeur privé VTC basé à Cannes. Transferts aéroport, hôtels, ports et événements sur toute la Côte d’Azur.</p><p class="foot-partner" style="margin-top:12px">Partenaire officiel : <a href="https://clicandsite.fr/cote-d-azur/"><span style="font-weight:600;color:var(--gold)">Clic&amp;Site</span></a>, guide de la Côte d’Azur</p></div>
-    <div><h3>Destinations</h3><ul><li><a href="chauffeur-prive-cannes/">Cannes</a></li><li><a href="chauffeur-prive-nice/">Nice</a></li><li><a href="chauffeur-prive-monaco/">Monaco</a></li><li><a href="chauffeur-prive-saint-tropez/">Saint-Tropez</a></li><li><a href="destinations/">Toutes les destinations</a></li><li><a href="https://clicandsite.fr/cote-d-azur/" title="Clic&amp;Site">Que faire sur la Côte d’Azur</a></li></ul></div>
+    <div class="foot-brand"><img src="assets/v2/logo-eps-256.webp" alt="" width="56" height="56" loading="lazy" style="margin-bottom:14px"><b>Elite Prestige Services</b><p>Chauffeur privé VTC basé à Cannes. Transferts aéroport, hôtels, ports et événements sur toute la Côte d’Azur.</p><p class="foot-partner" style="margin-top:12px">Partenaire officiel : <a href="https://clicandsite.fr/cote-d-azur/" data-href-intl="https://clicandsite.com/french-riviera/"><span style="font-weight:600;color:var(--gold)">Clic&amp;Site</span></a>, guide de la Côte d’Azur</p></div>
+    <div><h3>Destinations</h3><ul><li><a href="chauffeur-prive-cannes/">Cannes</a></li><li><a href="chauffeur-prive-nice/">Nice</a></li><li><a href="chauffeur-prive-monaco/">Monaco</a></li><li><a href="chauffeur-prive-saint-tropez/">Saint-Tropez</a></li><li><a href="destinations/">Toutes les destinations</a></li><li><a href="https://clicandsite.fr/cote-d-azur/" data-href-intl="https://clicandsite.com/french-riviera/" title="Clic&amp;Site">Que faire sur la Côte d’Azur</a></li></ul></div>
     <div><h3>Transferts</h3><ul><li><a href="transfert-aeroport-nice-cannes/">Aéroport de Nice → Cannes</a></li><li><a href="transfert-nice-monaco/">Nice → Monaco</a></li><li><a href="transfert-aeroport-nice-saint-tropez/">Aéroport de Nice → Saint-Tropez</a></li><li><a href="aviation-privee-cannes-mandelieu/">Aéroport de Cannes-Mandelieu</a></li></ul></div>
     <div><h3>Contact</h3><ul><li><a href="{WA}" target="_blank" rel="noopener">WhatsApp</a></li><li><a href="mailto:contact@elite-prestige-services.fr">contact@elite-prestige-services.fr</a></li><li><a href="admin/">Espace admin</a></li><li><a href="chauffeur/">Espace chauffeur</a></li></ul></div>
   </div>
   <div class="foot-legal"><span>© Elite Prestige Services · Site réalisé par <a href="https://mycreativesite.fr/"><img src="https://mycreativesite.fr/img/m-badge.webp" alt="" width="16" height="16" loading="lazy" style="width:16px;height:16px;vertical-align:-3px;margin-right:5px;display:inline-block">MyCreativeSite</a></span><span><a href="mentions-legales/">Mentions légales</a> · <a href="cgv/">CGV</a> · <a href="cgu/">CGU</a> · <a href="confidentialite/">Confidentialité</a></span></div>
 </div></footer>
 {cta2}
-<script src="assets/v2/i18n.js?v=20261104d"></script><script src="pricing.js?v=20261104-veh"></script><script src="script.js?v=20261104-veh"></script>
+<script src="assets/v2/i18n.js?v=20261112-partner"></script><script src="pricing.js?v=20261104-veh"></script><script src="script.js?v=20261104-veh"></script>
 <script>
 (function(){{
  const form=document.getElementById('reservation-form');if(!form)return;

@@ -433,9 +433,10 @@ const ICONS = {
   orders: '<path d="M7 3h8l4 4v14H7z"/><path d="M15 3v4h4M10 12h6M10 16h6"/>',
   inbox: '<path d="M4 13l2-8h12l2 8v6H4z"/><path d="M4 13h5l1 2h4l1-2h5"/>',
   settings: '<circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/>',
+  stats: '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
   more: '<circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/>'
 };
-const NAV = [['home', 'Aujourd’hui'], ['courses', 'Courses'], ['agenda', 'Agenda'], ['partners', 'Partenaires'], ['orders', 'Bons de commande'], ['crm', 'Prospection'], ['drivers', 'Chauffeurs'], ['inbox', 'Messages'], ['settings', 'Réglages']];
+const NAV = [['home', 'Aujourd’hui'], ['courses', 'Courses'], ['agenda', 'Agenda'], ['partners', 'Partenaires'], ['orders', 'Bons de commande'], ['crm', 'Prospection'], ['drivers', 'Chauffeurs'], ['inbox', 'Messages'], ['stats', 'Statistiques'], ['settings', 'Réglages']];
 const TABS = [['home', 'Aujourd’hui'], ['courses', 'Courses'], ['agenda', 'Agenda'], ['partners', 'Partenaires'], ['more', 'Plus']];
 const titles = Object.fromEntries([...NAV, ['more', 'Plus']]);
 let tab = 'home';
@@ -444,7 +445,7 @@ function drawNav() {
   const c = counts();
   const pip = n => n ? h('span', { class: 'pip' }, n) : null;
   $('side-nav').replaceChildren(...NAV.map(([id, label]) => h('button', { 'aria-current': tab === id ? 'page' : null, onclick: () => go(id) }, svg(ICONS[id]), label, pip(c[id]))));
-  const inMore = ['orders', 'crm', 'drivers', 'inbox', 'settings'].includes(tab);
+  const inMore = ['orders', 'crm', 'drivers', 'inbox', 'stats', 'settings'].includes(tab);
   $('tab-nav').replaceChildren(...TABS.map(([id, label]) => h('button', { 'aria-current': (tab === id || (id === 'more' && inMore)) ? 'page' : null, onclick: () => go(id) }, svg(ICONS[id]), label,
     id === 'courses' ? pip(c.courses) : id === 'more' ? pip(c.inbox) : null)));
 }
@@ -460,7 +461,7 @@ function render(loading = false) {
   $('subtitle').textContent = tab === 'home' ? new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }) : '';
   const v = $('view'); v.replaceChildren();
   if (loading) { v.append(h('p', { class: 'hint' }, 'Chargement…')); return; }
-  ({ home: renderHome, courses: renderCourses, agenda: renderAgenda, partners: renderPartners, orders: renderOrders, crm: renderCrm, drivers: renderDrivers, inbox: renderInbox, settings: renderSettings, more: renderMore })[tab](v);
+  ({ home: renderHome, courses: renderCourses, agenda: renderAgenda, partners: renderPartners, orders: renderOrders, crm: renderCrm, drivers: renderDrivers, inbox: renderInbox, stats: renderStats, settings: renderSettings, more: renderMore })[tab](v);
 }
 
 
@@ -1256,8 +1257,45 @@ function renderMore(v) {
     item('crm', 'Prospection', 'Robot d’envoi, prospects, message'),
     item('drivers', 'Chauffeurs', 'Documents et attribution des courses'),
     item('inbox', 'Messages', 'Demandes des clients, notifications', c.inbox),
+    item('stats', 'Statistiques', 'Visiteurs du site, pages, provenance'),
     item('settings', 'Réglages', 'Liens à envoyer, périodes majorées, déconnexion'),
     h('button', { class: 'row', onclick: () => window.open(SITE, '_blank', 'noopener') }, h('span', { class: 'main' }, h('div', { class: 't' }, 'Voir le site'), h('div', { class: 's' }, 'S’ouvre par-dessus, le pilotage reste ouvert')), chev())));
+}
+
+/* ================= Statistiques du site (13/11/2026, demande d'Anthony) =================
+   Visites anonymes enregistrées par /assets/v2/stats.js (table eps_site_events, fonction eps_admin_stats).
+   Pour ne pas compter ton téléphone : toucher ton nom dans les mentions légales, ou ouvrir le site avec #nostats. */
+let statDays = 7;
+async function renderStats(v) {
+  const pick = h('div', { class: 'list', style: 'display:flex;margin-bottom:12px' }, ...[[1, 'Aujourd’hui'], [7, '7 jours'], [30, '30 jours'], [90, '3 mois']].map(([d, l]) =>
+    h('button', { class: 'row', style: 'justify-content:center;border-bottom:0;' + (statDays === d ? 'font-weight:700;color:var(--gold, #c9a35b)' : ''), onclick: () => { statDays = d; render(); } }, l)));
+  v.append(pick);
+  const box = h('div', {}, h('p', { class: 'hint' }, 'Chargement…')); v.append(box);
+  const { data, error } = await db.rpc('eps_admin_stats', { p_days: statDays });
+  box.replaceChildren();
+  if (error || !data) { box.append(h('p', { class: 'hint' }, 'Statistiques indisponibles : ' + (error && error.message || 'réponse vide'))); return; }
+  const stat = (val, label) => h('div', { class: 'stat' }, h('div', { class: 'v' }, String(val ?? 0)), h('div', { class: 'l' }, label));
+  box.append(h('div', { class: 'stats', style: 'margin-bottom:16px' },
+    stat(data.visiteurs, 'Visiteurs'), stat(data.pages_vues, 'Pages vues'),
+    stat(data.formulaire_ouvert, 'Ont commencé une réservation'), stat(data.reservations_envoyees, 'Réservations envoyées'),
+    stat(data.clics_whatsapp, 'Clics WhatsApp'), stat(data.visiteurs ? Math.round(100 * (data.formulaire_ouvert || 0) / data.visiteurs) + ' %' : '0 %', 'Taux d’intérêt')));
+  const table = (title, rows, a, b, fmt) => {
+    if (!rows || !rows.length) return;
+    box.append(h('h2', {}, title), h('div', { class: 'list', style: 'margin-bottom:16px' }, ...rows.map(r =>
+      h('div', { class: 'row', style: 'cursor:default' }, h('span', { class: 'main' }, h('div', { class: 't' }, fmt ? fmt(r[a]) : r[a])), h('strong', {}, r[b])))));
+  };
+  const max = Math.max(1, ...(data.par_jour || []).map(r => r.visiteurs));
+  if (data.par_jour && data.par_jour.length > 1) {
+    box.append(h('h2', {}, 'Visiteurs par jour'), h('div', { class: 'card', style: 'display:flex;align-items:flex-end;gap:4px;height:140px;overflow-x:auto' },
+      ...data.par_jour.map(r => h('div', { title: r.jour + ' : ' + r.visiteurs + ' visiteurs', style: 'flex:1;min-width:10px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;font-size:10px;color:var(--ink-2)' },
+        h('div', { style: 'width:100%;background:var(--gold, #c9a35b);border-radius:3px 3px 0 0;height:' + Math.max(3, Math.round(100 * r.visiteurs / max)) + 'px' }), r.jour.slice(0, 2)))));
+  }
+  table('Pages les plus vues', data.pages, 'path', 'vues', x => x === '/' ? 'Accueil' : x);
+  table('D’où viennent les visiteurs', data.provenance, 'source', 'visiteurs', x => x === 'direct' ? 'Accès direct (adresse tapée, QR code, favoris)' : x);
+  table('Appareils', data.appareils, 'appareil', 'visiteurs');
+  table('Langue du site', data.langues, 'langue', 'visiteurs');
+  table('Fuseau horaire des visiteurs', data.fuseaux, 'fuseau', 'visiteurs', x => x.replace('_', ' '));
+  box.append(h('p', { class: 'hint' }, 'Statistiques anonymes, sans cookie. Ton appareil n’est pas compté si tu as touché ton nom dans les mentions légales ou ouvert le site avec #nostats (#stats pour être recompté).'));
 }
 
 /* ================= Bons de commande ================= */

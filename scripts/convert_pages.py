@@ -110,7 +110,7 @@ def run():
       ld = ''.join(re.findall(r'<script type="application/ld\+json".*?</script>', body, re.S))
       newbody = (f'<body data-eps-v2>' + header(lang, alts, wa) +
                  f'<main{attrs} class="page"><div class="wrap page-body">{inner}</div>{cta_band(lang, wa)}</main>' +
-                 footer(lang, wa) + cta + ld + scripts + '<script src="/assets/v2/site.js?v=' + CSSV + '" defer></script></body></html>')
+                 footer(lang, wa) + cta + ld + scripts + '<script src="/assets/v2/site.js?v=' + CSSV + '" defer></script><script src="/assets/v2/stats.js?v=20261113" defer></script></body></html>')
       open(p, 'w').write(head + newbody)
       done.append(f)
   print(len(done), "pages")

@@ -145,7 +145,7 @@ html=f'''<!doctype html>
  nav.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{{nav.classList.remove('open');mb.setAttribute('aria-expanded','false')}}));
 }})();
 </script>
-</body>
+<script src="/assets/v2/stats.js?v=20261113" defer></script></body>
 </html>
 '''
 open('/home/claude/eps-preview/apercu-accueil.html','w').write(html)

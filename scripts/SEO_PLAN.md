@@ -67,5 +67,10 @@ mettre à jour leurs versions traduites si elles existent (balises hreflang), pu
 - [x] chauffeur-prive-nice (12/11/2026, 2e enrichissement + EN/IT/ES)
 - [x] excursions-chauffeur-prive-cote-dazur (12/11/2026, 2e enrichissement)
 
+- [x] transfert-aeroport-nice-mougins (13/11/2026, 2e enrichissement + EN/IT)
+- [x] chauffeur-monte-carlo-masters (13/11/2026, 2e enrichissement)
+- [x] transfert-aeroport-nice-menton (13/11/2026, 2e enrichissement)
+- [x] chauffeur-iltm-cannes (13/11/2026, 2e enrichissement)
+
 ## À faire (ordre de priorité)
-(file vide au 12/11/2026 — passages suivants : enrichir les 4 pages FR les plus courtes, hors pages légales)
+(file vide au 13/11/2026 — passages suivants : enrichir les 4 pages FR les plus courtes, hors pages légales)

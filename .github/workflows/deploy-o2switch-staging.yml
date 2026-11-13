@@ -81,6 +81,9 @@ jobs:
           set ftp:ssl-protect-data true
           set ssl:verify-certificate true
           set ssl:ca-file "$RUNNER_TEMP/eps-ftps-ca.pem"
+          # 13/11/2026 : en TLS 1.3, le canal de données ProFTPD échoue avec
+          # « gnutls_record_recv: Error in parsing ». TLS 1.2 fonctionne.
+          set ssl:priority "NORMAL:-VERS-TLS1.3"
           set net:max-retries 1
           set net:timeout 25
           cd /$EPS_TARGET_SUBDIR
@@ -123,6 +126,9 @@ jobs:
           set ftp:ssl-protect-data true
           set ssl:verify-certificate true
           set ssl:ca-file "$RUNNER_TEMP/eps-ftps-ca.pem"
+          # 13/11/2026 : en TLS 1.3, le canal de données ProFTPD échoue avec
+          # « gnutls_record_recv: Error in parsing ». TLS 1.2 fonctionne.
+          set ssl:priority "NORMAL:-VERS-TLS1.3"
           set net:max-retries 2
           set net:timeout 25
           cd /$EPS_TARGET_SUBDIR

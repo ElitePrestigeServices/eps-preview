@@ -27,7 +27,7 @@ A=''.join(f'<a href="{u}"><h3>{n}</h3><dl>{"".join(f"<dt>{m}</dt><dd>{e}</dd>" f
 cta2=cta.replace('href="#reservation"','href="#reservation"')
 html=f'''<!doctype html>
 <html lang="fr">
-<head>
+<head><script>if(/github\\.io$/.test(location.hostname))location.replace("https://www.elite-prestige-services.fr"+location.pathname.replace(/^\\/eps-preview/,"")+location.search+location.hash)</script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="robots" content="noindex,nofollow">

@@ -72,5 +72,10 @@ mettre à jour leurs versions traduites si elles existent (balises hreflang), pu
 - [x] transfert-aeroport-nice-menton (13/11/2026, 2e enrichissement)
 - [x] chauffeur-iltm-cannes (13/11/2026, 2e enrichissement)
 
+- [x] aviation-privee-cannes-mandelieu (13/11/2026, 2e passage du jour)
+- [x] chauffeur-tfwa-cannes (13/11/2026, 2e passage du jour)
+- [x] chauffeur-prive-mougins (13/11/2026, 2e passage du jour)
+- [x] chauffeur-grand-prix-monaco (13/11/2026, 2e passage du jour + EN/IT)
+
 ## À faire (ordre de priorité)
 (file vide au 13/11/2026 — passages suivants : enrichir les 4 pages FR les plus courtes, hors pages légales)

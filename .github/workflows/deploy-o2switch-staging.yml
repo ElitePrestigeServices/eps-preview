@@ -83,11 +83,14 @@ jobs:
           set ssl:ca-file "$RUNNER_TEMP/eps-ftps-ca.pem"
           set net:max-retries 1
           set net:timeout 25
+          debug -t 3
           cd /$EPS_TARGET_SUBDIR
           cls -1 .
           bye
           EOF
           echo "Connexion FTPS et dossier de préproduction vérifiés."
+      - name: Arrêt (branche de diagnostic, aucune publication)
+        run: exit 1
       - name: Préparer les fichiers publics
         run: |
           mkdir -p "$RUNNER_TEMP/eps-public"

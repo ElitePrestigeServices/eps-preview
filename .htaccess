@@ -8,4 +8,8 @@ RewriteRule ^(.*)$ https://www.elite-prestige-services.fr/$1 [R=301,L]
 RewriteCond %{HTTP_HOST} ^www\.elite-prestige-services\.fr$ [NC]
 RewriteCond %{HTTPS} !=on
 RewriteRule ^(.*)$ https://www.elite-prestige-services.fr/$1 [R=301,L]
+# 13/11/2026 (Claude, Search Console) : anciennes adresses de l'aperçu GitHub (/eps-preview/…) restées chez Google
+# en 404 → redirection 301 vers la vraie page. Restes de l'ancien WordPress → 410 (supprimé définitivement).
+RewriteRule ^eps-preview/?(.*)$ https://www.elite-prestige-services.fr/$1 [R=301,L,NE]
+RewriteRule ^(wp-admin|wp-content|wp-includes|wp-login\.php|xmlrpc\.php|cgi-bin)(/.*)?$ - [G,L]
 </IfModule>

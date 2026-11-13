@@ -83,7 +83,8 @@ jobs:
           set ssl:ca-file "$RUNNER_TEMP/eps-ftps-ca.pem"
           set net:max-retries 1
           set net:timeout 25
-          debug -t 3
+          set ssl:priority "NORMAL:-VERS-TLS1.3"
+          debug -t 5
           cd /$EPS_TARGET_SUBDIR
           cls -1 .
           bye

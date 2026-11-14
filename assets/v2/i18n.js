@@ -179,7 +179,7 @@
     ['En parler sur WhatsApp', 'Talk to us on WhatsApp', 'Parliamone su WhatsApp', 'Hablemos por WhatsApp'],
     // Partenaire Clic&Site
     ['Partenaire officiel :', 'Official partner:', 'Partner ufficiale:', 'Socio oficial:'],
-    [', guide de la Côte d’Azur', ', French Riviera guide', ', guida della Costa Azzurra', ', guía de la Costa Azul'],
+    [', guide de voyage en France', ', France travel guide', ', guida di viaggio in Francia', ', guía de viaje de Francia'],
     ['Que faire sur la Côte d’Azur', 'Things to do on the French Riviera', 'Cosa fare in Costa Azzurra', 'Qué hacer en la Costa Azul'],
     ['Sorties, visites et bonnes adresses :', 'Outings, sightseeing and good addresses:', 'Uscite, visite e buoni indirizzi:', 'Salidas, visitas y buenas direcciones:'],
     ['le guide de notre partenaire officiel Clic&Site →', 'the guide by our official partner Clic&Site →', 'la guida del nostro partner ufficiale Clic&Site →', 'la guía de nuestro socio oficial Clic&Site →'],

@@ -77,5 +77,10 @@ mettre à jour leurs versions traduites si elles existent (balises hreflang), pu
 - [x] chauffeur-prive-mougins (13/11/2026, 2e passage du jour)
 - [x] chauffeur-grand-prix-monaco (13/11/2026, 2e passage du jour + EN/IT)
 
+- [x] chauffeur-prive-palais-des-festivals-cannes (14/11/2026, file vide → 4 plus courtes)
+- [x] transfert-aeroport-nice-eze (14/11/2026, + EN/IT)
+- [x] chauffeur-jazz-a-juan (14/11/2026)
+- [x] chauffeur-cannes-yachting-festival (14/11/2026)
+
 ## À faire (ordre de priorité)
-(file vide au 13/11/2026 — passages suivants : enrichir les 4 pages FR les plus courtes, hors pages légales)
+(file vide au 14/11/2026 — passages suivants : enrichir les 4 pages FR les plus courtes, hors pages légales)

@@ -342,3 +342,5 @@ p{margin:0}
 .apropos-photos img{width:100%;height:100%;aspect-ratio:3/4;object-fit:cover;border-radius:14px;display:block}
 .apropos-photos img.wide{grid-column:1/-1;aspect-ratio:16/9}
 .apropos-photos figcaption{grid-column:1/-1;font-size:.8rem;color:rgba(237,230,214,.55)}
+.photo-credit{margin:14px 0 0;font-size:.72rem;color:rgba(255,255,255,.45);text-align:right}
+.photo-credit a{color:inherit;text-decoration:underline;text-underline-offset:2px}

@@ -18,10 +18,11 @@
     ['Accès chauffeur', 'Driver access', 'Accesso autisti', 'Acceso chóferes'],
     ['Ouvrir le menu', 'Open menu', 'Apri il menu', 'Abrir el menú'],
     // Héros
-    ['VTC et chauffeur privé à Cannes, Nice, Monaco · Transferts aéroport', 'Private chauffeur and airport transfers in Cannes, Nice and Monaco', 'Autista privato NCC e transfer aeroportuali a Cannes, Nizza e Monaco', 'Chófer privado VTC y traslados al aeropuerto en Cannes, Niza y Mónaco'],
+    ['Chauffeur privé VTC sur toute la Côte d’Azur · Transferts aéroport', 'Private chauffeur across the French Riviera · Airport transfers', 'Autista privato NCC in tutta la Costa Azzurra · Transfer aeroportuali', 'Chófer privado VTC en toda la Costa Azul · Traslados al aeropuerto'],
     ['Réserver un chauffeur', 'Book a chauffeur', 'Prenota un autista', 'Reservar un chófer'],
     ['24 h/24, 7 j/7', '24/7', '24 ore su 24, 7 giorni su 7', '24 h, 7 días a la semana'],
     ['Prix confirmé avant la course', 'Price confirmed before the ride', 'Prezzo confermato prima della corsa', 'Precio confirmado antes del trayecto'],
+    ['À propos', 'About us', 'Chi siamo', 'Quiénes somos'],
     ['Chauffeur basé à Cannes', 'Chauffeur based in Cannes', 'Autista con base a Cannes', 'Chófer con base en Cannes'],
     ['Logo Elite Prestige Services', 'Elite Prestige Services logo', 'Logo Elite Prestige Services', 'Logotipo de Elite Prestige Services'],
     // Billets

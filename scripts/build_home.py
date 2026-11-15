@@ -38,7 +38,7 @@ html=f'''<!doctype html>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="preload" as="image" href="assets/v2/hero.webp" media="(min-width:821px)">
-<link rel="stylesheet" href="assets/v2/site.css?v=20261112heure">
+<link rel="stylesheet" href="assets/v2/site.css?v=20261115ariane">
 </head>
 <body>
 <header class="site-head"><div class="wrap">
@@ -58,11 +58,11 @@ html=f'''<!doctype html>
   <picture><source media="(max-width:1100px)" srcset="assets/v2/hero-1100.webp"><img class="hero-img" src="assets/v2/hero.webp" alt="" width="1872" height="1056" fetchpriority="high"></picture>
   <div class="hero-body">
     <img class="hero-logo" src="assets/v2/logo-eps-256.webp" alt="Logo Elite Prestige Services" width="120" height="120">
-    <h1>Elite Prestige Services<span>VTC et chauffeur privé à Cannes, Nice, Monaco · Transferts aéroport</span></h1>
+    <h1>Elite Prestige Services<span>Chauffeur privé VTC sur toute la Côte d’Azur · Transferts aéroport</span></h1>
     <div class="hero-actions"><a class="btn btn-gold" href="#reservation"><span class="hide-m">Réserver un chauffeur</span><span class="hide-d">Réserver</span></a><a class="btn btn-line" href="{WA}" target="_blank" rel="noopener">{WASVG}WhatsApp</a></div>
   </div>
 </section>
-<ul class="facts wrap"><li>24 h/24, 7 j/7</li><li>Prix confirmé avant la course</li><li>Chauffeur basé à Cannes</li></ul>
+<ul class="facts wrap"><li>24 h/24, 7 j/7</li><li>Prix confirmé avant la course</li><li><a href="chauffeur-prive-cannes/" style="color:inherit;text-decoration:none">Chauffeur basé à Cannes</a></li></ul>
 
 
 <section class="sec" id="services" aria-labelledby="services-t" style="padding-top:0"><div class="wrap">
@@ -123,10 +123,10 @@ html=f'''<!doctype html>
     <div><h3>Transferts</h3><ul><li><a href="transfert-aeroport-nice-cannes/">Aéroport de Nice → Cannes</a></li><li><a href="transfert-nice-monaco/">Nice → Monaco</a></li><li><a href="transfert-aeroport-nice-saint-tropez/">Aéroport de Nice → Saint-Tropez</a></li><li><a href="aviation-privee-cannes-mandelieu/">Aéroport de Cannes-Mandelieu</a></li></ul></div>
     <div><h3>Contact</h3><ul><li><a href="{WA}" target="_blank" rel="noopener">WhatsApp</a></li><li><a href="mailto:contact@elite-prestige-services.fr">contact@elite-prestige-services.fr</a></li><li><a href="admin/">Espace admin</a></li><li><a href="chauffeur/">Espace chauffeur</a></li></ul></div>
   </div>
-  <div class="foot-legal"><span>© Elite Prestige Services · Site réalisé par <a href="https://mycreativesite.fr/"><img src="https://mycreativesite.fr/img/m-badge.webp" alt="" width="16" height="16" loading="lazy" style="width:16px;height:16px;vertical-align:-3px;margin-right:5px;display:inline-block">MyCreativeSite</a></span><span><a href="mentions-legales/">Mentions légales</a> · <a href="cgv/">CGV</a> · <a href="cgu/">CGU</a> · <a href="confidentialite/">Confidentialité</a></span></div>
+  <div class="foot-legal"><span>© Elite Prestige Services · Site réalisé par <a href="https://mycreativesite.fr/"><img src="https://mycreativesite.fr/img/m-badge.webp" alt="" width="16" height="16" loading="lazy" style="width:16px;height:16px;vertical-align:-3px;margin-right:5px;display:inline-block">MyCreativeSite</a></span><span><a href="a-propos/">À propos</a> · <a href="mentions-legales/">Mentions légales</a> · <a href="cgv/">CGV</a> · <a href="cgu/">CGU</a> · <a href="confidentialite/">Confidentialité</a></span></div>
 </div></footer>
 {cta2}
-<script src="assets/v2/i18n.js?v=20261112-partner"></script><script src="pricing.js?v=20261104-veh"></script><script src="script.js?v=20261104-veh"></script>
+<script src="assets/v2/i18n.js?v=20261115-apropos"></script><script src="pricing.js?v=20261104-veh"></script><script src="script.js?v=20261104-veh"></script>
 <script>
 (function(){{
  const form=document.getElementById('reservation-form');if(!form)return;

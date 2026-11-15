@@ -22,3 +22,10 @@ RewriteRule ^c-g-v/?$ https://www.elite-prestige-services.fr/cgv/ [R=301,L]
 RewriteRule ^(famille|nous-contacter|vehicules-2)/?$ https://www.elite-prestige-services.fr/ [R=301,L]
 RewriteRule ^(wp-admin|wp-content|wp-includes|wp-login\.php|xmlrpc\.php|cgi-bin)(/.*)?$ - [G,L]
 </IfModule>
+
+# 15/11/2026 (Claude) : photos réelles du véhicule lisibles depuis d'autres sites (annuaires : PagesJaunes, etc.)
+<IfModule mod_headers.c>
+<FilesMatch "\.(jpg|jpeg|png|webp)$">
+Header set Access-Control-Allow-Origin "*"
+</FilesMatch>
+</IfModule>

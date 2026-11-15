@@ -11,5 +11,14 @@ RewriteRule ^(.*)$ https://www.elite-prestige-services.fr/$1 [R=301,L]
 # 13/11/2026 (Claude, Search Console) : anciennes adresses de l'aperçu GitHub (/eps-preview/…) restées chez Google
 # en 404 → redirection 301 vers la vraie page. Restes de l'ancien WordPress → 410 (supprimé définitivement).
 RewriteRule ^eps-preview/?(.*)$ https://www.elite-prestige-services.fr/$1 [R=301,L,NE]
+# 15/11/2026 (Claude, audit SEO) : anciennes adresses du site → vraie redirection 301 (au lieu d'une page
+# « noindex + canonical + refresh », signaux contradictoires pour Google ; la 301 transmet la popularité).
+RewriteRule ^vtc-cannes/?$ https://www.elite-prestige-services.fr/chauffeur-prive-cannes/ [R=301,L]
+RewriteRule ^transfert-gare/?$ https://www.elite-prestige-services.fr/chauffeur-prive-cannes/ [R=301,L]
+RewriteRule ^transfert-aeroport/?$ https://www.elite-prestige-services.fr/transfert-aeroport-nice-cannes/ [R=301,L]
+RewriteRule ^mise-a-disposition/?$ https://www.elite-prestige-services.fr/chauffeur-evenements-vip-cote-dazur/ [R=301,L]
+RewriteRule ^port-de-croisiere/?$ https://www.elite-prestige-services.fr/chauffeur-prive-croisiere-villefranche-sur-mer/ [R=301,L]
+RewriteRule ^c-g-v/?$ https://www.elite-prestige-services.fr/cgv/ [R=301,L]
+RewriteRule ^(famille|nous-contacter|vehicules-2)/?$ https://www.elite-prestige-services.fr/ [R=301,L]
 RewriteRule ^(wp-admin|wp-content|wp-includes|wp-login\.php|xmlrpc\.php|cgi-bin)(/.*)?$ - [G,L]
 </IfModule>

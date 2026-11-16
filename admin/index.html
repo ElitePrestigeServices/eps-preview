@@ -1658,7 +1658,11 @@ async function cptLoad(force) {
   if (x.error) { toast('Lecture impossible : ' + x.error.message, true); cRows = []; } else cRows = x.data;
   cMonthLoaded = cMonth;
 }
+let cView = 'docs';
 async function renderCompta(v) {
+  v.append(h('div', { class: 'seg', role: 'group', 'aria-label': 'Documents ou chiffres' },
+    [['docs', 'Mes documents'], ['chiffres', 'Chiffres et TVA']].map(([k, l]) => h('button', { 'aria-pressed': String(cView === k), onclick: () => { cView = k; render(); } }, l))));
+  if (cView === 'docs') return renderDocs(v);
   const head = h('div', { style: 'display:flex;align-items:center;gap:10px;margin-bottom:14px' },
     h('button', { class: 'btn quiet', 'aria-label': 'Mois précédent', onclick: () => { cMonth = monthShift(cMonth, -1); render(); } }, '‹'),
     h('h2', { style: 'margin:0;flex:1;text-align:center;text-transform:capitalize' }, monthLabel(cMonth)),
@@ -1687,7 +1691,81 @@ async function renderCompta(v) {
       h('button', { class: 'btn quiet', onclick: () => openCptForm({ kind: 'vente' }) }, '+ Recette'),
       toImport.length ? h('button', { class: 'btn quiet', onclick: e => cptImportOrders(toImport, e.target) }, 'Importer ' + toImport.length + ' bon' + (toImport.length > 1 ? 's' : '') + ' de commande du mois') : null,
       rows.length ? h('button', { class: 'btn quiet', onclick: () => cptExport(rows) }, 'Exporter le mois (tableur)') : null),
-    cptList(rows), cptBank()].filter(Boolean));
+    cptList(rows)].filter(Boolean));
+}
+
+/* ---- Mes documents (17/11/2026, sur le modèle de l'espace documents du comptable d'Anthony) : dossiers Achats, Ventes, Banque et caisse, Fiscalité, Social, Divers.
+   Fichiers dans le bucket eps-compta sous docs/<dossier>/ ; lisibles par Claude via la fonction eps-compta-reader. ---- */
+const DOC_FOLDERS = [['achats', 'Mes achats', 'Tickets de caisse, factures fournisseurs (essence, péages, entretien…)'], ['ventes', 'Mes ventes', 'Factures et bons émis, relevés de plateformes'],
+  ['banque', 'Ma banque et caisse', 'Relevés bancaires mensuels, remises d’espèces'], ['fiscalite', 'Ma fiscalité', 'Avis d’impôt, CFE, déclarations de TVA'],
+  ['social', 'Mon social', 'URSSAF, retraite, mutuelle'], ['divers', 'Divers', 'Assurance, carte grise, contrats, courriers']];
+let docFolder = 'achats', docCounts = {};
+const docSafe = n => n.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^\w.\-]+/g, '_').replace(/_+/g, '_').slice(-80);
+async function docList(folder) {
+  const x = await db.storage.from('eps-compta').list('docs/' + folder, { limit: 1000, sortBy: { column: 'created_at', order: 'desc' } });
+  if (x.error) { toast(x.error.message, true); return []; }
+  return (x.data || []).filter(f => f.id);
+}
+async function docUpload(files, folder, btn) {
+  const label = btn?.textContent; if (btn) { btn.disabled = true; btn.textContent = 'Envoi…'; }
+  let ok = 0;
+  for (const f0 of files) {
+    const f = await cptCompress(f0);
+    const name = parisToday().slice(0, 7) + '_' + Date.now().toString(36) + '_' + docSafe(f0.name.replace(/\.[^.]+$/, '') + (f !== f0 ? '.jpg' : (f0.name.match(/\.[^.]+$/)?.[0] || '')));
+    const up = await db.storage.from('eps-compta').upload('docs/' + folder + '/' + name, f, { contentType: f.type || 'application/octet-stream' });
+    if (up.error) { toast('Envoi impossible (' + f0.name + ') : ' + up.error.message, true); break; } ok++;
+  }
+  if (btn) { btn.disabled = false; btn.textContent = label; }
+  if (ok) toast(ok + ' document' + (ok > 1 ? 's' : '') + ' déposé' + (ok > 1 ? 's' : '') + ' dans « ' + DOC_FOLDERS.find(d => d[0] === folder)[1] + ' ».');
+  render();
+}
+const docShown = n => n.replace(/^\d{4}-\d{2}_[a-z0-9]+_/, '');
+async function renderDocs(v) {
+  const picker = (multiple, label, primary) => {
+    const inp = h('input', { type: 'file', accept: 'image/*,application/pdf,.csv,.xls,.xlsx,.ofx', multiple: multiple || null, style: 'position:absolute;width:1px;height:1px;opacity:0;overflow:hidden',
+      onchange: e => { const fs = [...e.target.files]; e.target.value = ''; if (fs.length) docUpload(fs, docFolder, lbl); } });
+    const lbl = h('label', { class: 'btn ' + (primary ? 'primary' : 'quiet'), style: 'position:relative;cursor:pointer;display:inline-flex' }, label, inp);
+    return lbl;
+  };
+  v.append(h('div', { class: 'btns', style: 'margin:0 0 14px' }, picker(false, '+ Nouveau document', true), picker(true, 'Envoi multiple', false)),
+    h('p', { class: 'hint', style: 'margin-top:-6px' }, 'Le document part dans le dossier sélectionné ci-dessous. Écris « compta » à Claude : il lit tes tickets et relevés, remplit les chiffres et te dit ce qui manque.'));
+  const grid = h('div', { class: 'grid-desk' }), left = h('div'), right = h('div');
+  grid.append(left, right); v.append(grid);
+  const counts = await Promise.all(DOC_FOLDERS.map(async ([k]) => [k, (await docList(k)).length]));
+  docCounts = Object.fromEntries(counts);
+  const fl = h('div', { class: 'list' });
+  DOC_FOLDERS.forEach(([k, l, sub]) => fl.append(h('button', { class: 'row', 'aria-current': docFolder === k ? 'true' : null, style: docFolder === k ? 'background:var(--surface-2,rgba(201,173,115,.12))' : '', onclick: () => { docFolder = k; render(); } },
+    h('span', { class: 'main' }, h('div', { class: 't' }, l), h('div', { class: 's' }, sub)), h('span', { class: 'pip', style: 'position:static' }, String(docCounts[k] || 0).padStart(2, '0')))));
+  left.append(fl);
+  const files = await docList(docFolder);
+  const fr = h('div', { class: 'list' });
+  files.forEach(f => fr.append(h('button', { class: 'row', onclick: () => docOpen(docFolder, f) },
+    h('span', { class: 'main' }, h('div', { class: 't' }, (/pdf$/i.test(f.name) ? '📄 ' : /\.(csv|xlsx?|ofx)$/i.test(f.name) ? '📊 ' : '🧾 ') + docShown(f.name)),
+      h('div', { class: 's' }, 'Déposé le ' + new Date(f.created_at).toLocaleDateString('fr-FR', { timeZone: 'Europe/Paris' }) + ' · ' + Math.max(1, Math.round((f.metadata?.size || 0) / 1024)) + ' ko')), chev())));
+  if (!files.length) fr.append(h('div', { class: 'empty-note' }, 'Aucun document dans « ' + DOC_FOLDERS.find(d => d[0] === docFolder)[1] + ' ».'));
+  right.append(h('h3', { style: 'margin:0 0 10px' }, DOC_FOLDERS.find(d => d[0] === docFolder)[1]), fr);
+}
+async function docOpen(folder, f) {
+  const path = 'docs/' + folder + '/' + f.name;
+  const x = await db.storage.from('eps-compta').createSignedUrl(path, 600);
+  if (x.error) return toast(x.error.message, true);
+  const url = x.data.signedUrl, isImg = /\.(jpe?g|png|webp|heic|heif)$/i.test(f.name), isPdf = /\.pdf$/i.test(f.name);
+  const body = h('div');
+  if (isImg) body.append(h('img', { src: url, alt: docShown(f.name), style: 'width:100%;border-radius:12px;display:block;margin-bottom:12px' }));
+  else if (isPdf) body.append(h('iframe', { src: url, title: docShown(f.name), style: 'width:100%;height:60vh;border:0;border-radius:12px;background:#fff;margin-bottom:12px' }));
+  body.append(h('p', { class: 'hint' }, 'Déposé le ' + new Date(f.created_at).toLocaleString('fr-FR', { timeZone: 'Europe/Paris' })),
+    h('div', { class: 'btns' },
+      h('a', { class: 'btn primary', href: url, target: '_blank', rel: 'noopener' }, 'Ouvrir / télécharger'),
+      h('button', { class: 'btn quiet', onclick: async () => {
+        const n = prompt('Nouveau nom du document :', docShown(f.name)); if (!n || n === docShown(f.name)) return;
+        const to = 'docs/' + folder + '/' + f.name.match(/^(\d{4}-\d{2}_[a-z0-9]+_)?/)[0] + docSafe(n);
+        const m = await db.storage.from('eps-compta').move(path, to); if (m.error) return toast(m.error.message, true); toast('Renommé.'); closeSheet(); render(); } }, 'Renommer'),
+      h('select', { class: 'btn quiet', 'aria-label': 'Déplacer vers', onchange: async e => { const dest = e.target.value; if (!dest) return;
+        const m = await db.storage.from('eps-compta').move(path, 'docs/' + dest + '/' + f.name); if (m.error) return toast(m.error.message, true); toast('Déplacé.'); closeSheet(); render(); } },
+        h('option', { value: '' }, 'Déplacer vers…'), DOC_FOLDERS.filter(d => d[0] !== folder).map(([k, l]) => h('option', { value: k }, l))),
+      h('button', { class: 'btn danger', onclick: async () => { if (!confirm('Supprimer « ' + docShown(f.name) + ' » ?')) return;
+        const r = await db.storage.from('eps-compta').remove([path]); if (r.error) return toast(r.error.message, true); toast('Supprimé.'); closeSheet(); render(); } }, 'Supprimer')));
+  openSheet(docShown(f.name), body);
 }
 function cptBank() {
   const box = h('div', { class: 'card', style: 'margin-top:16px' }, h('h3', { style: 'margin-top:0' }, 'Relevé bancaire de ' + monthLabel(cMonth)),

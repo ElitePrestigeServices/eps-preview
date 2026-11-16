@@ -1691,7 +1691,7 @@ async function renderCompta(v) {
 }
 function cptBank() {
   const box = h('div', { class: 'card', style: 'margin-top:16px' }, h('h3', { style: 'margin-top:0' }, 'Relevé bancaire de ' + monthLabel(cMonth)),
-    h('p', { class: 'hint', style: 'margin-top:0' }, 'Ajoute le relevé du mois (PDF, ou mieux l’export CSV/Excel de ta banque). Il reste archivé ici pour ton comptable ; envoie-le aussi à Claude pour qu’il le compare aux lignes ci-dessus et te liste ce qui manque.'));
+    h('p', { class: 'hint', style: 'margin-top:0' }, 'Ajoute le relevé du mois (PDF, ou mieux l’export CSV/Excel de ta banque). Il reste archivé ici pour ton comptable, et Claude peut le lire pour le comparer aux lignes ci-dessus et te lister ce qui manque.'));
   const list = h('div', { class: 'list', style: 'margin:8px 0' }, h('div', { class: 'empty-note' }, 'Chargement…'));
   const fileIn = h('input', { type: 'file', accept: 'application/pdf,.csv,.xls,.xlsx,.ofx,.qif,text/csv,image/*', multiple: true, onchange: async e => {
     const fs = [...e.target.files]; if (!fs.length) return;

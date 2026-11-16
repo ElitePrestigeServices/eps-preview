@@ -222,6 +222,7 @@ h2{font:600 19px/1.2 var(--serif);margin:26px 0 10px}
 .paper td:last-child{font-weight:600}
 .paper .price td{font-size:17px;border-bottom:0;padding-top:12px}
 .paper .foot{margin-top:24px;font-size:11.5px;color:#555;border-top:1px solid #e4e0d6;padding-top:12px}
+.paper .sign{display:flex;gap:20px;margin-top:26px}.paper .sign div{flex:1;border:1px solid #cfc8b8;min-height:90px;padding:8px 10px;font-size:12px;color:#555}
 .paper .void{color:#a4321f;font-weight:700;border:2px solid #a4321f;display:inline-block;padding:4px 10px;margin-top:10px}
 @media (max-width:600px){.paper{padding:22px 16px;margin-top:10px}.paper .num{text-align:left}}
 .paper.pdf{box-shadow:none!important;margin:0!important;max-width:none!important;width:700px;padding:0!important;font-size:12px;line-height:1.38}
@@ -353,7 +354,7 @@ const S = { res: [], drafts: [], quotes: [], pays: [], partners: [], requests: [
   contacts: null, campaigns: [], recips: [], opps: [], robot: null, drivers: null, docs: [], missions: [], orders: [], unav: [] };
 const by = (arr, id) => arr.find(x => x.reservation_id === id);
 async function loadCore() {
-  const [r, d, q, p, pa, cr, pe, no, bc, un] = await Promise.all([
+  const [r, d, q, p, pa, cr, pe, no, bc, un, dv] = await Promise.all([
     db.from('eps_reservations').select('id,reference,created_at,status,type,departure,destination,flight_number,date,time,duration_hours,passengers,luggage,child_seat,vehicle,customer_name,customer_email,customer_phone,notes,partner_code,archived_at').is('archived_at', null).order('date', { ascending: true }).limit(500),
     db.from('eps_quote_drafts').select('reservation_id,amount_cents,note,status,updated_at'),
     db.from('eps_reservation_quotes').select('reservation_id,amount_cents,state,sent_at,accepted_at'),
@@ -363,13 +364,14 @@ async function loadCore() {
     db.from('pricing_events').select('name,start_date,end_date,surcharge_percent,enabled,kind').order('start_date', { ascending: true }),
     db.from('eps_admin_notifications').select('id,kind,source_id,summary,created_at,read_at').order('created_at', { ascending: false }).limit(50),
     db.from('eps_order_forms').select('*').order('pickup_date', { ascending: false }).order('pickup_time', { ascending: false }).limit(500),
-    db.from('eps_unavailability').select('id,day,time_from,time_to,note').gte('day', agAdd(parisToday(), -60)).order('day').order('time_from', { nullsFirst: true })
+    db.from('eps_unavailability').select('id,day,time_from,time_to,note').gte('day', agAdd(parisToday(), -60)).order('day').order('time_from', { nullsFirst: true }),
+    db.from('eps_devis').select('*').order('created_at', { ascending: false }).limit(500)
   ]);
   const err = [r, d, q, p].find(x => x.error);
   if (err) { toast('Lecture impossible : ' + err.error.message, true); return; }
   S.res = r.data; S.drafts = d.data; S.quotes = q.data; S.pays = p.data;
   S.partners = pa.error ? [] : pa.data; S.requests = cr.error ? [] : cr.data;
-  S.periods = pe.error ? [] : pe.data; S.notifs = no.error ? [] : no.data; S.orders = bc.error ? [] : bc.data; S.unav = un.error ? [] : un.data;
+  S.periods = pe.error ? [] : pe.data; S.notifs = no.error ? [] : no.data; S.orders = bc.error ? [] : bc.data; S.unav = un.error ? [] : un.data; S.devis = dv.error ? [] : dv.data;
 }
 async function loadCrm() {
   const [c, k, rc, o, st] = await Promise.all([
@@ -441,7 +443,7 @@ const ICONS = {
   stats: '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
   more: '<circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/>'
 };
-const NAV = [['home', 'Aujourd’hui'], ['courses', 'Courses'], ['agenda', 'Agenda'], ['partners', 'Partenaires'], ['orders', 'Bons de commande'], ['crm', 'Prospection'], ['drivers', 'Chauffeurs'], ['inbox', 'Messages'], ['stats', 'Statistiques'], ['settings', 'Réglages']];
+const NAV = [['home', 'Aujourd’hui'], ['courses', 'Courses'], ['agenda', 'Agenda'], ['partners', 'Partenaires'], ['orders', 'Devis & bons'], ['crm', 'Prospection'], ['drivers', 'Chauffeurs'], ['inbox', 'Messages'], ['stats', 'Statistiques'], ['settings', 'Réglages']];
 const TABS = [['home', 'Aujourd’hui'], ['courses', 'Courses'], ['agenda', 'Agenda'], ['partners', 'Partenaires'], ['more', 'Plus']];
 const titles = Object.fromEntries([...NAV, ['more', 'Plus']]);
 let tab = 'home';
@@ -582,7 +584,7 @@ function renderAgenda(v) {
 
 /* ================= Fiche (mobile plein écran, ordinateur à droite) ================= */
 function openSheet(title, body) { $('sheet-title').textContent = title; $('sheet-body').replaceChildren(body); $('sheet').classList.add('open'); $('scrim').classList.add('open'); $('sheet').scrollTop = 0; if (innerWidth < 1000) document.body.style.overflow = 'hidden'; }
-function closeSheet() { $('sheet').classList.remove('open'); $('scrim').classList.remove('open'); document.body.style.overflow = ''; }
+function closeSheet() { window.__devisForOrder = null; $('sheet').classList.remove('open'); $('scrim').classList.remove('open'); document.body.style.overflow = ''; }
 $('sheet-close').onclick = closeSheet; $('scrim').onclick = closeSheet;
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSheet(); });
 
@@ -1258,7 +1260,7 @@ function renderMore(v) {
   const c = counts();
   const item = (id, t, s, n) => h('button', { class: 'row', onclick: () => go(id) }, h('span', { class: 'main' }, h('div', { class: 't' }, t), h('div', { class: 's' }, s)), n ? h('span', { class: 'pip' }, n) : null, chev());
   v.append(h('div', { class: 'list', style: 'margin-top:4px' },
-    item('orders', 'Bons de commande', 'À présenter en cas de contrôle'),
+    item('orders', 'Devis & bons de commande', 'Faire un devis, bon à présenter en cas de contrôle'),
     item('crm', 'Prospection', 'Robot d’envoi, prospects, message'),
     item('drivers', 'Chauffeurs', 'Documents et attribution des courses'),
     item('inbox', 'Messages', 'Demandes des clients, notifications', c.inbox),
@@ -1327,8 +1329,11 @@ function orderFromCourse(b) {
     duration_hours: b.duration_hours || null, passengers: Number(b.passengers) || null, flight_number: b.flight_number || '', vehicle: b.vehicle || '',
     price_cents: cents, payment_method: b.partner_code ? 'Facturé au partenaire' : pay ? 'Carte bancaire (lien de paiement)' : '', partner_code: b.partner_code || null, notes: '' };
 }
-let orderFilter = 'upcoming', orderQuery = '';
+let orderFilter = 'upcoming', orderQuery = '', docKind = 'devis';
 function renderOrders(v) {
+  v.append(h('div', { class: 'seg', role: 'group', 'aria-label': 'Devis ou bons de commande' },
+    [['devis', 'Devis'], ['bons', 'Bons de commande']].map(([k, l]) => h('button', { 'aria-pressed': String(docKind === k), onclick: () => { docKind = k; render(); } }, l))));
+  if (docKind === 'devis') return renderDevis(v);
   const today = parisToday();
   const search = h('input', { class: 'search', type: 'search', placeholder: 'Rechercher un client, un lieu, un numéro', value: orderQuery, oninput: e => { orderQuery = e.target.value; draw(); } });
   const box = h('div');
@@ -1379,6 +1384,7 @@ function openOrderForm(o, existing) {
     btn.disabled = false;
     if (x.error) return toast(x.error.message, true);
     const i = S.orders.findIndex(y => y.id === x.data.id); if (i >= 0) S.orders[i] = x.data; else S.orders.unshift(x.data);
+    if (!existing && window.__devisForOrder) { const did = window.__devisForOrder; window.__devisForOrder = null; const y = await db.from('eps_devis').update({ order_form_id: x.data.id, status: 'accepté', updated_at: new Date().toISOString() }).eq('id', did).select().single(); if (!y.error) { const k = S.devis.findIndex(z => z.id === did); if (k >= 0) S.devis[k] = y.data; } }
     toast(existing ? 'Bon ' + x.data.number + ' mis à jour.' : 'Bon ' + x.data.number + ' créé.'); closeSheet(); if (tab === 'orders') render(); openOrderView(x.data);
   } });
   const types = ['Transfert', 'Mise à disposition', 'Événement'];
@@ -1467,6 +1473,167 @@ function openOrderManage(o) {
       !o.cancelled_at ? h('button', { class: 'btn danger', onclick: () => { closeSheet(); cancelOrder(o); } }, 'Annuler ce bon') : null,
       h('button', { class: 'btn danger', onclick: () => { closeSheet(); deleteOrder(o); } }, 'Supprimer ce bon'))));
   openSheet('Gérer le bon', body);
+}
+
+/* ================= Devis (16/11/2026, demande d'Anthony : faire un devis directement depuis le téléphone) ================= */
+const DEVIS_ST = { 'brouillon': 'Brouillon', 'envoyé': 'Envoyé', 'accepté': 'Accepté', 'refusé': 'Refusé' };
+let devisFilter = 'open', devisQuery = '';
+const devisExpired = d => d.status === 'envoyé' && d.valid_until < parisToday();
+function renderDevis(v) {
+  const search = h('input', { class: 'search', type: 'search', placeholder: 'Rechercher un client, un lieu, un numéro', value: devisQuery, oninput: e => { devisQuery = e.target.value; draw(); } });
+  const box = h('div');
+  function draw() {
+    let list = (S.devis || []).slice();
+    if (devisFilter === 'open') list = list.filter(d => d.status === 'brouillon' || (d.status === 'envoyé' && !devisExpired(d)));
+    if (devisFilter === 'done') list = list.filter(d => d.status === 'accepté' || d.status === 'refusé' || devisExpired(d));
+    const q = devisQuery.trim().toLowerCase();
+    if (q) list = list.filter(d => [d.number, d.customer_name, d.customer_company, d.customer_phone, d.pickup_place, d.destination].join(' ').toLowerCase().includes(q));
+    const l = h('div', { class: 'list' });
+    list.forEach(d => l.append(h('button', { class: 'row', onclick: () => openDevisView(d) },
+      h('span', { class: 'dot ' + (d.status === 'accepté' ? 'ok' : '') }),
+      h('span', { class: 'main' }, h('div', { class: 't' }, d.customer_name + (d.customer_company ? ' · ' + d.customer_company : '')),
+        h('div', { class: 's' }, d.number + ' · ' + (devisExpired(d) ? 'Expiré' : DEVIS_ST[d.status]) + (d.pickup_place ? ' · ' + shortPlace(d.pickup_place) + (d.destination ? ' – ' + shortPlace(d.destination) : '') : ''))),
+      h('span', { class: 'end' }, h('b', {}, eur(d.price_cents)), d.pickup_date ? fmtDay(d.pickup_date) : ''), chev())));
+    if (!list.length) l.append(h('div', { class: 'empty-note' }, devisFilter === 'open' && !q ? 'Aucun devis en cours. Touche « Nouveau devis » pour en faire un.' : 'Aucun devis dans cette liste.'));
+    box.replaceChildren(l);
+  }
+  const left = h('div'), right = h('div');
+  left.append(h('div', { class: 'seg', role: 'group', 'aria-label': 'Filtrer les devis' },
+    [['open', 'En cours'], ['done', 'Acceptés, refusés, expirés'], ['all', 'Tous']].map(([k, l]) => h('button', { 'aria-pressed': String(devisFilter === k), onclick: () => { devisFilter = k; render(); } }, l))), search, box);
+  right.append(h('div', { class: 'btns', style: 'margin-top:0' }, h('button', { class: 'btn primary', onclick: () => openDevisForm({}) }, 'Nouveau devis')),
+    h('p', { class: 'hint' }, 'Le devis part en PDF par WhatsApp ou par e-mail. Quand le client accepte, touche « Accepté » puis « Créer le bon de commande » : tout est repris.'));
+  v.append(h('div', { class: 'grid-desk' }, left, right));
+  draw();
+}
+function openDevisForm(o, existing) {
+  const val = k => o[k] == null ? '' : String(o[k]);
+  const f = h('form', { onsubmit: async e => {
+    e.preventDefault(); const v = Object.fromEntries(new FormData(f));
+    const price = Math.round(Number(String(v.price).replace(/\s/g, '').replace(',', '.')) * 100);
+    if (!(price >= 0)) return toast('Saisis un prix valide.', true);
+    if (!v.customer_phone.trim() && !cleanEmail(v.customer_email)) return toast('Indique au moins un téléphone ou un e-mail du client.', true);
+    const row = { customer_name: v.customer_name.trim(), customer_company: v.customer_company.trim() || null, customer_phone: v.customer_phone.trim() || null, customer_email: cleanEmail(v.customer_email) || null,
+      service_type: v.service_type, pickup_date: v.pickup_date || null, pickup_time: v.pickup_time || null, pickup_place: v.pickup_place.trim() || null, destination: v.destination.trim() || null,
+      duration_hours: v.duration_hours ? Number(v.duration_hours) : null, passengers: v.passengers ? Number(v.passengers) : null, luggage: v.luggage.trim() || null, vehicle: v.vehicle || null,
+      price_cents: price, valid_until: v.valid_until, payment_terms: v.payment_terms || null, notes: v.notes.trim() || null, updated_at: new Date().toISOString() };
+    const btn = f.querySelector('button[type=submit]'); btn.disabled = true;
+    const x = existing ? await db.from('eps_devis').update(row).eq('id', existing.id).select().single() : await db.from('eps_devis').insert(row).select().single();
+    btn.disabled = false;
+    if (x.error) return toast(x.error.message, true);
+    S.devis ||= []; const i = S.devis.findIndex(y => y.id === x.data.id); if (i >= 0) S.devis[i] = x.data; else S.devis.unshift(x.data);
+    toast(existing ? 'Devis ' + x.data.number + ' mis à jour.' : 'Devis ' + x.data.number + ' créé.'); closeSheet(); if (tab === 'orders') render(); openDevisView(x.data);
+  } });
+  const types = ['Transfert', 'Mise à disposition', 'Événement', 'Excursion'];
+  const vehicles = ['Business Van', 'Business Class', 'First Class', 'Electric Class'];
+  const veh = val('vehicle') && val('vehicle') !== 'Sans préférence' ? val('vehicle') : remembered('vehicle', 'Business Van');
+  const in30 = agAdd(parisToday(), 30);
+  const terms = ['Carte bancaire (lien de paiement)', 'Virement à réception de facture', 'Carte bancaire à bord', 'Espèces', 'Acompte de 30 % à la commande'];
+  f.append(
+    h('h3', { style: 'margin:0 0 10px' }, 'Client'),
+    fld('Nom du client', h('input', { name: 'customer_name', required: true, minlength: '2', maxlength: '120', value: val('customer_name'), autocomplete: 'off' })),
+    fld('Société (facultatif)', h('input', { name: 'customer_company', maxlength: '120', value: val('customer_company'), autocomplete: 'off' })),
+    h('div', { class: 'grid2' }, fld('Téléphone', h('input', { name: 'customer_phone', type: 'tel', maxlength: '30', value: val('customer_phone') })),
+      fld('E-mail', h('input', { name: 'customer_email', type: 'email', value: val('customer_email') }))),
+    h('h3', { style: 'margin:18px 0 10px' }, 'Prestation'),
+    fld('Type', h('select', { name: 'service_type' }, types.map(x => h('option', { selected: (val('service_type') || 'Transfert') === x }, x)))),
+    h('div', { class: 'grid2' }, fld('Date', h('input', { name: 'pickup_date', type: 'date', value: val('pickup_date') })),
+      fld('Heure', h('input', { name: 'pickup_time', type: 'time', value: val('pickup_time').slice(0, 5) }))),
+    fld('Départ', h('input', { name: 'pickup_place', maxlength: '200', value: val('pickup_place'), list: 'eps-places', autocomplete: 'off' })),
+    fld('Destination', h('input', { name: 'destination', maxlength: '200', value: val('destination'), list: 'eps-places', autocomplete: 'off' })),
+    h('div', { class: 'grid2' }, fld('Passagers', h('input', { name: 'passengers', type: 'number', min: '1', max: '50', value: val('passengers') || '1' })),
+      fld('Durée (h, mise à dispo)', h('input', { name: 'duration_hours', type: 'number', min: '1', max: '168', value: val('duration_hours') }))),
+    h('div', { class: 'grid2' }, fld('Bagages', h('input', { name: 'luggage', maxlength: '40', value: val('luggage') })),
+      fld('Véhicule', h('select', { name: 'vehicle' }, vehicles.map(x => h('option', { selected: veh === x }, x))))),
+    h('h3', { style: 'margin:18px 0 10px' }, 'Prix et conditions'),
+    h('div', { class: 'grid2' }, fld('Prix TTC (€)', h('input', { name: 'price', type: 'text', inputmode: 'decimal', required: true, value: o.price_cents != null && o.price_cents !== '' ? String(o.price_cents / 100) : '' }), 'TVA 10 % incluse (transport de personnes).'),
+      fld('Valable jusqu’au', h('input', { name: 'valid_until', type: 'date', required: true, value: val('valid_until') || in30 }))),
+    fld('Règlement', h('select', { name: 'payment_terms' }, h('option', { value: '' }, '—'), terms.map(x => h('option', { selected: val('payment_terms') === x }, x)))),
+    fld('Détail ou remarques (visible sur le devis)', h('textarea', { name: 'notes', rows: '3', maxlength: '1200', placeholder: 'Ex. : attente incluse 30 min, péages compris, siège enfant fourni…' }, val('notes'))),
+    h('button', { class: 'btn primary', type: 'submit' }, existing ? 'Enregistrer les modifications' : 'Créer le devis'));
+  openSheet(existing ? 'Modifier ' + existing.number : 'Nouveau devis', f);
+}
+function devisAmounts(d) { const ttc = d.price_cents, rate = Number(d.vat_rate ?? 10), ht = Math.round(ttc / (1 + rate / 100)); return { ttc, ht, tva: ttc - ht, rate }; }
+function devisText(d) {
+  const a = devisAmounts(d);
+  return ['Devis ' + d.number + ' — ' + EPS_CO.name,
+    d.service_type + (d.duration_hours ? ' · ' + Number(d.duration_hours) + ' h' : ''),
+    d.pickup_date ? 'Date : ' + fmtLongDay(d.pickup_date) + (d.pickup_time ? ' à ' + String(d.pickup_time).slice(0, 5) : '') : null,
+    d.pickup_place ? 'Départ : ' + d.pickup_place : null, d.destination ? 'Destination : ' + d.destination : null,
+    d.vehicle ? 'Véhicule : ' + d.vehicle + (d.passengers ? ' · ' + d.passengers + ' passager' + (d.passengers > 1 ? 's' : '') : '') : null,
+    'Prix TTC : ' + eur(a.ttc) + ' (TVA ' + a.rate + ' % incluse)',
+    'Valable jusqu’au ' + new Date(d.valid_until + 'T12:00:00').toLocaleDateString('fr-FR'),
+    'Contact : ' + EPS_CO.phone + ' · ' + EPS_CO.email].filter(Boolean).join('\n');
+}
+function openDevisView(d) {
+  const row = (k, v) => v ? h('tr', {}, h('td', {}, k), h('td', {}, v)) : null;
+  const a = devisAmounts(d), st = devisExpired(d) ? 'Expiré' : DEVIS_ST[d.status];
+  $('doc-title').textContent = d.number;
+  $('paper').replaceChildren(...[
+    h('div', { class: 'head' },
+      h('div', { class: 'co' }, h('img', { src: '../assets/v2/logo-eps-256.webp', alt: '', width: '78', height: '78', style: 'display:block;margin-bottom:12px;background:#0b0b0c;border-radius:50%;padding:6px' }), h('b', {}, EPS_CO.name),
+        h('div', {}, EPS_CO.form + ' · ' + EPS_CO.address), h('div', {}, EPS_CO.rcs + ' · ' + EPS_CO.tva),
+        h('div', {}, 'Inscription au registre des VTC : ' + EPS_CO.evtc), h('div', {}, EPS_CO.phone + ' · ' + EPS_CO.email)),
+      h('div', { class: 'num' }, h('div', { class: 't' }, 'Devis'), h('div', { class: 'n' }, 'N° ' + d.number),
+        h('div', { class: 'd' }, 'Établi le ' + new Date(d.created_at).toLocaleDateString('fr-FR', { timeZone: 'Europe/Paris' })),
+        d.status === 'refusé' || devisExpired(d) ? h('div', { class: 'void' }, st.toUpperCase()) : null)),
+    h('div', { class: 'booked' }, 'Devis valable jusqu’au ', h('b', {}, new Date(d.valid_until + 'T12:00:00').toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }))),
+    h('h3', {}, 'Client'),
+    h('table', {}, h('tbody', {}, row('Nom', d.customer_name), row('Société', d.customer_company), row('Téléphone', d.customer_phone), row('E-mail', d.customer_email))),
+    h('h3', {}, 'Prestation'),
+    h('table', {}, h('tbody', {}, row('Type', d.service_type + (d.duration_hours ? ' · ' + Number(d.duration_hours) + ' h' : '')),
+      row('Date', d.pickup_date ? fmtLongDay(d.pickup_date) + (d.pickup_time ? ' à ' + String(d.pickup_time).slice(0, 5) : '') : ''),
+      row('Départ', d.pickup_place), row('Destination', d.destination), row('Véhicule', d.vehicle),
+      row('Passagers', d.passengers ? String(d.passengers) : ''), row('Bagages', d.luggage))),
+    d.notes ? [h('h3', {}, 'Détail'), h('p', { style: 'margin:0;white-space:pre-wrap' }, d.notes)] : null,
+    h('h3', {}, 'Prix'),
+    h('table', {}, h('tbody', {}, row('Montant HT', eur(a.ht)), row('TVA ' + a.rate + ' %', eur(a.tva)),
+      h('tr', { class: 'price' }, h('td', {}, 'Total TTC'), h('td', {}, eur(a.ttc))), row('Règlement', d.payment_terms))),
+    h('div', { class: 'sign' }, h('div', {}, 'Bon pour accord — date, nom et signature du client'), h('div', {}, 'Pour ' + EPS_CO.name)),
+    h('div', { class: 'foot' }, 'Prix fixe par véhicule, toutes taxes comprises. Devis gratuit. Prestation soumise aux conditions générales de vente disponibles sur ' + EPS_CO.web + '/cgv/. Transport de personnes en voiture de transport avec chauffeur (VTC) sur réservation préalable. ' + EPS_CO.web)].flat().filter(Boolean));
+  const phone = String(d.customer_phone || '').replace(/[^\d+]/g, '').replace(/^\+/, '').replace(/^0/, '33');
+  const pdfBtn = h('button', { class: 'btn primary', onclick: () => pdfAction(d.number, pdfBtn, false) }, isMobile() ? 'PDF (imprimer, enregistrer)' : 'Télécharger le PDF');
+  const shareBtn = h('button', { class: 'btn quiet', onclick: () => pdfAction(d.number, shareBtn, true) }, 'Partager le PDF (WhatsApp, mail…)');
+  const msg = 'Bonjour ' + d.customer_name + ', voici notre devis :\n\n' + devisText(d) + '\n\nPour confirmer, il suffit de répondre « OK ».';
+  $('doc-actions').replaceChildren(...[pdfBtn, shareBtn,
+    phone ? h('a', { class: 'btn quiet', href: 'https://wa.me/' + phone + '?text=' + encodeURIComponent(msg), target: '_blank', rel: 'noopener' }, 'Envoyer le texte (WhatsApp)') : null,
+    d.customer_email ? h('a', { class: 'btn quiet', href: 'mailto:' + d.customer_email + '?subject=' + encodeURIComponent('Devis ' + d.number + ' — Elite Prestige Services') + '&body=' + encodeURIComponent(msg) }, 'Envoyer par e-mail') : null,
+    d.status === 'accepté' ? (d.order_form_id ? h('button', { class: 'btn quiet', onclick: () => { const o = S.orders.find(x => x.id === d.order_form_id); if (o) { closeDoc(); openOrderView(o); } else toast('Bon introuvable.', true); } }, 'Voir le bon de commande')
+      : h('button', { class: 'btn primary', onclick: () => { closeDoc(); devisToOrder(d); } }, 'Créer le bon de commande')) : null].filter(Boolean));
+  $('doc-more').onclick = () => { closeDoc(); openDevisManage(d); };
+  $('docview').classList.remove('hidden'); $('docview').scrollTop = 0; document.body.style.overflow = 'hidden';
+}
+async function setDevisStatus(d, status) {
+  const x = await db.from('eps_devis').update({ status, updated_at: new Date().toISOString() }).eq('id', d.id).select().single();
+  if (x.error) return toast(x.error.message, true);
+  const i = S.devis.findIndex(y => y.id === d.id); if (i >= 0) S.devis[i] = x.data;
+  toast('Devis ' + d.number + ' : ' + DEVIS_ST[status].toLowerCase() + '.'); closeSheet(); if (tab === 'orders') render(); openDevisView(x.data);
+}
+function devisToOrder(d) {
+  docKind = 'bons'; window.__devisForOrder = d.id;
+  openOrderForm({ booked_at: new Date().toISOString(), customer_name: d.customer_name, customer_phone: d.customer_phone || '', customer_email: d.customer_email || '',
+    service_type: d.service_type === 'Excursion' ? 'Mise à disposition' : d.service_type, pickup_date: d.pickup_date || '', pickup_time: d.pickup_time || '', pickup_place: d.pickup_place || '',
+    destination: d.destination || '', duration_hours: d.duration_hours, passengers: d.passengers, vehicle: d.vehicle || '', price_cents: d.price_cents,
+    payment_method: PAY_METHODS.includes(d.payment_terms) ? d.payment_terms : '', notes: 'Suite au devis ' + d.number + (d.notes ? '\n' + d.notes : '') });
+}
+function openDevisManage(d) {
+  const body = h('div'), st = d.status;
+  body.append(h('div', { class: 'card' }, h('h3', {}, d.number + ' · ' + d.customer_name),
+    h('p', { class: 'hint', style: 'margin:0' }, eur(d.price_cents) + ' · ' + (devisExpired(d) ? 'Expiré' : DEVIS_ST[st])),
+    h('div', { class: 'btns' },
+      h('button', { class: 'btn quiet', onclick: () => { closeSheet(); openDevisView(d); } }, 'Revenir au devis'),
+      st !== 'accepté' ? h('button', { class: 'btn primary', onclick: () => setDevisStatus(d, 'accepté') }, 'Le client a accepté') : null,
+      st !== 'refusé' && st !== 'accepté' ? h('button', { class: 'btn quiet', onclick: () => setDevisStatus(d, 'refusé') }, 'Le client a refusé') : null,
+      st === 'refusé' ? h('button', { class: 'btn quiet', onclick: () => setDevisStatus(d, 'envoyé') }, 'Remettre en cours') : null,
+      h('button', { class: 'btn quiet', onclick: () => openDevisForm(d, d) }, 'Modifier'),
+      h('button', { class: 'btn quiet', onclick: () => { const c = { ...d }; delete c.id; delete c.number; c.valid_until = ''; closeSheet(); openDevisForm(c); } }, 'Dupliquer (nouveau devis)'),
+      h('button', { class: 'btn danger', onclick: () => { closeSheet(); deleteDevis(d); } }, 'Supprimer ce devis'))));
+  openSheet('Gérer le devis', body);
+}
+async function deleteDevis(d) {
+  if (!confirm('Supprimer définitivement le devis ' + d.number + ' ? Son numéro ne sera pas réutilisé.')) return;
+  const x = await db.from('eps_devis').delete().eq('id', d.id);
+  if (x.error) return toast(x.error.message, true);
+  S.devis = S.devis.filter(y => y.id !== d.id); toast('Devis ' + d.number + ' supprimé.'); closeDoc(); if (tab === 'orders') render();
 }
 function closeDoc() { $('docview').classList.add('hidden'); document.body.style.overflow = ''; }
 $('doc-close').onclick = closeDoc;

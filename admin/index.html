@@ -2,7 +2,7 @@
 <html lang="fr">
 <head><script>if(/github\.io$/.test(location.hostname))location.replace("https://www.elite-prestige-services.fr"+location.pathname.replace(/^\/eps-preview/,"")+location.search+location.hash)</script>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
 <meta name="robots" content="noindex,nofollow">
 <meta name="theme-color" content="#0b0b0c">
 <link rel="icon" href="../assets/v2/icon-32.png" sizes="32x32">
@@ -26,7 +26,8 @@
 }
 *{box-sizing:border-box}
 html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 var(--sans);-webkit-font-smoothing:antialiased}
-body{min-height:100vh;padding-bottom:calc(var(--tab-h) + env(safe-area-inset-bottom) + 16px)}
+html{-webkit-text-size-adjust:100%}
+body{overflow-x:hidden;min-height:100vh;padding-bottom:calc(var(--tab-h) + env(safe-area-inset-bottom) + 16px)}
 button,input,select,textarea{font:inherit;color:inherit}
 a{color:var(--gold)}
 :focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:6px}
@@ -107,6 +108,10 @@ h2{font:600 19px/1.2 var(--serif);margin:26px 0 10px}
 .field input,.field select,.field textarea{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:13px 14px;font-size:16px}
 .field select{-webkit-appearance:none;appearance:none;min-height:50px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%23c9ad73' stroke-width='1.8'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:38px}
 .field textarea{resize:vertical}
+.field,.grid2>*{min-width:0}
+.field input[type=date],.field input[type=time],.field input[type=datetime-local]{-webkit-appearance:none;appearance:none;display:block;min-width:0;max-width:100%;min-height:50px;text-align:left;box-sizing:border-box}
+.field input::-webkit-date-and-time-value{text-align:left;margin:0}
+.field input::-webkit-datetime-edit{padding:0}
 .amount{font:600 34px/1 var(--serif)!important;padding:12px 14px!important}
 .hint{font-size:13px;color:var(--ink-2);margin-top:6px}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}

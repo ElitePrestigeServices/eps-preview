@@ -1515,7 +1515,7 @@ function openDevisForm(o, existing) {
     const row = { customer_name: v.customer_name.trim(), customer_company: v.customer_company.trim() || null, customer_phone: v.customer_phone.trim() || null, customer_email: cleanEmail(v.customer_email) || null,
       service_type: v.service_type, pickup_date: v.pickup_date || null, pickup_time: v.pickup_time || null, pickup_place: v.pickup_place.trim() || null, destination: v.destination.trim() || null,
       duration_hours: v.duration_hours ? Number(v.duration_hours) : null, passengers: v.passengers ? Number(v.passengers) : null, luggage: v.luggage.trim() || null, vehicle: v.vehicle || null,
-      price_cents: price, valid_until: v.valid_until, payment_terms: v.payment_terms || null, notes: v.notes.trim() || null, updated_at: new Date().toISOString() };
+      price_cents: price, vat_rate: Number(v.vat_rate) || 10, valid_until: v.valid_until, payment_terms: v.payment_terms || null, notes: v.notes.trim() || null, updated_at: new Date().toISOString() };
     const btn = f.querySelector('button[type=submit]'); btn.disabled = true;
     const x = existing ? await db.from('eps_devis').update(row).eq('id', existing.id).select().single() : await db.from('eps_devis').insert(row).select().single();
     btn.disabled = false;
@@ -1527,6 +1527,8 @@ function openDevisForm(o, existing) {
   const vehicles = ['Business Van', 'Business Class', 'First Class', 'Electric Class'];
   const veh = val('vehicle') && val('vehicle') !== 'Sans préférence' ? val('vehicle') : remembered('vehicle', 'Business Van');
   const in30 = agAdd(parisToday(), 30);
+  const defVat = t => t === 'Mise à disposition' ? 20 : 10;
+  const vatSel = h('select', { name: 'vat_rate' }, [[10, '10 % (transport de personnes)'], [20, '20 % (mise à disposition)']].map(([r, l]) => h('option', { value: String(r), selected: Number(o.vat_rate ?? defVat(val('service_type') || 'Transfert')) === r }, l)));
   const terms = ['Carte bancaire (lien de paiement)', 'Virement à réception de facture', 'Carte bancaire à bord', 'Espèces', 'Acompte de 30 % à la commande'];
   f.append(
     h('h3', { style: 'margin:0 0 10px' }, 'Client'),
@@ -1535,7 +1537,7 @@ function openDevisForm(o, existing) {
     h('div', { class: 'grid2' }, fld('Téléphone', h('input', { name: 'customer_phone', type: 'tel', maxlength: '30', value: val('customer_phone') })),
       fld('E-mail', h('input', { name: 'customer_email', type: 'email', value: val('customer_email') }))),
     h('h3', { style: 'margin:18px 0 10px' }, 'Prestation'),
-    fld('Type', h('select', { name: 'service_type' }, types.map(x => h('option', { selected: (val('service_type') || 'Transfert') === x }, x)))),
+    fld('Type', h('select', { name: 'service_type', onchange: e => { vatSel.value = String(defVat(e.target.value)); } }, types.map(x => h('option', { selected: (val('service_type') || 'Transfert') === x }, x)))),
     h('div', { class: 'grid2' }, fld('Date', h('input', { name: 'pickup_date', type: 'date', value: val('pickup_date') })),
       fld('Heure', h('input', { name: 'pickup_time', type: 'time', value: val('pickup_time').slice(0, 5) }))),
     fld('Départ', h('input', { name: 'pickup_place', maxlength: '200', value: val('pickup_place'), list: 'eps-places', autocomplete: 'off' })),
@@ -1545,8 +1547,9 @@ function openDevisForm(o, existing) {
     h('div', { class: 'grid2' }, fld('Bagages', h('input', { name: 'luggage', maxlength: '40', value: val('luggage') })),
       fld('Véhicule', h('select', { name: 'vehicle' }, vehicles.map(x => h('option', { selected: veh === x }, x))))),
     h('h3', { style: 'margin:18px 0 10px' }, 'Prix et conditions'),
-    h('div', { class: 'grid2' }, fld('Prix TTC (€)', h('input', { name: 'price', type: 'text', inputmode: 'decimal', required: true, value: o.price_cents != null && o.price_cents !== '' ? String(o.price_cents / 100) : '' }), 'TVA 10 % incluse (transport de personnes).'),
-      fld('Valable jusqu’au', h('input', { name: 'valid_until', type: 'date', required: true, value: val('valid_until') || in30 }))),
+    h('div', { class: 'grid2' }, fld('Prix TTC (€)', h('input', { name: 'price', type: 'text', inputmode: 'decimal', required: true, value: o.price_cents != null && o.price_cents !== '' ? String(o.price_cents / 100) : '' })),
+      fld('TVA incluse', vatSel)),
+    fld('Valable jusqu’au', h('input', { name: 'valid_until', type: 'date', required: true, value: val('valid_until') || in30 })),
     fld('Règlement', h('select', { name: 'payment_terms' }, h('option', { value: '' }, '—'), terms.map(x => h('option', { selected: val('payment_terms') === x }, x)))),
     fld('Détail ou remarques (visible sur le devis)', h('textarea', { name: 'notes', rows: '3', maxlength: '1200', placeholder: 'Ex. : attente incluse 30 min, péages compris, siège enfant fourni…' }, val('notes'))),
     h('button', { class: 'btn primary', type: 'submit' }, existing ? 'Enregistrer les modifications' : 'Créer le devis'));

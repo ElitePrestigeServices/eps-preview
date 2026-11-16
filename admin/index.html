@@ -1729,6 +1729,12 @@ async function renderDocs(v) {
   };
   v.append(h('div', { class: 'btns', style: 'margin:0 0 14px' }, picker(false, '+ Nouveau document', true), picker(true, 'Envoi multiple', false)),
     h('p', { class: 'hint', style: 'margin-top:-6px' }, 'Le document part dans le dossier sélectionné ci-dessous. Écris « compta » à Claude : il lit tes tickets et relevés, remplit les chiffres et te dit ce qui manque.'));
+  await cptLoad();
+  { const rows = cRows || [], sm = (k, f) => rows.filter(r => r.kind === k).reduce((a, r) => a + f(r), 0);
+    const vT = sm('vente', r => r.amount_ttc_cents), aT = sm('achat', r => r.amount_ttc_cents), due = sm('vente', r => r.vat_cents) - sm('achat', r => r.vat_cents);
+    const st = (val, l) => h('div', { class: 'stat' }, h('div', { class: 'v' }, val), h('div', { class: 'l' }, l));
+    v.append(h('div', { class: 'stats four', style: 'margin-bottom:6px' }, st(eur(vT), 'Ventes TTC'), st(eur(aT), 'Achats TTC'), st(eur(Math.abs(due)), due >= 0 ? 'TVA à payer' : 'Crédit de TVA'), st(eur((vT - sm('vente', r => r.vat_cents)) - (aT - sm('achat', r => r.vat_cents))), 'Résultat HT')),
+      h('p', { class: 'hint', style: 'margin-top:0;text-transform:none' }, monthLabel(cMonth) + ' · estimation à faire valider par ton comptable · détail dans « Chiffres et TVA »')); }
   const grid = h('div', { class: 'grid-desk' }), left = h('div'), right = h('div');
   grid.append(left, right); v.append(grid);
   const counts = await Promise.all(DOC_FOLDERS.map(async ([k]) => [k, (await docList(k)).length]));
@@ -1738,10 +1744,22 @@ async function renderDocs(v) {
     h('span', { class: 'main' }, h('div', { class: 't' }, l), h('div', { class: 's' }, sub)), h('span', { class: 'pip', style: 'position:static' }, String(docCounts[k] || 0).padStart(2, '0')))));
   left.append(fl);
   const files = await docList(docFolder);
+  const paths = files.map(f => 'docs/' + docFolder + '/' + f.name);
+  const lk = paths.length ? await db.from('eps_compta').select('kind,op_date,party,category,amount_ttc_cents,vat_cents,receipt_path').in('receipt_path', paths) : { data: [] };
+  const byPath = {}; (lk.data || []).forEach(r => (byPath[r.receipt_path] ||= []).push(r));
   const fr = h('div', { class: 'list' });
-  files.forEach(f => fr.append(h('button', { class: 'row', onclick: () => docOpen(docFolder, f) },
-    h('span', { class: 'main' }, h('div', { class: 't' }, (/pdf$/i.test(f.name) ? '📄 ' : /\.(csv|xlsx?|ofx)$/i.test(f.name) ? '📊 ' : '🧾 ') + docShown(f.name)),
-      h('div', { class: 's' }, 'Déposé le ' + new Date(f.created_at).toLocaleDateString('fr-FR', { timeZone: 'Europe/Paris' }) + ' · ' + Math.max(1, Math.round((f.metadata?.size || 0) / 1024)) + ' ko')), chev())));
+  files.forEach(f => {
+    const rs = byPath['docs/' + docFolder + '/' + f.name] || [];
+    const v = rs.filter(r => r.kind === 'vente').reduce((a, r) => a + r.amount_ttc_cents, 0), a = rs.filter(r => r.kind === 'achat').reduce((x, r) => x + r.amount_ttc_cents, 0);
+    const tva = rs.reduce((x, r) => x + (r.kind === 'vente' ? r.vat_cents : -r.vat_cents), 0);
+    const first = rs.slice().sort((x, y) => x.op_date < y.op_date ? -1 : 1)[0];
+    const sub = rs.length ? [first ? fmtDay(first.op_date) : '', first?.party, rs.length > 1 ? rs.length + ' lignes' : first?.category].filter(Boolean).join(' · ')
+      : 'Déposé le ' + new Date(f.created_at).toLocaleDateString('fr-FR', { timeZone: 'Europe/Paris' }) + ' · pas encore saisi';
+    const amount = rs.length ? h('span', { class: 'end' }, v ? h('b', { style: 'color:var(--gold, #c9a35b)' }, '+ ' + eur(v)) : null, a ? h('b', {}, '− ' + eur(a)) : null,
+      h('span', { style: 'font-size:12px;color:var(--ink-2)' }, 'TVA ' + eur(Math.abs(tva)))) : h('span', { class: 'end' }, h('span', { class: 'pip', style: 'position:static;background:#a4321f' }, 'à saisir'));
+    fr.append(h('button', { class: 'row', onclick: () => docOpen(docFolder, f) },
+      h('span', { class: 'main' }, h('div', { class: 't' }, (/pdf$/i.test(f.name) ? '📄 ' : /\.(csv|xlsx?|ofx)$/i.test(f.name) ? '📊 ' : '🧾 ') + docShown(f.name)), h('div', { class: 's' }, sub)), amount, chev()));
+  });
   if (!files.length) fr.append(h('div', { class: 'empty-note' }, 'Aucun document dans « ' + DOC_FOLDERS.find(d => d[0] === docFolder)[1] + ' ».'));
   right.append(h('h3', { style: 'margin:0 0 10px' }, DOC_FOLDERS.find(d => d[0] === docFolder)[1]), fr);
 }

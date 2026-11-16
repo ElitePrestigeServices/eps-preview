@@ -1674,7 +1674,7 @@ async function renderCompta(v) {
   const toImport = S.orders.filter(o => !o.cancelled_at && o.price_cents != null && String(o.pickup_date).slice(0, 7) === cMonth && !done.has(o.id));
   const stat = (val, label) => h('div', { class: 'stat' }, h('div', { class: 'v' }, val), h('div', { class: 'l' }, label));
   const tvaDue = vTva - aTva;
-  box.replaceChildren(
+  box.replaceChildren(...[
     h('div', { class: 'stats four', style: 'margin-bottom:12px' },
       stat(eur(vTtc), 'Ventes TTC'), stat(eur(aTtc), 'Achats TTC'),
       stat(eur(Math.abs(tvaDue)), tvaDue >= 0 ? 'TVA à payer (estimation)' : 'Crédit de TVA (estimation)'),
@@ -1687,7 +1687,7 @@ async function renderCompta(v) {
       h('button', { class: 'btn quiet', onclick: () => openCptForm({ kind: 'vente' }) }, '+ Recette'),
       toImport.length ? h('button', { class: 'btn quiet', onclick: e => cptImportOrders(toImport, e.target) }, 'Importer ' + toImport.length + ' bon' + (toImport.length > 1 ? 's' : '') + ' de commande du mois') : null,
       rows.length ? h('button', { class: 'btn quiet', onclick: () => cptExport(rows) }, 'Exporter le mois (tableur)') : null),
-    cptList(rows), cptBank());
+    cptList(rows), cptBank()].filter(Boolean));
 }
 function cptBank() {
   const box = h('div', { class: 'card', style: 'margin-top:16px' }, h('h3', { style: 'margin-top:0' }, 'Relevé bancaire de ' + monthLabel(cMonth)),

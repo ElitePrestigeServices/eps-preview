@@ -431,6 +431,7 @@ const unreadNotifs = () => S.notifs.filter(n => !n.read_at);
 
 /* ================= Navigation ================= */
 const ICONS = {
+  compta: '<path d="M5 4h14v16H5z"/><path d="M8 8h8M8 12h3M13 12h3M8 16h3M13 16h3"/>',
   home: '<circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/>',
   courses: '<path d="M4 7h16M4 12h16M4 17h10"/>',
   agenda: '<rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/>',
@@ -443,7 +444,7 @@ const ICONS = {
   stats: '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
   more: '<circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/>'
 };
-const NAV = [['home', 'Aujourd’hui'], ['courses', 'Courses'], ['agenda', 'Agenda'], ['partners', 'Partenaires'], ['orders', 'Devis & bons'], ['crm', 'Prospection'], ['drivers', 'Chauffeurs'], ['inbox', 'Messages'], ['stats', 'Statistiques'], ['settings', 'Réglages']];
+const NAV = [['home', 'Aujourd’hui'], ['courses', 'Courses'], ['agenda', 'Agenda'], ['partners', 'Partenaires'], ['orders', 'Devis & bons'], ['compta', 'Comptabilité'], ['crm', 'Prospection'], ['drivers', 'Chauffeurs'], ['inbox', 'Messages'], ['stats', 'Statistiques'], ['settings', 'Réglages']];
 const TABS = [['home', 'Aujourd’hui'], ['courses', 'Courses'], ['agenda', 'Agenda'], ['partners', 'Partenaires'], ['more', 'Plus']];
 const titles = Object.fromEntries([...NAV, ['more', 'Plus']]);
 let tab = 'home';
@@ -452,7 +453,7 @@ function drawNav() {
   const c = counts();
   const pip = n => n ? h('span', { class: 'pip' }, n) : null;
   $('side-nav').replaceChildren(...NAV.map(([id, label]) => h('button', { 'aria-current': tab === id ? 'page' : null, onclick: () => go(id) }, svg(ICONS[id]), label, pip(c[id]))));
-  const inMore = ['orders', 'crm', 'drivers', 'inbox', 'stats', 'settings'].includes(tab);
+  const inMore = ['orders', 'compta', 'crm', 'drivers', 'inbox', 'stats', 'settings'].includes(tab);
   $('tab-nav').replaceChildren(...TABS.map(([id, label]) => h('button', { 'aria-current': (tab === id || (id === 'more' && inMore)) ? 'page' : null, onclick: () => go(id) }, svg(ICONS[id]), label,
     id === 'courses' ? pip(c.courses) : id === 'more' ? pip(c.inbox) : null)));
 }
@@ -468,7 +469,7 @@ function render(loading = false) {
   $('subtitle').textContent = tab === 'home' ? new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }) : '';
   const v = $('view'); v.replaceChildren();
   if (loading) { v.append(h('p', { class: 'hint' }, 'Chargement…')); return; }
-  ({ home: renderHome, courses: renderCourses, agenda: renderAgenda, partners: renderPartners, orders: renderOrders, crm: renderCrm, drivers: renderDrivers, inbox: renderInbox, stats: renderStats, settings: renderSettings, more: renderMore })[tab](v);
+  ({ home: renderHome, courses: renderCourses, agenda: renderAgenda, partners: renderPartners, orders: renderOrders, compta: renderCompta, crm: renderCrm, drivers: renderDrivers, inbox: renderInbox, stats: renderStats, settings: renderSettings, more: renderMore })[tab](v);
 }
 
 
@@ -1261,6 +1262,7 @@ function renderMore(v) {
   const item = (id, t, s, n) => h('button', { class: 'row', onclick: () => go(id) }, h('span', { class: 'main' }, h('div', { class: 't' }, t), h('div', { class: 's' }, s)), n ? h('span', { class: 'pip' }, n) : null, chev());
   v.append(h('div', { class: 'list', style: 'margin-top:4px' },
     item('orders', 'Devis & bons de commande', 'Faire un devis, bon à présenter en cas de contrôle'),
+    item('compta', 'Comptabilité', 'Achats, ventes, justificatifs, TVA du mois'),
     item('crm', 'Prospection', 'Robot d’envoi, prospects, message'),
     item('drivers', 'Chauffeurs', 'Documents et attribution des courses'),
     item('inbox', 'Messages', 'Demandes des clients, notifications', c.inbox),
@@ -1637,6 +1639,181 @@ async function deleteDevis(d) {
   const x = await db.from('eps_devis').delete().eq('id', d.id);
   if (x.error) return toast(x.error.message, true);
   S.devis = S.devis.filter(y => y.id !== d.id); toast('Devis ' + d.number + ' supprimé.'); closeDoc(); if (tab === 'orders') render();
+}
+
+/* ================= Comptabilité (16/11/2026, demande d'Anthony : achats et ventes comme une appli comptable)
+   Table eps_compta + bucket privé eps-compta (justificatifs). Travail préparatoire : à valider par l'expert-comptable. ================= */
+const CPT_ACHATS = [['Carburant', 20], ['Péages et parking', 20], ['Entretien et réparations', 20], ['Lavage', 20], ['Loyer ou crédit du véhicule', 20], ['Assurance', 0],
+  ['Téléphone et internet', 20], ['Logiciels et abonnements', 20], ['Publicité', 20], ['Honoraires (comptable, avocat…)', 20], ['Frais bancaires', 0], ['Repas', 10],
+  ['Fournitures', 20], ['Cotisations URSSAF', 0], ['Rémunération du gérant', 0], ['Impôts et taxes', 0], ['Autre achat', 20]];
+const CPT_VENTES = [['Transfert', 10], ['Mise à disposition', 20], ['Événement', 10], ['Commission ou partenariat', 20], ['Autre recette', 10]];
+const CPT_RATES = [0, 5.5, 10, 20];
+let cMonth = parisToday().slice(0, 7), cRows = null, cMonthLoaded = '';
+const cptVat = (ttc, r) => r ? Math.round(ttc - ttc / (1 + r / 100)) : 0;
+const monthLabel = m => new Date(m + '-15T12:00:00').toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
+const monthShift = (m, n) => { const d = new Date(m + '-15T12:00:00Z'); d.setUTCMonth(d.getUTCMonth() + n); return d.toISOString().slice(0, 7); };
+async function cptLoad(force) {
+  if (!force && cRows && cMonthLoaded === cMonth) return;
+  const x = await db.from('eps_compta').select('*').gte('op_date', cMonth + '-01').lt('op_date', monthShift(cMonth, 1) + '-01').order('op_date', { ascending: false }).order('created_at', { ascending: false });
+  if (x.error) { toast('Lecture impossible : ' + x.error.message, true); cRows = []; } else cRows = x.data;
+  cMonthLoaded = cMonth;
+}
+async function renderCompta(v) {
+  const head = h('div', { style: 'display:flex;align-items:center;gap:10px;margin-bottom:14px' },
+    h('button', { class: 'btn quiet', 'aria-label': 'Mois précédent', onclick: () => { cMonth = monthShift(cMonth, -1); render(); } }, '‹'),
+    h('h2', { style: 'margin:0;flex:1;text-align:center;text-transform:capitalize' }, monthLabel(cMonth)),
+    h('button', { class: 'btn quiet', 'aria-label': 'Mois suivant', onclick: () => { cMonth = monthShift(cMonth, 1); render(); } }, '›'));
+  const box = h('div', {}, h('p', { class: 'hint' }, 'Chargement…'));
+  v.append(head, box);
+  await cptLoad();
+  const rows = cRows || [];
+  const sum = (k, f) => rows.filter(r => r.kind === k).reduce((a, r) => a + f(r), 0);
+  const vTtc = sum('vente', r => r.amount_ttc_cents), vTva = sum('vente', r => r.vat_cents), aTtc = sum('achat', r => r.amount_ttc_cents), aTva = sum('achat', r => r.vat_cents);
+  const noReceipt = rows.filter(r => r.kind === 'achat' && !r.receipt_path);
+  const done = new Set(rows.map(r => r.order_form_id).filter(Boolean));
+  const toImport = S.orders.filter(o => !o.cancelled_at && o.price_cents != null && String(o.pickup_date).slice(0, 7) === cMonth && !done.has(o.id));
+  const stat = (val, label) => h('div', { class: 'stat' }, h('div', { class: 'v' }, val), h('div', { class: 'l' }, label));
+  const tvaDue = vTva - aTva;
+  box.replaceChildren(
+    h('div', { class: 'stats four', style: 'margin-bottom:12px' },
+      stat(eur(vTtc), 'Ventes TTC'), stat(eur(aTtc), 'Achats TTC'),
+      stat(eur(Math.abs(tvaDue)), tvaDue >= 0 ? 'TVA à payer (estimation)' : 'Crédit de TVA (estimation)'),
+      stat(eur((vTtc - vTva) - (aTtc - aTva)), 'Résultat HT du mois')),
+    h('p', { class: 'hint', style: 'margin-top:0' }, 'TVA collectée ' + eur(vTva) + ' · TVA sur achats ' + eur(aTva) + '. Estimation avant validation par ton comptable (certaines TVA ne sont pas déductibles à 100 %, et l’amortissement du véhicule n’est pas compté ici).'),
+    noReceipt.length ? h('div', { class: 'card', style: 'border-color:#a4321f;margin-bottom:12px' }, h('h3', { style: 'margin-top:0' }, noReceipt.length + ' justificatif' + (noReceipt.length > 1 ? 's' : '') + ' manquant' + (noReceipt.length > 1 ? 's' : '')),
+      h('p', { class: 'hint', style: 'margin:0' }, 'Sans facture, la TVA ne se récupère pas : ' + noReceipt.slice(0, 6).map(r => fmtDay(r.op_date) + ' ' + r.label + ' (' + eur(r.amount_ttc_cents) + ')').join(' · ') + (noReceipt.length > 6 ? '…' : ''))) : null,
+    h('div', { class: 'btns', style: 'margin:0 0 14px' },
+      h('button', { class: 'btn primary', onclick: () => openCptForm({ kind: 'achat' }) }, '+ Dépense (photo du ticket)'),
+      h('button', { class: 'btn quiet', onclick: () => openCptForm({ kind: 'vente' }) }, '+ Recette'),
+      toImport.length ? h('button', { class: 'btn quiet', onclick: e => cptImportOrders(toImport, e.target) }, 'Importer ' + toImport.length + ' bon' + (toImport.length > 1 ? 's' : '') + ' de commande du mois') : null,
+      rows.length ? h('button', { class: 'btn quiet', onclick: () => cptExport(rows) }, 'Exporter le mois (tableur)') : null),
+    cptList(rows), cptBank());
+}
+function cptBank() {
+  const box = h('div', { class: 'card', style: 'margin-top:16px' }, h('h3', { style: 'margin-top:0' }, 'Relevé bancaire de ' + monthLabel(cMonth)),
+    h('p', { class: 'hint', style: 'margin-top:0' }, 'Ajoute le relevé du mois (PDF, ou mieux l’export CSV/Excel de ta banque). Il reste archivé ici pour ton comptable ; envoie-le aussi à Claude pour qu’il le compare aux lignes ci-dessus et te liste ce qui manque.'));
+  const list = h('div', { class: 'list', style: 'margin:8px 0' }, h('div', { class: 'empty-note' }, 'Chargement…'));
+  const fileIn = h('input', { type: 'file', accept: 'application/pdf,.csv,.xls,.xlsx,.ofx,.qif,text/csv,image/*', multiple: true, onchange: async e => {
+    const fs = [...e.target.files]; if (!fs.length) return;
+    for (const file of fs) {
+      const safe = file.name.normalize('NFD').replace(/[^\w.\-]+/g, '_').slice(-80);
+      const up = await db.storage.from('eps-compta').upload('releves/' + cMonth + '/' + Date.now() + '-' + safe, file, { contentType: file.type || 'application/octet-stream' });
+      if (up.error) { toast('Envoi impossible : ' + up.error.message, true); return; }
+    }
+    toast('Relevé ajouté.'); e.target.value = ''; draw();
+  } });
+  async function draw() {
+    const x = await db.storage.from('eps-compta').list('releves/' + cMonth, { limit: 50, sortBy: { column: 'created_at', order: 'desc' } });
+    const files = (x.data || []).filter(f => f.id);
+    list.replaceChildren(...(files.length ? files.map(f => h('button', { class: 'row', onclick: () => cptOpenReceipt('releves/' + cMonth + '/' + f.name) },
+      h('span', { class: 'main' }, h('div', { class: 't' }, f.name.replace(/^\d+-/, '')), h('div', { class: 's' }, new Date(f.created_at).toLocaleDateString('fr-FR'))), chev()))
+      : [h('div', { class: 'empty-note' }, 'Aucun relevé pour ce mois.')]));
+  }
+  draw();
+  box.append(list, h('label', { class: 'btn quiet', style: 'display:inline-flex;cursor:pointer;position:relative' }, 'Ajouter le relevé', h('span', { style: 'position:absolute;width:1px;height:1px;opacity:0;overflow:hidden' }, fileIn)));
+  return box;
+}
+function cptList(rows) {
+  const l = h('div', { class: 'list' });
+  rows.forEach(r => l.append(h('button', { class: 'row', onclick: () => openCptForm(r, r) },
+    h('span', { class: 'dot ' + (r.kind === 'vente' ? 'ok' : '') }),
+    h('span', { class: 'main' }, h('div', { class: 't' }, r.label), h('div', { class: 's' }, [r.category, r.party, r.kind === 'achat' && !r.receipt_path ? '⚠ sans justificatif' : (r.receipt_path ? '📎' : '')].filter(Boolean).join(' · '))),
+    h('span', { class: 'end' }, h('b', { style: r.kind === 'achat' ? 'color:var(--ink-2)' : '' }, (r.kind === 'achat' ? '− ' : '+ ') + eur(r.amount_ttc_cents)), fmtDay(r.op_date)), chev())));
+  if (!rows.length) l.append(h('div', { class: 'empty-note' }, 'Rien ce mois-ci. Ajoute tes dépenses en photographiant les tickets, et importe tes bons de commande pour les ventes.'));
+  return l;
+}
+async function cptCompress(file) {
+  if (!/^image\/(jpeg|png|webp)$/.test(file.type) || file.size < 1.5e6) return file;
+  try {
+    const bmp = await createImageBitmap(file); const k = Math.min(1, 1800 / Math.max(bmp.width, bmp.height));
+    const c = document.createElement('canvas'); c.width = Math.round(bmp.width * k); c.height = Math.round(bmp.height * k); c.getContext('2d').drawImage(bmp, 0, 0, c.width, c.height);
+    const b = await new Promise(r => c.toBlob(r, 'image/jpeg', 0.82)); return b ? new File([b], 'justificatif.jpg', { type: 'image/jpeg' }) : file;
+  } catch { return file; }
+}
+function openCptForm(o, existing) {
+  const kind = o.kind || 'achat', cats = kind === 'achat' ? CPT_ACHATS : CPT_VENTES;
+  const val = k => o[k] == null ? '' : String(o[k]);
+  const rateSel = h('select', { name: 'vat_rate' }, CPT_RATES.map(r => h('option', { value: String(r), selected: Number(o.vat_rate ?? cats[0][1]) === r }, r ? String(r).replace('.', ',') + ' %' : 'Pas de TVA')));
+  const ttcIn = h('input', { name: 'ttc', type: 'text', inputmode: 'decimal', required: true, value: o.amount_ttc_cents != null ? String(o.amount_ttc_cents / 100).replace('.', ',') : '' });
+  const vatHint = h('div', { class: 'hint' });
+  const upd = () => { const t = Math.round(Number(ttcIn.value.replace(/\s/g, '').replace(',', '.')) * 100); vatHint.textContent = t >= 0 ? 'TVA : ' + eur(cptVat(t, Number(rateSel.value))) + ' · HT : ' + eur(t - cptVat(t, Number(rateSel.value))) : ''; };
+  ttcIn.addEventListener('input', upd); rateSel.addEventListener('change', upd);
+  const catSel = h('select', { name: 'category', onchange: e => { const c = cats.find(x => x[0] === e.target.value); if (c) { rateSel.value = String(c[1]); upd(); } } },
+    cats.map(([c]) => h('option', { selected: (val('category') || cats[0][0]) === c }, c)));
+  const fileIn = h('input', { name: 'file', type: 'file', accept: 'image/*,application/pdf' });
+  const f = h('form', { onsubmit: async e => {
+    e.preventDefault(); const v = Object.fromEntries(new FormData(f));
+    const ttc = Math.round(Number(String(v.ttc).replace(/\s/g, '').replace(',', '.')) * 100);
+    if (!(ttc >= 0)) return toast('Saisis un montant valide.', true);
+    const btn = f.querySelector('button[type=submit]'); btn.disabled = true; btn.textContent = 'Enregistrement…';
+    try {
+      let receipt = existing?.receipt_path || null;
+      if (fileIn.files[0]) {
+        const file = await cptCompress(fileIn.files[0]);
+        const ext = (file.name.split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g, '') || 'jpg';
+        const path = v.op_date.slice(0, 7) + '/' + crypto.randomUUID() + '.' + ext;
+        const up = await db.storage.from('eps-compta').upload(path, file, { contentType: file.type || 'application/octet-stream' });
+        if (up.error) throw Error('Envoi du justificatif impossible : ' + up.error.message);
+        if (receipt) await db.storage.from('eps-compta').remove([receipt]);
+        receipt = path;
+      }
+      const rate = Number(v.vat_rate);
+      const row = { kind, op_date: v.op_date, label: v.label.trim(), party: v.party.trim() || null, category: v.category, amount_ttc_cents: ttc, vat_rate: rate, vat_cents: cptVat(ttc, rate),
+        payment_method: v.payment_method || null, receipt_path: receipt, notes: v.notes.trim() || null, updated_at: new Date().toISOString() };
+      const x = existing ? await db.from('eps_compta').update(row).eq('id', existing.id).select().single() : await db.from('eps_compta').insert(row).select().single();
+      if (x.error) throw Error(x.error.message);
+      toast(existing ? 'Modifié.' : (kind === 'achat' ? 'Dépense ajoutée.' : 'Recette ajoutée.'));
+      closeSheet(); cMonth = v.op_date.slice(0, 7); await cptLoad(true); if (tab === 'compta') render();
+    } catch (err) { toast(err.message, true); btn.disabled = false; btn.textContent = existing ? 'Enregistrer' : 'Ajouter'; }
+  } });
+  const pays = ['Carte bancaire', 'Virement', 'Prélèvement', 'Espèces', 'Lien de paiement (Stripe)', 'Chèque'];
+  f.append(
+    fld('Date', h('input', { name: 'op_date', type: 'date', required: true, value: val('op_date') || parisToday() })),
+    fld(kind === 'achat' ? 'Quoi ?' : 'Libellé', h('input', { name: 'label', required: true, maxlength: '160', value: val('label'), placeholder: kind === 'achat' ? 'Ex. : plein gazole, péage Antibes' : 'Ex. : transfert aéroport – Cannes' })),
+    fld(kind === 'achat' ? 'Fournisseur' : 'Client', h('input', { name: 'party', maxlength: '120', value: val('party'), placeholder: kind === 'achat' ? 'Ex. : TotalEnergies' : '' })),
+    fld('Catégorie', catSel),
+    h('div', { class: 'grid2' }, fld('Montant TTC (€)', ttcIn), fld('TVA', rateSel)), vatHint,
+    fld(kind === 'achat' ? 'Payé par' : 'Encaissé par', h('select', { name: 'payment_method' }, h('option', { value: '' }, '—'), pays.map(x => h('option', { selected: val('payment_method') === x }, x)))),
+    fld(existing?.receipt_path ? 'Remplacer le justificatif' : 'Justificatif (photo ou PDF)', fileIn, kind === 'achat' ? 'Photographie le ticket ou la facture : sans justificatif, la TVA n’est pas récupérable.' : 'Facultatif pour une vente.'),
+    existing?.receipt_path ? h('button', { type: 'button', class: 'btn quiet', onclick: () => cptOpenReceipt(existing.receipt_path) }, 'Voir le justificatif') : null,
+    fld('Remarque', h('textarea', { name: 'notes', rows: '2', maxlength: '600' }, val('notes'))),
+    h('button', { class: 'btn primary', type: 'submit' }, existing ? 'Enregistrer' : 'Ajouter'),
+    existing ? h('button', { type: 'button', class: 'btn danger', style: 'margin-top:10px', onclick: () => cptDelete(existing) }, 'Supprimer cette ligne') : null);
+  upd();
+  openSheet(existing ? (kind === 'achat' ? 'Dépense' : 'Recette') : (kind === 'achat' ? 'Nouvelle dépense' : 'Nouvelle recette'), f);
+}
+async function cptOpenReceipt(path) {
+  const w = window.open('', '_blank');
+  const x = await db.storage.from('eps-compta').createSignedUrl(path, 300);
+  if (x.error) { if (w) w.close(); return toast(x.error.message, true); }
+  if (w) w.location = x.data.signedUrl; else location.href = x.data.signedUrl;
+}
+async function cptDelete(r) {
+  if (!confirm('Supprimer « ' + r.label + ' » (' + eur(r.amount_ttc_cents) + ') ?')) return;
+  const x = await db.from('eps_compta').delete().eq('id', r.id);
+  if (x.error) return toast(x.error.message, true);
+  if (r.receipt_path) await db.storage.from('eps-compta').remove([r.receipt_path]);
+  toast('Ligne supprimée.'); closeSheet(); await cptLoad(true); if (tab === 'compta') render();
+}
+async function cptImportOrders(list, btn) {
+  btn.disabled = true;
+  const rows = list.map(o => { const cat = o.service_type === 'Mise à disposition' ? 'Mise à disposition' : o.service_type === 'Événement' ? 'Événement' : 'Transfert', rate = cat === 'Mise à disposition' ? 20 : 10;
+    return { kind: 'vente', op_date: o.pickup_date, label: o.number + ' · ' + shortPlace(o.pickup_place) + (o.destination ? ' – ' + shortPlace(o.destination) : ''), party: o.customer_name, category: cat,
+      amount_ttc_cents: o.price_cents, vat_rate: rate, vat_cents: cptVat(o.price_cents, rate), payment_method: o.payment_method || null, order_form_id: o.id }; });
+  const x = await db.from('eps_compta').insert(rows);
+  btn.disabled = false;
+  if (x.error) return toast(x.error.message, true);
+  toast(rows.length + ' vente' + (rows.length > 1 ? 's' : '') + ' importée' + (rows.length > 1 ? 's' : '') + '.'); await cptLoad(true); render();
+}
+async function cptExport(rows) {
+  const n = c => (c / 100).toFixed(2).replace('.', ',');
+  const lines = [['Date', 'Type', 'Libellé', 'Client / fournisseur', 'Catégorie', 'TTC', 'Taux TVA', 'TVA', 'HT', 'Règlement', 'Justificatif'].join(';')]
+    .concat(rows.slice().reverse().map(r => [r.op_date.split('-').reverse().join('/'), r.kind === 'vente' ? 'Vente' : 'Achat', r.label, r.party || '', r.category, n(r.amount_ttc_cents), String(r.vat_rate).replace('.', ',') + ' %', n(r.vat_cents), n(r.amount_ttc_cents - r.vat_cents), r.payment_method || '', r.receipt_path ? 'oui' : 'non']
+      .map(x => /[;"\n]/.test(x) ? '"' + String(x).replace(/"/g, '""') + '"' : x).join(';')));
+  const name = 'EPS-compta-' + cMonth + '.csv';
+  const file = new File(['﻿' + lines.join('\r\n')], name, { type: 'text/csv' });
+  try { if (isMobile() && navigator.canShare?.({ files: [file] })) { await navigator.share({ files: [file] }); return; } } catch (e) { if (e.name === 'AbortError') return; }
+  const u = URL.createObjectURL(file); const a = h('a', { href: u, download: name }); document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(u), 5000);
 }
 function closeDoc() { $('docview').classList.add('hidden'); document.body.style.overflow = ''; }
 $('doc-close').onclick = closeDoc;

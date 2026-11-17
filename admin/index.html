@@ -1645,7 +1645,7 @@ async function deleteDevis(d) {
    Table eps_compta + bucket privé eps-compta (justificatifs). Travail préparatoire : à valider par l'expert-comptable. ================= */
 const CPT_ACHATS = [['Carburant', 20], ['Péages et parking', 20], ['Entretien et réparations', 20], ['Lavage', 20], ['Loyer ou crédit du véhicule', 20], ['Loyer (garage, box, local)', 0], ['Assurance', 0],
   ['Téléphone et internet', 20], ['Logiciels et abonnements', 20], ['Publicité', 20], ['Commissions de plateformes (Sixt, Uber…)', 0], ['Honoraires (comptable, avocat…)', 20], ['Frais bancaires', 0], ['Repas', 10],
-  ['Fournitures', 20], ['Cotisations URSSAF', 0], ['Intérêts d’emprunt', 0], ['Amortissement du véhicule', 0], ['Prélèvements du gérant (hors charges, EURL à l’IR)', 0], ['Impôts et taxes', 0], ['Amendes (non déductibles)', 0], ['Autre achat', 20]];
+  ['Fournitures', 20], ['Cotisations URSSAF', 0], ['Intérêts d’emprunt', 0], ['Amortissement du véhicule', 0], ['Rémunération de l’exploitant (réintégrée fiscalement)', 0], ['Impôts et taxes', 0], ['Amendes (non déductibles)', 0], ['Autre achat', 20]];
 const CPT_VENTES = [['Transfert', 10], ['Mise à disposition', 20], ['Événement', 10], ['Commission ou partenariat', 20], ['Autre recette', 10]];
 const CPT_RATES = [0, 5.5, 10, 20];
 let cMonth = parisToday().slice(0, 7), cRows = null, cMonthLoaded = '';

@@ -1763,6 +1763,7 @@ async function renderDocs(v) {
     const sub = rs.length ? [first ? fmtDay(first.op_date) : '', first?.party, rs.length > 1 ? rs.length + ' lignes' : first?.category].filter(Boolean).join(' · ')
       : 'Déposé le ' + new Date(f.created_at).toLocaleDateString('fr-FR', { timeZone: 'Europe/Paris' }) + ' · pas encore saisi';
     const amount = rs.length ? h('span', { class: 'end' }, v ? h('b', { style: 'color:var(--gold, #c9a35b)' }, '+ ' + eur(v)) : null, a ? h('b', {}, '− ' + eur(a)) : null,
+      v && a ? h('span', { style: 'font-size:12px;font-weight:600' }, '= ' + eur(v - a) + ' net') : null,
       h('span', { style: 'font-size:12px;color:var(--ink-2)' }, 'TVA ' + eur(Math.abs(tva)))) : h('span', { class: 'end' }, h('span', { class: 'pip', style: 'position:static;background:#a4321f' }, 'à saisir'));
     fr.append(h('button', { class: 'row', onclick: () => docOpen(docFolder, f) },
       h('span', { class: 'main' }, h('div', { class: 't' }, (/pdf$/i.test(f.name) ? '📄 ' : /\.(csv|xlsx?|ofx)$/i.test(f.name) ? '📊 ' : '🧾 ') + docShown(f.name)), h('div', { class: 's' }, sub)), amount, chev()));

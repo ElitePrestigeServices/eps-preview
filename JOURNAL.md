@@ -176,3 +176,4 @@
 - 2026-11-17 : page Rallye Monte-Carlo 2027 (dates ACM, côté littoral seulement, pas de montagne), dates Carnaval 2027 sur la page événements Nice, liens depuis agenda et Monaco, sitemap.
 - 2026-11-17 : admin, le bouton Actualiser recharge aussi la compta (cache cRows vidé).
 - 2026-11-17 : admin compta, « Achats TTC » renommé « Dépenses TTC » (plus clair pour Anthony).
+- 2026-11-17 : Mes documents, un rapport avec ventes et commission affiche aussi le net versé ; chemins des rapports Sixt sept-oct corrigés en base.

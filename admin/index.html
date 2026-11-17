@@ -444,7 +444,7 @@ const ICONS = {
   stats: '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
   more: '<circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/>'
 };
-const NAV = [['home', 'Aujourd’hui'], ['courses', 'Courses'], ['agenda', 'Agenda'], ['partners', 'Partenaires'], ['orders', 'Devis & bons'], ['compta', 'Comptabilité'], ['crm', 'Prospection'], ['drivers', 'Chauffeurs'], ['inbox', 'Messages'], ['stats', 'Statistiques'], ['settings', 'Réglages']];
+const NAV = [['home', 'Aujourd’hui'], ['courses', 'Courses'], ['agenda', 'Agenda'], ['partners', 'Partenaires'], ['orders', 'Devis & bons'], ['clients', 'Clients'], ['compta', 'Comptabilité'], ['crm', 'Prospection'], ['drivers', 'Chauffeurs'], ['inbox', 'Messages'], ['stats', 'Statistiques'], ['settings', 'Réglages']];
 const TABS = [['home', 'Aujourd’hui'], ['courses', 'Courses'], ['agenda', 'Agenda'], ['partners', 'Partenaires'], ['more', 'Plus']];
 const titles = Object.fromEntries([...NAV, ['more', 'Plus']]);
 let tab = 'home';
@@ -453,7 +453,7 @@ function drawNav() {
   const c = counts();
   const pip = n => n ? h('span', { class: 'pip' }, n) : null;
   $('side-nav').replaceChildren(...NAV.map(([id, label]) => h('button', { 'aria-current': tab === id ? 'page' : null, onclick: () => go(id) }, svg(ICONS[id]), label, pip(c[id]))));
-  const inMore = ['orders', 'compta', 'crm', 'drivers', 'inbox', 'stats', 'settings'].includes(tab);
+  const inMore = ['orders', 'clients', 'compta', 'crm', 'drivers', 'inbox', 'stats', 'settings'].includes(tab);
   $('tab-nav').replaceChildren(...TABS.map(([id, label]) => h('button', { 'aria-current': (tab === id || (id === 'more' && inMore)) ? 'page' : null, onclick: () => go(id) }, svg(ICONS[id]), label,
     id === 'courses' ? pip(c.courses) : id === 'more' ? pip(c.inbox) : null)));
 }
@@ -469,7 +469,7 @@ function render(loading = false) {
   $('subtitle').textContent = tab === 'home' ? new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }) : '';
   const v = $('view'); v.replaceChildren();
   if (loading) { v.append(h('p', { class: 'hint' }, 'Chargement…')); return; }
-  ({ home: renderHome, courses: renderCourses, agenda: renderAgenda, partners: renderPartners, orders: renderOrders, compta: renderCompta, crm: renderCrm, drivers: renderDrivers, inbox: renderInbox, stats: renderStats, settings: renderSettings, more: renderMore })[tab](v);
+  ({ home: renderHome, courses: renderCourses, agenda: renderAgenda, partners: renderPartners, orders: renderOrders, clients: renderClients, compta: renderCompta, crm: renderCrm, drivers: renderDrivers, inbox: renderInbox, stats: renderStats, settings: renderSettings, more: renderMore })[tab](v);
 }
 
 
@@ -1262,6 +1262,7 @@ function renderMore(v) {
   const item = (id, t, s, n) => h('button', { class: 'row', onclick: () => go(id) }, h('span', { class: 'main' }, h('div', { class: 't' }, t), h('div', { class: 's' }, s)), n ? h('span', { class: 'pip' }, n) : null, chev());
   v.append(h('div', { class: 'list', style: 'margin-top:4px' },
     item('orders', 'Devis & bons de commande', 'Faire un devis, bon à présenter en cas de contrôle'),
+    item('clients', 'Clients', 'Ton carnet de clients directs : un clic remplit devis et bons'),
     item('compta', 'Comptabilité', 'Achats, ventes, justificatifs, TVA du mois'),
     item('crm', 'Prospection', 'Robot d’envoi, prospects, message'),
     item('drivers', 'Chauffeurs', 'Documents et attribution des courses'),
@@ -1399,7 +1400,7 @@ function openClientForm(c) {
     const x = c ? await db.from('eps_clients').update(row).eq('id', c.id) : await db.from('eps_clients').insert(row);
     btn.disabled = false;
     if (x.error) return toast(x.error.message, true);
-    toast(c ? 'Fiche de ' + row.name + ' mise à jour.' : row.name + ' ajouté à tes clients.'); cliCache = null; closeSheet(); if (tab === 'orders') render();
+    toast(c ? 'Fiche de ' + row.name + ' mise à jour.' : row.name + ' ajouté à tes clients.'); cliCache = null; closeSheet(); if (tab === 'orders' || tab === 'clients') render();
   } });
   const pre = () => { const v = Object.fromEntries(new FormData(f)); return { customer_name: v.name.trim(), customer_company: v.company.trim(), customer_phone: v.phone.trim(), customer_email: cleanEmail(v.email) }; };
   f.append(
@@ -1415,7 +1416,7 @@ function openClientForm(c) {
       c ? h('button', { class: 'btn quiet', type: 'button', style: 'color:#a4321f', onclick: async () => {
         if (!confirm('Retirer ' + c.name + ' de tes clients ? Ses devis et bons déjà faits restent.')) return;
         const x = await db.from('eps_clients').delete().eq('id', c.id); if (x.error) return toast(x.error.message, true);
-        toast(c.name + ' retiré de tes clients.'); cliCache = null; closeSheet(); if (tab === 'orders') render();
+        toast(c.name + ' retiré de tes clients.'); cliCache = null; closeSheet(); if (tab === 'orders' || tab === 'clients') render();
       } }, 'Retirer') : null));
   openSheet(c ? c.name : 'Nouveau client', f);
 }

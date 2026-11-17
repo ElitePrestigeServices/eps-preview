@@ -29,3 +29,12 @@ RewriteRule ^(wp-admin|wp-content|wp-includes|wp-login\.php|xmlrpc\.php|cgi-bin)
 Header set Access-Control-Allow-Origin "*"
 </FilesMatch>
 </IfModule>
+
+# Admin : toujours recharger la dernière version des pages (17/11/2026)
+<IfModule mod_headers.c>
+<If "%{REQUEST_URI} =~ m#^/admin/#">
+<FilesMatch "\.html?$">
+Header set Cache-Control "no-cache, must-revalidate"
+</FilesMatch>
+</If>
+</IfModule>

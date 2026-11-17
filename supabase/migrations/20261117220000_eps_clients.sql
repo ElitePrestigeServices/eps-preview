@@ -26,3 +26,7 @@ from (
 ) s
 where length(trim(coalesce(name, ''))) >= 2
 order by lower(trim(name)), coalesce(nullif(regexp_replace(phone, '\D', '', 'g'), ''), lower(coalesce(email, ''))), created_at desc;
+
+-- Droits (les nouvelles tables n'en ont pas par défaut sur ce projet)
+revoke all on public.eps_clients from anon;
+grant select, insert, update, delete on public.eps_clients to authenticated;

@@ -1729,12 +1729,19 @@ async function renderDocs(v) {
   };
   v.append(h('div', { class: 'btns', style: 'margin:0 0 14px' }, picker(false, '+ Nouveau document', true), picker(true, 'Envoi multiple', false)),
     h('p', { class: 'hint', style: 'margin-top:-6px' }, 'Le document part dans le dossier sélectionné ci-dessous. Écris « compta » à Claude : il lit tes tickets et relevés, remplit les chiffres et te dit ce qui manque.'));
+  v.append(h('div', { style: 'display:flex;align-items:center;gap:10px;margin:4px 0 10px' },
+    h('button', { class: 'btn quiet', 'aria-label': 'Mois précédent', onclick: () => { cMonth = monthShift(cMonth, -1); render(); } }, '‹'),
+    h('h2', { style: 'margin:0;flex:1;text-align:center;text-transform:capitalize' }, monthLabel(cMonth)),
+    h('button', { class: 'btn quiet', 'aria-label': 'Mois suivant', onclick: () => { cMonth = monthShift(cMonth, 1); render(); } }, '›')));
   await cptLoad();
   { const rows = cRows || [], sm = (k, f) => rows.filter(r => r.kind === k).reduce((a, r) => a + f(r), 0);
     const vT = sm('vente', r => r.amount_ttc_cents), aT = sm('achat', r => r.amount_ttc_cents), due = sm('vente', r => r.vat_cents) - sm('achat', r => r.vat_cents);
     const st = (val, l) => h('div', { class: 'stat' }, h('div', { class: 'v' }, val), h('div', { class: 'l' }, l));
     v.append(h('div', { class: 'stats four', style: 'margin-bottom:6px' }, st(eur(vT), 'Ventes TTC'), st(eur(aT), 'Achats TTC'), st(eur(Math.abs(due)), due >= 0 ? 'TVA à payer' : 'Crédit de TVA'), st(eur((vT - sm('vente', r => r.vat_cents)) - (aT - sm('achat', r => r.vat_cents))), 'Résultat HT')),
-      h('p', { class: 'hint', style: 'margin-top:0;text-transform:none' }, monthLabel(cMonth) + ' · estimation à faire valider par ton comptable · détail dans « Chiffres et TVA »')); }
+      h('p', { class: 'hint', style: 'margin-top:0;text-transform:none' }, 'Chiffres du mois affiché (flèches ‹ ›) · estimation à faire valider par ton comptable · détail dans « Chiffres et TVA »'));
+    const y = cMonth.slice(0, 4), ya = await db.from('eps_compta').select('kind,amount_ttc_cents,vat_cents,op_date').gte('op_date', y + '-01-01').lte('op_date', y + '-12-31');
+    if (!ya.error && ya.data.length) { const yv = ya.data.filter(r => r.kind === 'vente'), months = [...new Set(ya.data.map(r => r.op_date.slice(0, 7)))].sort();
+      v.append(h('p', { class: 'hint', style: 'margin-top:-4px' }, 'Saisi pour ' + y + ' (' + months.map(m => monthLabel(m).split(' ')[0]).join(', ') + ') : ventes ' + eur(yv.reduce((a, r) => a + r.amount_ttc_cents, 0)) + ' TTC.')); } }
   const grid = h('div', { class: 'grid-desk' }), left = h('div'), right = h('div');
   grid.append(left, right); v.append(grid);
   const counts = await Promise.all(DOC_FOLDERS.map(async ([k]) => [k, (await docList(k)).length]));

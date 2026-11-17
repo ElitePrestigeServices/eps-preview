@@ -1332,10 +1332,99 @@ function orderFromCourse(b) {
     price_cents: cents, payment_method: b.partner_code ? 'Facturé au partenaire' : pay ? 'Carte bancaire (lien de paiement)' : '', partner_code: b.partner_code || null, notes: '' };
 }
 let orderFilter = 'upcoming', orderQuery = '', docKind = 'devis';
+/* ================= Carnet de clients ================= */
+let cliCache = null, cliQuery = '';
+async function cliLoad(force) {
+  if (cliCache && !force) return cliCache;
+  const x = await db.from('eps_clients').select('*').order('name');
+  if (x.error) { toast(x.error.message, true); return cliCache || []; }
+  return (cliCache = x.data || []);
+}
+const digits = s => String(s || '').replace(/\D/g, '');
+function cliFind(list, name, phone, email) {
+  const ph = digits(phone), em = cleanEmail(email);
+  return list.find(c => ph.length >= 6 && digits(c.phone) === ph) || list.find(c => em && cleanEmail(c.email) === em)
+    || list.find(c => c.name.trim().toLowerCase() === String(name || '').trim().toLowerCase());
+}
+// Après un devis ou un bon : ajoute le client au carnet, ou complète sa fiche.
+async function cliSaveFrom(v) {
+  if (v.save_client !== 'on' || String(v.customer_name || '').trim().length < 2) return;
+  const list = await cliLoad(), ex = cliFind(list, v.customer_name, v.customer_phone, v.customer_email);
+  const row = { name: v.customer_name.trim(), phone: String(v.customer_phone || '').trim() || ex?.phone || null, email: cleanEmail(v.customer_email) || ex?.email || null,
+    company: String(v.customer_company || '').trim() || ex?.company || null, updated_at: new Date().toISOString() };
+  const x = ex ? await db.from('eps_clients').update(row).eq('id', ex.id) : await db.from('eps_clients').insert(row);
+  if (x.error) toast('Client non enregistré : ' + x.error.message, true); else cliCache = null;
+}
+// Liste déroulante en haut des formulaires : un clic remplit les coordonnées du client.
+function cliPicker(f) {
+  const sel = h('select', { onchange: e => {
+    const c = (cliCache || []).find(y => y.id === e.target.value); if (!c) return;
+    const set = (n, val) => { const i = f.querySelector('[name="' + n + '"]'); if (i) i.value = val || ''; };
+    set('customer_name', c.name); set('customer_company', c.company); set('customer_phone', c.phone); set('customer_email', c.email);
+    toast('Coordonnées de ' + c.name + ' remplies.');
+  } }, h('option', { value: '' }, 'Chargement des clients…'));
+  cliLoad().then(list => {
+    sel.firstChild.textContent = list.length ? 'Choisir un client enregistré…' : 'Aucun client enregistré pour l’instant';
+    list.forEach(c => sel.append(h('option', { value: c.id }, c.name + (c.company ? ' · ' + c.company : '') + (c.phone ? ' · ' + c.phone : ''))));
+  });
+  return fld('Client enregistré', sel, 'Choisis un client pour remplir son nom, son téléphone et son e-mail d’un coup.');
+}
+const cliSaveBox = checked => h('label', { class: 'check', style: 'margin:-4px 0 12px' }, h('input', { type: 'checkbox', name: 'save_client', checked: checked !== false }), h('span', {}, 'Enregistrer ou mettre à jour ce client dans mes clients'));
+function renderClients(v) {
+  const search = h('input', { class: 'search', type: 'search', placeholder: 'Rechercher un nom, une société, un téléphone', value: cliQuery, oninput: e => { cliQuery = e.target.value; draw(); } });
+  const box = h('div', {}, h('p', { class: 'hint' }, 'Chargement…'));
+  function draw() {
+    const q = cliQuery.trim().toLowerCase();
+    const list = (cliCache || []).filter(c => !q || [c.name, c.company, c.phone, c.email, c.address].join(' ').toLowerCase().includes(q));
+    const l = h('div', { class: 'list' });
+    list.forEach(c => l.append(h('button', { class: 'row', onclick: () => openClientForm(c) },
+      h('span', { class: 'main' }, h('div', { class: 't' }, c.name + (c.company ? ' · ' + c.company : '')), h('div', { class: 's' }, [c.phone, c.email].filter(Boolean).join(' · ') || 'Pas de coordonnées')), chev())));
+    if (!list.length) l.append(h('div', { class: 'empty-note' }, q ? 'Aucun client ne correspond.' : 'Aucun client enregistré. Ajoute-en un, ou coche « Enregistrer ce client » en faisant un devis ou un bon.'));
+    box.replaceChildren(l);
+  }
+  const left = h('div'), right = h('div');
+  left.append(search, box);
+  right.append(h('div', { class: 'btns', style: 'margin-top:0' }, h('button', { class: 'btn primary', onclick: () => openClientForm(null) }, 'Nouveau client')),
+    h('div', { class: 'card', style: 'margin-top:16px' }, h('h3', {}, 'Ton carnet de clients'),
+      h('p', { class: 'hint', style: 'margin:0' }, 'Dans un nouveau devis ou bon de commande, choisis le client dans « Client enregistré » : son nom, son téléphone et son e-mail se remplissent tout seuls.')));
+  v.append(h('div', { class: 'grid-desk' }, left, right));
+  cliLoad(true).then(draw);
+}
+function openClientForm(c) {
+  const val = k => c && c[k] != null ? String(c[k]) : '';
+  const f = h('form', { onsubmit: async e => {
+    e.preventDefault(); const v = Object.fromEntries(new FormData(f));
+    const row = { name: v.name.trim(), company: v.company.trim() || null, phone: v.phone.trim() || null, email: cleanEmail(v.email) || null, address: v.address.trim() || null, notes: v.notes.trim() || null, updated_at: new Date().toISOString() };
+    const btn = f.querySelector('button[type=submit]'); btn.disabled = true;
+    const x = c ? await db.from('eps_clients').update(row).eq('id', c.id) : await db.from('eps_clients').insert(row);
+    btn.disabled = false;
+    if (x.error) return toast(x.error.message, true);
+    toast(c ? 'Fiche de ' + row.name + ' mise à jour.' : row.name + ' ajouté à tes clients.'); cliCache = null; closeSheet(); if (tab === 'orders') render();
+  } });
+  const pre = () => { const v = Object.fromEntries(new FormData(f)); return { customer_name: v.name.trim(), customer_company: v.company.trim(), customer_phone: v.phone.trim(), customer_email: cleanEmail(v.email) }; };
+  f.append(
+    fld('Nom', h('input', { name: 'name', required: true, minlength: '2', maxlength: '120', value: val('name'), autocomplete: 'off' })),
+    fld('Société (facultatif)', h('input', { name: 'company', maxlength: '120', value: val('company'), autocomplete: 'off' })),
+    h('div', { class: 'grid2' }, fld('Téléphone', h('input', { name: 'phone', type: 'tel', maxlength: '30', value: val('phone') })),
+      fld('E-mail', h('input', { name: 'email', type: 'email', value: val('email') }))),
+    fld('Adresse (facultatif)', h('input', { name: 'address', maxlength: '200', value: val('address'), autocomplete: 'off' })),
+    fld('Notes (facultatif)', h('textarea', { name: 'notes', rows: '3', maxlength: '1000' }, val('notes')), 'Ses habitudes, son hôtel, ses préférences…'),
+    h('div', { class: 'btns' }, h('button', { class: 'btn primary', type: 'submit' }, c ? 'Enregistrer' : 'Ajouter le client'),
+      c ? h('button', { class: 'btn quiet', type: 'button', onclick: () => { closeSheet(); openDevisForm(pre()); } }, 'Faire un devis') : null,
+      c ? h('button', { class: 'btn quiet', type: 'button', onclick: () => { closeSheet(); openOrderForm({ ...pre(), booked_at: new Date().toISOString() }); } }, 'Faire un bon de commande') : null,
+      c ? h('button', { class: 'btn quiet', type: 'button', style: 'color:#a4321f', onclick: async () => {
+        if (!confirm('Retirer ' + c.name + ' de tes clients ? Ses devis et bons déjà faits restent.')) return;
+        const x = await db.from('eps_clients').delete().eq('id', c.id); if (x.error) return toast(x.error.message, true);
+        toast(c.name + ' retiré de tes clients.'); cliCache = null; closeSheet(); if (tab === 'orders') render();
+      } }, 'Retirer') : null));
+  openSheet(c ? c.name : 'Nouveau client', f);
+}
+
 function renderOrders(v) {
   v.append(h('div', { class: 'seg', role: 'group', 'aria-label': 'Devis ou bons de commande' },
-    [['devis', 'Devis'], ['bons', 'Bons de commande']].map(([k, l]) => h('button', { 'aria-pressed': String(docKind === k), onclick: () => { docKind = k; render(); } }, l))));
+    [['devis', 'Devis'], ['bons', 'Bons de commande'], ['clients', 'Clients']].map(([k, l]) => h('button', { 'aria-pressed': String(docKind === k), onclick: () => { docKind = k; render(); } }, l))));
   if (docKind === 'devis') return renderDevis(v);
+  if (docKind === 'clients') return renderClients(v);
   const today = parisToday();
   const search = h('input', { class: 'search', type: 'search', placeholder: 'Rechercher un client, un lieu, un numéro', value: orderQuery, oninput: e => { orderQuery = e.target.value; draw(); } });
   const box = h('div');
@@ -1385,6 +1474,7 @@ function openOrderForm(o, existing) {
       : await db.from('eps_order_forms').insert({ ...row, reservation_id: o.reservation_id || null, partner_code: o.partner_code || null }).select().single();
     btn.disabled = false;
     if (x.error) return toast(x.error.message, true);
+    cliSaveFrom(v);
     const i = S.orders.findIndex(y => y.id === x.data.id); if (i >= 0) S.orders[i] = x.data; else S.orders.unshift(x.data);
     if (!existing && window.__devisForOrder) { const did = window.__devisForOrder; window.__devisForOrder = null; const y = await db.from('eps_devis').update({ order_form_id: x.data.id, status: 'accepté', updated_at: new Date().toISOString() }).eq('id', did).select().single(); if (!y.error) { const k = S.devis.findIndex(z => z.id === did); if (k >= 0) S.devis[k] = y.data; } }
     toast(existing ? 'Bon ' + x.data.number + ' mis à jour.' : 'Bon ' + x.data.number + ' créé.'); closeSheet(); if (tab === 'orders') render(); openOrderView(x.data);
@@ -1394,9 +1484,11 @@ function openOrderForm(o, existing) {
   const veh = val('vehicle') && val('vehicle') !== 'Sans préférence' ? val('vehicle') : remembered('vehicle', 'Business Van');
   f.append(
     h('h3', { style: 'margin:0 0 10px' }, 'Client'),
+    ...(existing ? [] : [cliPicker(f)]),
     fld('Nom du client', h('input', { name: 'customer_name', required: true, minlength: '2', maxlength: '120', value: val('customer_name'), autocomplete: 'off' })),
     h('div', { class: 'grid2' }, fld('Téléphone du client', h('input', { name: 'customer_phone', type: 'tel', required: true, minlength: '6', maxlength: '30', value: val('customer_phone') })),
       fld('E-mail (facultatif)', h('input', { name: 'customer_email', type: 'email', value: val('customer_email') }))),
+    cliSaveBox(!o.reservation_id),
     fld('Réservation faite le', h('input', { name: 'booked_at', type: 'datetime-local', required: true, value: localInput(o.booked_at) }), 'Le moment où le client t’a commandé la course. Il doit être avant la prise en charge.'),
     h('h3', { style: 'margin:18px 0 10px' }, 'Course'),
     fld('Prestation', h('select', { name: 'service_type' }, types.map(x => h('option', { selected: (val('service_type') || 'Transfert') === x }, x)))),
@@ -1522,6 +1614,7 @@ function openDevisForm(o, existing) {
     const x = existing ? await db.from('eps_devis').update(row).eq('id', existing.id).select().single() : await db.from('eps_devis').insert(row).select().single();
     btn.disabled = false;
     if (x.error) return toast(x.error.message, true);
+    cliSaveFrom(v);
     S.devis ||= []; const i = S.devis.findIndex(y => y.id === x.data.id); if (i >= 0) S.devis[i] = x.data; else S.devis.unshift(x.data);
     toast(existing ? 'Devis ' + x.data.number + ' mis à jour.' : 'Devis ' + x.data.number + ' créé.'); closeSheet(); if (tab === 'orders') render(); openDevisView(x.data);
   } });
@@ -1534,10 +1627,12 @@ function openDevisForm(o, existing) {
   const terms = ['Carte bancaire (lien de paiement)', 'Virement à réception de facture', 'Carte bancaire à bord', 'Espèces', 'Acompte de 30 % à la commande'];
   f.append(
     h('h3', { style: 'margin:0 0 10px' }, 'Client'),
+    ...(existing ? [] : [cliPicker(f)]),
     fld('Nom du client', h('input', { name: 'customer_name', required: true, minlength: '2', maxlength: '120', value: val('customer_name'), autocomplete: 'off' })),
     fld('Société (facultatif)', h('input', { name: 'customer_company', maxlength: '120', value: val('customer_company'), autocomplete: 'off' })),
     h('div', { class: 'grid2' }, fld('Téléphone', h('input', { name: 'customer_phone', type: 'tel', maxlength: '30', value: val('customer_phone') })),
       fld('E-mail', h('input', { name: 'customer_email', type: 'email', value: val('customer_email') }))),
+    cliSaveBox(),
     h('h3', { style: 'margin:18px 0 10px' }, 'Prestation'),
     fld('Type', h('select', { name: 'service_type', onchange: e => { vatSel.value = String(defVat(e.target.value)); } }, types.map(x => h('option', { selected: (val('service_type') || 'Transfert') === x }, x)))),
     h('div', { class: 'grid2' }, fld('Date', h('input', { name: 'pickup_date', type: 'date', value: val('pickup_date') })),

@@ -178,3 +178,4 @@
 - 2026-11-17 : admin compta, « Achats TTC » renommé « Dépenses TTC » (plus clair pour Anthony).
 - 2026-11-17 : Mes documents, un rapport avec ventes et commission affiche aussi le net versé ; chemins des rapports Sixt sept-oct corrigés en base.
 - 2026-11-17 : Mes documents filtrés par mois (mois du contenu saisi, sinon date du relevé, sinon mois de dépôt).
+- 2026-11-17 : carnet de clients (table eps_clients, onglet Devis & bons → Clients), choix d'un client enregistré qui remplit devis et bons, case « Enregistrer ce client ».

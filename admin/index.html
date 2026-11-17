@@ -1744,13 +1744,18 @@ async function renderDocs(v) {
       v.append(h('p', { class: 'hint', style: 'margin-top:-4px' }, 'Saisi pour ' + y + ' (' + months.map(m => monthLabel(m).split(' ')[0]).join(', ') + ') : ventes ' + eur(yv.reduce((a, r) => a + r.amount_ttc_cents, 0)) + ' TTC.')); } }
   const grid = h('div', { class: 'grid-desk' }), left = h('div'), right = h('div');
   grid.append(left, right); v.append(grid);
-  const counts = await Promise.all(DOC_FOLDERS.map(async ([k]) => [k, (await docList(k)).length]));
+  // Un document est rangé dans le mois de ce qu'il contient (date de la 1re ligne saisie), sinon dans son mois de dépôt.
+  const rp = await db.from('eps_compta').select('op_date,receipt_path').not('receipt_path', 'is', null);
+  const docMonth = {}; (rp.data || []).forEach(r => { const m = r.op_date.slice(0, 7); if (!docMonth[r.receipt_path] || m < docMonth[r.receipt_path]) docMonth[r.receipt_path] = m; });
+  const monthOf = (folder, f) => docMonth['docs/' + folder + '/' + f.name] || ((x => x ? x[3] + '-' + x[2] : '')(f.name.match(/du_(\d\d)-(\d\d)-(\d{4})/))) || (/^\d{4}-\d{2}_/.test(f.name) ? f.name.slice(0, 7) : new Date(f.created_at).toISOString().slice(0, 7));
+  const counts = await Promise.all(DOC_FOLDERS.map(async ([k]) => [k, (await docList(k)).filter(f => monthOf(k, f) === cMonth).length]));
   docCounts = Object.fromEntries(counts);
   const fl = h('div', { class: 'list' });
   DOC_FOLDERS.forEach(([k, l, sub]) => fl.append(h('button', { class: 'row', 'aria-current': docFolder === k ? 'true' : null, style: docFolder === k ? 'background:var(--surface-2,rgba(201,173,115,.12))' : '', onclick: () => { docFolder = k; render(); } },
     h('span', { class: 'main' }, h('div', { class: 't' }, l), h('div', { class: 's' }, sub)), h('span', { class: 'pip', style: 'position:static' }, String(docCounts[k] || 0).padStart(2, '0')))));
   left.append(fl);
-  const files = await docList(docFolder);
+  const files = (await docList(docFolder)).filter(f => monthOf(docFolder, f) === cMonth);
+  if (!files.length) right.append(h('p', { class: 'hint' }, 'Aucun document pour ' + monthLabel(cMonth) + ' dans ce dossier.'));
   const paths = files.map(f => 'docs/' + docFolder + '/' + f.name);
   const lk = paths.length ? await db.from('eps_compta').select('kind,op_date,party,category,amount_ttc_cents,vat_cents,receipt_path').in('receipt_path', paths) : { data: [] };
   const byPath = {}; (lk.data || []).forEach(r => (byPath[r.receipt_path] ||= []).push(r));

@@ -177,3 +177,4 @@
 - 2026-11-17 : admin, le bouton Actualiser recharge aussi la compta (cache cRows vidé).
 - 2026-11-17 : admin compta, « Achats TTC » renommé « Dépenses TTC » (plus clair pour Anthony).
 - 2026-11-17 : Mes documents, un rapport avec ventes et commission affiche aussi le net versé ; chemins des rapports Sixt sept-oct corrigés en base.
+- 2026-11-17 : Mes documents filtrés par mois (mois du contenu saisi, sinon date du relevé, sinon mois de dépôt).

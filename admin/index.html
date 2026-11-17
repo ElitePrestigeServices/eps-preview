@@ -394,7 +394,7 @@ async function loadDrivers() {
   ]);
   S.drivers = p.error ? [] : p.data; S.docs = dcs.error ? [] : dcs.data; S.missions = m.error ? [] : m.data;
 }
-async function reload() { await loadCore(); if (tab === 'crm' || S.contacts) await loadCrm(); if (tab === 'drivers' || S.drivers) await loadDrivers(); render(); }
+async function reload() { cRows = null; cMonthLoaded = ''; await loadCore(); if (tab === 'crm' || S.contacts) await loadCrm(); if (tab === 'drivers' || S.drivers) await loadDrivers(); render(); }
 
 /* ================= Courses : statut & prix ================= */
 function stage(b) {

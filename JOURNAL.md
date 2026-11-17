@@ -175,3 +175,4 @@
 - 17/11/2026 (Claude) : compta alignée sur les comptes Exco 2025 (rémunération de l'exploitant passée en charge, compte 644, réintégrée fiscalement). Charges fixes ajoutées sept.-nov. 2026 : rémunération 1 000 €/mois, honoraires Exco 230 € TTC (factures du 03/09, 05/10, 04/11), estimations d'après 2025 : assurance 256,82 €, frais bancaires 81,20 €, téléphone 37,87 €, cotisations exploitant ~207,42 €/mois.
 - 2026-11-17 : page Rallye Monte-Carlo 2027 (dates ACM, côté littoral seulement, pas de montagne), dates Carnaval 2027 sur la page événements Nice, liens depuis agenda et Monaco, sitemap.
 - 2026-11-17 : admin, le bouton Actualiser recharge aussi la compta (cache cRows vidé).
+- 2026-11-17 : admin compta, « Achats TTC » renommé « Dépenses TTC » (plus clair pour Anthony).

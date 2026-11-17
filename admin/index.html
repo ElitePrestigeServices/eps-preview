@@ -1680,7 +1680,7 @@ async function renderCompta(v) {
   const tvaDue = vTva - aTva;
   box.replaceChildren(...[
     h('div', { class: 'stats four', style: 'margin-bottom:12px' },
-      stat(eur(vTtc), 'Ventes TTC'), stat(eur(aTtc), 'Achats TTC'),
+      stat(eur(vTtc), 'Ventes TTC'), stat(eur(aTtc), 'Dépenses TTC'),
       stat(eur(Math.abs(tvaDue)), tvaDue >= 0 ? 'TVA à payer (estimation)' : 'Crédit de TVA (estimation)'),
       stat(eur((vTtc - vTva) - (aTtc - aTva)), 'Résultat HT du mois')),
     h('p', { class: 'hint', style: 'margin-top:0' }, 'TVA collectée ' + eur(vTva) + ' · TVA sur achats ' + eur(aTva) + '. Estimation avant validation par ton comptable (certaines TVA ne sont pas déductibles à 100 %, et l’amortissement du véhicule n’est pas compté ici).'),
@@ -1737,7 +1737,7 @@ async function renderDocs(v) {
   { const rows = cRows || [], sm = (k, f) => rows.filter(r => r.kind === k).reduce((a, r) => a + f(r), 0);
     const vT = sm('vente', r => r.amount_ttc_cents), aT = sm('achat', r => r.amount_ttc_cents), due = sm('vente', r => r.vat_cents) - sm('achat', r => r.vat_cents);
     const st = (val, l) => h('div', { class: 'stat' }, h('div', { class: 'v' }, val), h('div', { class: 'l' }, l));
-    v.append(h('div', { class: 'stats four', style: 'margin-bottom:6px' }, st(eur(vT), 'Ventes TTC'), st(eur(aT), 'Achats TTC'), st(eur(Math.abs(due)), due >= 0 ? 'TVA à payer' : 'Crédit de TVA'), st(eur((vT - sm('vente', r => r.vat_cents)) - (aT - sm('achat', r => r.vat_cents))), 'Résultat HT')),
+    v.append(h('div', { class: 'stats four', style: 'margin-bottom:6px' }, st(eur(vT), 'Ventes TTC'), st(eur(aT), 'Dépenses TTC'), st(eur(Math.abs(due)), due >= 0 ? 'TVA à payer' : 'Crédit de TVA'), st(eur((vT - sm('vente', r => r.vat_cents)) - (aT - sm('achat', r => r.vat_cents))), 'Résultat HT')),
       h('p', { class: 'hint', style: 'margin-top:0;text-transform:none' }, 'Chiffres du mois affiché (flèches ‹ ›) · estimation à faire valider par ton comptable · détail dans « Chiffres et TVA »'));
     const y = cMonth.slice(0, 4), ya = await db.from('eps_compta').select('kind,amount_ttc_cents,vat_cents,op_date').gte('op_date', y + '-01-01').lte('op_date', y + '-12-31');
     if (!ya.error && ya.data.length) { const yv = ya.data.filter(r => r.kind === 'vente'), months = [...new Set(ya.data.map(r => r.op_date.slice(0, 7)))].sort();

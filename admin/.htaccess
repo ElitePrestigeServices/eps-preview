@@ -1,0 +1,4 @@
+# Admin : toujours recharger la dernière version (17/11/2026)
+<IfModule mod_headers.c>
+Header set Cache-Control "no-cache, must-revalidate"
+</IfModule>

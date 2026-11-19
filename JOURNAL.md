@@ -182,3 +182,4 @@
 - 2026-11-17 : admin, section Clients dans Plus ; pages /admin/ en no-cache (le téléphone gardait l'ancienne version).
 - 2026-11-19 : SEO, accès aéroport de Nice (pont du Mercantour, voie Mathis) sur 4 pages de transfert FR/EN ; Monaco en hiver (Rallye, Cirque) sur les transferts Nice–Monaco FR/EN.
 - 2026-11-19 : réservation, prix fixe aussi pour un hôtel ou une adresse à Cannes/Monaco/Saint-Tropez (avant : « sur devis » sauf saisie exacte).
+- 2026-11-19 : SEO, page anglaise Monte-Carlo Rally 2027 (hreflang avec la page FR), liens depuis les pages Monaco EN, sitemap 93 URL.

@@ -98,11 +98,10 @@
     if ((/\bnice\b/.test(v) || /\bnce\b/.test(v)) &&
         /\baeroport\b|\bairport\b|\bnce\b/.test(v)) return 'nice-airport';
     if (/\bmandelieu\b/.test(v) && /\baeroport\b|\bairport\b|\baerodrome\b/.test(v)) return 'mandelieu-airport';
-    if (/^cannes(?: france| 06400| 06400 france)?$/.test(v) ||
-        (/\bcannes\b/.test(v) && /\b06400\b/.test(v) && !/\b(?:mandelieu|bocca|le cannet)\b/.test(v)) ||
-        /^cannes(?: alpes maritimes)?(?: provence alpes cote d azur)? france$/.test(v)) return 'cannes-centre';
-    if (/^monaco(?: france)?$/.test(v)) return 'monaco';
-    if (/^saint tropez(?: france)?$/.test(v)) return 'saint-tropez';
+    // 19/11/2026 : un hôtel ou une adresse à Cannes, Monaco ou Saint-Tropez (« Hôtel Martinez, Cannes ») donne aussi le prix fixe.
+    if (/\bcannes\b/.test(v) && !/\b(?:mandelieu|bocca|cannet|super cannes|aeroport|airport|aerodrome)\b/.test(v)) return 'cannes-centre';
+    if (/\bmonaco\b|\bmonte carlo\b/.test(v) && !/\b(?:aeroport|airport|heliport)\b/.test(v)) return 'monaco';
+    if (/\b(?:saint|st) tropez\b/.test(v)) return 'saint-tropez';
     if (/\bisola\b/.test(v)) return 'isola-2000';
     if (/\bauron\b/.test(v)) return 'auron';
     return null;

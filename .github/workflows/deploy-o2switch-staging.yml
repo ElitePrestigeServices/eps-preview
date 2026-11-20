@@ -95,6 +95,7 @@ jobs:
         run: |
           mkdir -p "$RUNNER_TEMP/eps-public"
           rsync -a ./ "$RUNNER_TEMP/eps-public/" \
+            --include='supabase/' --include='supabase/.htaccess' --exclude='supabase/**' \
             --exclude=.git --exclude=.github --exclude=.gitignore \
             --exclude=README.md --exclude='*.md' \
             --exclude='node_modules' --exclude='.env*' --exclude='scripts' --exclude='tests'

@@ -57,8 +57,6 @@
     ['Découvrir', 'Discover', 'Scopri', 'Descubrir'],
     // Véhicules
     ['Nos véhicules', 'Our vehicles', 'I nostri veicoli', 'Nuestros vehículos'],
-    ['La flotte', 'The fleet', 'La flotta', 'La flota'],
-    ['Faites défiler pour faire tourner les véhicules', 'Scroll to turn the vehicles', 'Scorri per far girare i veicoli', 'Desplácese para girar los vehículos'],
     ['Quatre catégories Mercedes, du trajet en duo au groupe de sept avec bagages.', 'Four Mercedes categories, from a couple to a group of seven with luggage.', 'Quattro categorie Mercedes, dalla coppia al gruppo di sette con bagagli.', 'Cuatro categorías Mercedes, de una pareja a un grupo de siete con equipaje.'],
     ['Mercedes Classe E, EQE ou équivalent', 'Mercedes E-Class, EQE or similar', 'Mercedes Classe E, EQE o equivalente', 'Mercedes Clase E, EQE o similar'],
     ['Mercedes Classe V Extra-Long ou équivalent', 'Mercedes V-Class Extra-Long or similar', 'Mercedes Classe V Extra-Long o equivalente', 'Mercedes Clase V Extralarga o similar'],

@@ -1,130 +1,93 @@
-/* Elite Prestige Services — la flotte en 3D (20/11/2026, demande d'Anthony).
-   Les 4 vidéos de véhicules sont découpées en 60 images WebP chacune (assets/v2/flotte3d/<véhicule>/d|m/NN.webp),
-   dessinées dans un canvas selon le défilement, comme la démo Signature de MyCreativeSite.
-   - d = ordinateur (1200 px), m = téléphone (720 px) ;
-   - chargement progressif : rien n'est téléchargé avant que la section approche, puis 1 image sur 12, 1 sur 6, 1 sur 3, puis toutes,
-     en commençant par le véhicule affiché ; pendant ce temps, on dessine l'image chargée la plus proche ;
-   - mouvement réduit demandé ou pas de canvas : la section reste masquée et les cartes classiques suffisent. */
+/* Elite Prestige Services — la flotte en 3D (20/11/2026, demande d'Anthony : « dans la vignette, elle tourne toute seule »).
+   Chaque vignette de « Nos véhicules » fait tourner son véhicule en boucle, sans défilement.
+   - 60 images WebP par véhicule (assets/v2/flotte3d/<véhicule>/m/NN.webp, 720 px), découpées des vidéos fournies ;
+   - les vidéos ne reviennent pas exactement au point de départ : on joue l'aller puis le retour, pour une boucle sans saut ;
+   - chargement progressif : une vignette ne télécharge ses images que lorsqu'elle approche de l'écran
+     (1 sur 6, puis 1 sur 3, puis toutes) ; la photo d'origine reste affichée tant que ce n'est pas prêt ;
+   - l'animation s'arrête quand la vignette sort de l'écran ou que l'onglet est masqué ;
+   - mouvement réduit demandé : rien ne bouge, la photo d'origine reste. */
 (() => {
-  const root = document.querySelector('[data-f3d]');
-  if (!root) return;
-  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const cv = root.querySelector('canvas');
-  const ctx = cv && cv.getContext && cv.getContext('2d');
-  if (reduce || !ctx) return;
-  root.classList.add('on');
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const MAP = { 'Business Class': 'business', 'Business Van': 'van', 'Electric Class': 'electric', 'First Class': 'first' };
+  const N = 60, FPS = 12;
+  const cards = [];
+  document.querySelectorAll('.fleet .car').forEach((car, idx) => {
+    const name = MAP[car.querySelector('[data-vehicle]')?.dataset.vehicle];
+    const img = car.querySelector('img');
+    if (!name || !img) return;
+    const cv = document.createElement('canvas');
+    const ctx = cv.getContext && cv.getContext('2d');
+    if (!ctx) return;
+    cv.className = 'f3d-cv';
+    cv.setAttribute('aria-hidden', 'true');
+    img.after(cv);
+    cards.push({ car, name, cv, ctx, imgs: new Array(N).fill(null), started: false, visible: false, count: 0, phase: idx * 17 });
+  });
+  if (!cards.length) return;
 
-  const CARS = ['business', 'van', 'electric', 'first'];
-  const N = 60;
-  const stage = root.querySelector('.f3d-stage');
-  const items = [...root.querySelectorAll('.f3d-item')];
-  const dots = [...root.querySelectorAll('.f3d-dots button')];
-  const bar = root.querySelector('.f3d-load b');
-  const size = () => (Math.min(innerWidth, screen.width || innerWidth) <= 820 ? 'm' : 'd');
-  let set = size();
-  const imgs = CARS.map(() => new Array(N).fill(null));
-  const ok = CARS.map(() => new Array(N).fill(false));
-  let loaded = 0, started = false, cur = -1, want = 0, raf = 0;
-
-  // ordre de chargement : image 0 de chaque véhicule, puis pas de 12, 6, 3, 1 ; le véhicule courant d'abord
-  function order(first) {
-    const out = [], seen = new Set();
-    const cars = [first, ...CARS.map((_, i) => i).filter((i) => i !== first)];
-    const push = (c, k) => { const key = c * N + k; if (!seen.has(key)) { seen.add(key); out.push([c, k]); } };
-    cars.forEach((c) => push(c, 0));
-    for (const step of [12, 6, 3, 1]) for (const c of cars) for (let k = 0; k < N; k += step) push(c, k);
-    return out;
-  }
-  function start() {
-    if (started) return;
-    started = true;
-    const q = order(Math.max(0, want));
+  function load(c) {
+    if (c.started) return;
+    c.started = true;
+    const q = [], seen = new Set();
+    for (const step of [6, 3, 1]) for (let k = 0; k < N; k += step) if (!seen.has(k)) { seen.add(k); q.push(k); }
     let i = 0, active = 0;
     const next = () => {
-      while (active < 6 && i < q.length) {
-        const [c, k] = q[i++];
-        if (ok[c][k]) continue;
+      while (active < 4 && i < q.length) {
+        const k = q[i++];
         active++;
         const im = new Image();
         im.decoding = 'async';
-        im.onload = () => { ok[c][k] = true; imgs[c][k] = im; done(); if (c === cur || cur < 0) draw(); };
-        im.onerror = done;
-        im.src = `assets/v2/flotte3d/${CARS[c]}/${set}/${String(k).padStart(2, '0')}.webp`;
+        im.onload = () => { c.imgs[k] = im; c.count++; if (c.count >= 10) c.car.classList.add('f3d-ok'); fin(); };
+        im.onerror = fin;
+        im.src = `assets/v2/flotte3d/${c.name}/m/${String(k).padStart(2, '0')}.webp`;
       }
     };
-    const done = () => {
-      active--; loaded++;
-      if (bar) bar.style.transform = `scaleX(${Math.min(1, loaded / (CARS.length * N))})`;
-      if (loaded >= CARS.length * N) root.classList.add('ready');
-      next();
-    };
+    const fin = () => { active--; next(); tick(); };
     next();
   }
   function nearest(c, k) {
     for (let d = 0; d < N; d++) {
-      if (k - d >= 0 && ok[c][k - d]) return imgs[c][k - d];
-      if (k + d < N && ok[c][k + d]) return imgs[c][k + d];
+      if (k - d >= 0 && c.imgs[k - d]) return c.imgs[k - d];
+      if (k + d < N && c.imgs[k + d]) return c.imgs[k + d];
     }
     return null;
   }
-  function fit() {
-    const r = stage.getBoundingClientRect();
+  function draw(c, t) {
+    const r = c.cv.getBoundingClientRect();
+    if (!r.width) return;
     const dpr = Math.min(2, devicePixelRatio || 1);
-    const w = Math.round(r.width * dpr), h = Math.round(r.height * dpr);
-    if (cv.width !== w || cv.height !== h) { cv.width = w; cv.height = h; }
-  }
-  function progress() {
-    const r = root.getBoundingClientRect();
-    const span = r.height - innerHeight;
-    return span > 0 ? Math.min(1, Math.max(0, -r.top / span)) : 0;
-  }
-  function draw() {
-    raf = 0;
-    fit();
-    const t = progress() * CARS.length;
-    const c = Math.min(CARS.length - 1, Math.floor(t));
-    const local = Math.min(1, t - c);
-    const k = Math.min(N - 1, Math.round(local * (N - 1)));
-    want = c;
-    if (c !== cur) {
-      cur = c;
-      items.forEach((el, i) => el.classList.toggle('is', i === c));
-      dots.forEach((el, i) => el.classList.toggle('is', i === c));
-    }
-    const W = cv.width, H = cv.height;
-    ctx.fillStyle = '#000';
-    ctx.fillRect(0, 0, W, H);
+    const W = Math.round(r.width * dpr), H = Math.round(r.height * dpr);
+    if (c.cv.width !== W || c.cv.height !== H) { c.cv.width = W; c.cv.height = H; }
+    const cycle = 2 * (N - 1);
+    const p = Math.floor(t * FPS + c.phase) % cycle;
+    const k = p < N ? p : cycle - p;
     const im = nearest(c, k);
     if (!im) return;
-    // fondu au passage d'un véhicule à l'autre
-    let a = 1;
-    if (c > 0) a = Math.min(a, local / 0.07);
-    if (c < CARS.length - 1) a = Math.min(a, (1 - local) / 0.07);
-    ctx.globalAlpha = Math.max(0, Math.min(1, a));
-    const mobile = W < H * 1.05;
-    // téléphone : le véhicule occupe toute la largeur, au-dessus du texte ; ordinateur : centré, un peu à droite du texte
-    const boxW = mobile ? W * 1.08 : W * 0.66, boxH = mobile ? H * 0.5 : H * 0.86;
-    const s = Math.min(boxW / im.naturalWidth, boxH / im.naturalHeight);
+    const s = Math.min(W / im.naturalWidth, H / im.naturalHeight);
     const dw = im.naturalWidth * s, dh = im.naturalHeight * s;
-    const x = mobile ? (W - dw) / 2 : W * 0.62 - dw / 2;
-    const y = mobile ? H * 0.36 - dh / 2 : (H - dh) / 2;
-    ctx.drawImage(im, Math.round(x), Math.round(y), Math.round(dw), Math.round(dh));
-    ctx.globalAlpha = 1;
+    c.ctx.fillStyle = '#000';
+    c.ctx.fillRect(0, 0, W, H);
+    c.ctx.drawImage(im, Math.round((W - dw) / 2), Math.round((H - dh) / 2), Math.round(dw), Math.round(dh));
   }
-  const ask = () => { if (!raf) raf = requestAnimationFrame(draw); };
-  addEventListener('scroll', ask, { passive: true });
-  addEventListener('resize', () => {
-    const s = size();
-    if (s !== set && loaded === 0) set = s; // on ne recharge pas tout si l'écran tourne en cours de route
-    ask();
-  });
-  dots.forEach((el, i) => el.addEventListener('click', () => {
-    const r = root.getBoundingClientRect();
-    const span = r.height - innerHeight;
-    scrollTo({ top: scrollY + r.top + span * ((i + 0.5) / CARS.length), behavior: 'smooth' });
-  }));
+  let raf = 0, last = 0;
+  function loop(now) {
+    raf = 0;
+    if (document.hidden) return;
+    const on = cards.filter((c) => c.visible && c.count);
+    if (!on.length) return;
+    if (now - last >= 1000 / FPS - 2) { last = now; on.forEach((c) => draw(c, now / 1000)); }
+    raf = requestAnimationFrame(loop);
+  }
+  const tick = () => { if (!raf) raf = requestAnimationFrame(loop); };
+  document.addEventListener('visibilitychange', tick);
+  addEventListener('resize', tick);
   if ('IntersectionObserver' in window) {
-    new IntersectionObserver((es, ob) => { if (es.some((e) => e.isIntersecting)) { start(); ob.disconnect(); } }, { rootMargin: '150% 0px' }).observe(root);
-  } else start();
-  draw();
+    const ob = new IntersectionObserver((es) => es.forEach((e) => {
+      const c = cards.find((x) => x.car === e.target);
+      if (!c) return;
+      c.visible = e.isIntersecting;
+      if (e.isIntersecting) { load(c); tick(); }
+    }), { rootMargin: '300px 300px' });
+    cards.forEach((c) => ob.observe(c.car));
+  } else cards.forEach((c) => { c.visible = true; load(c); tick(); });
 })();

@@ -349,7 +349,3 @@ p{margin:0}
 .field-photos img{width:100%;height:auto;aspect-ratio:3/2;object-fit:cover;border-radius:14px;display:block}
 .field-photos figcaption{margin-top:6px;font-size:.8rem;color:rgba(237,230,214,.6)}
 @media(max-width:640px){.field-photos{grid-template-columns:1fr}}
-/* La flotte en 3D (20/11/2026) : dans chaque vignette, le véhicule tourne tout seul (canvas, assets/v2/flotte3d.js) */
-.car{position:relative}
-.car .f3d-cv{position:absolute;left:0;top:0;width:100%;aspect-ratio:665/416;display:block;background:#000;opacity:0;transition:opacity .5s ease;pointer-events:none}
-.car.f3d-ok .f3d-cv{opacity:1}

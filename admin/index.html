@@ -1305,6 +1305,7 @@ async function renderStats(v) {
   table('Appareils', data.appareils, 'appareil', 'visiteurs');
   table('Langue du site', data.langues, 'langue', 'visiteurs');
   table('Fuseau horaire des visiteurs', data.fuseaux, 'fuseau', 'visiteurs', x => x.replace('_', ' '));
+  if (data.robots_ecartes) box.append(h('p', { class: 'hint' }, data.robots_ecartes + ' visite(s) de robots écartée(s) (fuseau UTC ou asiatique, faux sites référents) : seuls les vrais visiteurs sont comptés.'));
   box.append(h('p', { class: 'hint' }, 'Statistiques anonymes, sans cookie. Ton appareil n’est pas compté si tu as touché ton nom dans les mentions légales ou ouvert le site avec #nostats (#stats pour être recompté).'));
 }
 

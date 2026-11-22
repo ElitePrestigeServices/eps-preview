@@ -23,6 +23,8 @@ LANG = {
     "en": {"home": "Home", "aria": "Breadcrumb", "faq": ["Frequently asked questions", "FAQ"]},
     "it": {"home": "Home", "aria": "Percorso", "faq": ["Domande frequenti", "FAQ"]},
     "es": {"home": "Inicio", "aria": "Ruta de navegación", "faq": ["Preguntas frecuentes", "FAQ"]},
+    "ru": {"home": "Главная", "aria": "Главная", "faq": ["Частые вопросы", "FAQ"]},
+    "zh": {"home": "首页", "aria": "首页", "faq": ["常见问题", "FAQ"]},
 }
 # Pages françaises rangées sous /destinations/ (hub). Les autres pages FR sont directement sous l'accueil.
 NO_HUB_FR = {"destinations", "agenda-evenements-cote-dazur", "a-propos"}
@@ -45,7 +47,7 @@ def process(path):
     h = open(path, encoding="utf-8").read()
     if f"{BASE}/{slug}/" not in PUBLIC or 'http-equiv="refresh"' in h:
         return None
-    lang = slug.split("/")[0] if slug.split("/")[0] in ("en", "it", "es") else "fr"
+    lang = slug.split("/")[0] if slug.split("/")[0] in ("en", "it", "es", "ru", "zh") else "fr"
     L = LANG[lang]
     m = re.search(r"<h1[^>]*>(.*?)</h1>", h, re.S)
     if not m:
@@ -57,7 +59,10 @@ def process(path):
     h = re.sub(r'<script type="application/ld\+json" data-eps="(?:ariane|faq)">.*?</script>', "", h, flags=re.S)
     h = re.sub(r'<nav class="crumbs".*?</nav>', "", h, flags=re.S)
 
-    trail = [(L["home"], f"{BASE}/", "/")]
+    if lang in ("ru", "zh"):  # pages russes / chinoises : leur propre accueil (/ru/, /zh/)
+        trail = [] if slug == lang else [(L["home"], f"{BASE}/{lang}/", f"/{lang}/")]
+    else:
+        trail = [(L["home"], f"{BASE}/", "/")]
     if lang == "fr" and slug not in NO_HUB_FR:
         trail.append(("Destinations", f"{BASE}/destinations/", "/destinations/"))
     trail.append((name, url, None))

@@ -359,3 +359,6 @@ html[lang|=es] .eps-cta-wa::after,html[lang|=es] .eps-wa-float::after{content:"P
 html[lang|=ru] .eps-cta-wa::after,html[lang|=ru] .eps-wa-float::after{content:"Пишите нам — ответ письменно"}
 html[lang|=zh] .eps-cta-wa::after,html[lang|=zh] .eps-wa-float::after{content:"请发消息，书面跟进"}
 .eps-cta-bar .eps-cta-wa{padding:4px 6px}.eps-cta-bar .eps-cta-wa::after{font-size:10.5px;letter-spacing:-.1px}
+/* Pages en chinois : polices système avec idéogrammes (22/11/2026) */
+html[lang|=zh] body{font-family:"PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei",var(--sans),sans-serif}
+html[lang|=zh] h1,html[lang|=zh] h2,html[lang|=zh] h3{font-family:"Songti SC","Noto Serif SC","SimSun",var(--serif),serif;letter-spacing:0}

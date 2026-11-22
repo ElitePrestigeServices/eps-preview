@@ -144,7 +144,12 @@
     const hours = (pickupParis(request.date, request.time) - Date.now()) / 3600000;
     if (!Number.isFinite(hours) || hours < 2) return null;
     const partner = window.epsPartner && request.partnerCode && request.partnerCode === window.epsPartner.code ? window.epsPartner : null;
-    if (partner) return { amount: base, base, event: null, urgency: 0, percent: 0, partner: partner.name, indicative: true };
+    // Partenaire : tarif fixe sans majoration, moins sa remise éventuelle (22/11/2026), arrondi aux 5 € les plus proches.
+    if (partner) {
+      const discount = Math.max(0, Math.min(30, Number(partner.discount) || 0));
+      const amount = discount ? Math.round(base * (1 - discount / 100) / 5) * 5 : base;
+      return { amount, base, event: null, urgency: 0, percent: 0, partner: partner.name, discount, indicative: true };
+    }
     const event = events.filter(item => request.date >= item.start && request.date <= item.end)
       .sort((a, b) => b.percent - a.percent)[0];
     const urgency = hours <= 6 ? 30 : hours <= 24 ? 20 : hours <= 48 ? 10 : 0;

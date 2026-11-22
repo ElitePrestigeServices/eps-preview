@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
-<script src="../pricing.js?v=20261119-zones"></script>
+<script src="../pricing.js?v=20261122-remise"></script>
 <style>
 :root{
   --bg:#0b0b0c; --surface:#161616; --surface-2:#1f1e1c; --line:#2e2c28;
@@ -359,7 +359,7 @@ async function loadCore() {
     db.from('eps_quote_drafts').select('reservation_id,amount_cents,note,status,updated_at'),
     db.from('eps_reservation_quotes').select('reservation_id,amount_cents,state,sent_at,accepted_at'),
     db.from('eps_reservation_payments').select('reservation_id,amount_cents,state,paid_at,authorized_at,authorization_expires_at'),
-    db.from('eps_partners').select('id,code,name,kind,contact_email,commission_percent,active,created_at').order('created_at', { ascending: false }),
+    db.from('eps_partners').select('id,code,name,kind,contact_email,commission_percent,discount_percent,active,created_at').order('created_at', { ascending: false }),
     db.from('eps_customer_requests').select('id,reservation_id,request_type,message,status,created_at,processed_at').order('created_at', { ascending: false }).limit(100),
     db.from('pricing_events').select('name,start_date,end_date,surcharge_percent,enabled,kind').order('start_date', { ascending: true }),
     db.from('eps_admin_notifications').select('id,kind,source_id,summary,created_at,read_at').order('created_at', { ascending: false }).limit(50),
@@ -868,10 +868,23 @@ function renderPartners(v) {
   right.append(h('h2', { style: 'margin-top:4px' }, 'En résumé'), h('div', { class: 'stats' },
     h('div', { class: 'stat' }, h('div', { class: 'v' }, S.partners.filter(p => p.active && p.kind !== 'test').length), h('div', { class: 'l' }, 'Partenaires actifs')),
     h('div', { class: 'stat' }, h('div', { class: 'v' }, eur(total)), h('div', { class: 'l' }, 'Commissions à reverser'))),
-    h('p', { class: 'hint' }, 'Chaque partenaire a un lien personnel : ses clients réservent au tarif fixe, sans majoration, et tu reverses la commission sur les courses payées.'));
+    h('p', { class: 'hint' }, 'Chaque partenaire a un lien personnel : ses réservations passent au tarif fixe, sans majoration, avec sa remise déjà déduite du prix affiché. Si tu lui as donné une commission à la place, tu la reverses sur les courses payées.'));
   v.append(h('div', { class: 'grid-desk' }, left, right));
 }
 const slug = s => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toUpperCase().replace(/[^A-Z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 20);
+function partnerDealText(p) {
+  const d = Number(p.discount_percent || 0), c = Number(p.commission_percent || 0);
+  return 'Vos réservations y passent au tarif fixe, sans majoration' + (d ? ', avec votre remise partenaire de ' + d + '\u00a0% déjà déduite du prix affiché' : '') + '.' + (c ? ' Nous vous reversons ' + c + '\u00a0% sur chaque course payée.' : '');
+}
+function partnerDealForm(p) {
+  const d = h('input', { type: 'number', min: '0', max: '30', step: '1', value: String(Number(p.discount_percent || 0)) });
+  const c = h('input', { type: 'number', min: '0', max: '50', step: '0.5', value: String(Number(p.commission_percent || 0)) });
+  return h('div', { style: 'margin-top:14px' }, h('div', { class: 'grid2' }, fld('Remise client (%)', d), fld('Commission reversée (%)', c)),
+    h('div', { class: 'btns' }, h('button', { class: 'btn quiet', onclick: async () => {
+      const dv = Math.max(0, Math.min(30, Number(d.value) || 0)), cv = Math.max(0, Math.min(50, Number(c.value) || 0));
+      const x = await db.from('eps_partners').update({ discount_percent: dv, commission_percent: cv }).eq('id', p.id);
+      if (x.error) return toast(x.error.message, true); toast('Conditions du partenaire enregistrées.'); closeSheet(); reload(); } }, 'Enregistrer la remise et la commission')));
+}
 function openPartner(id) {
   const p = id ? S.partners.find(x => x.id === id) : null;
   const body = h('div');
@@ -881,11 +894,13 @@ function openPartner(id) {
     body.append(h('div', { class: 'card' },
       h('div', { class: 'badges' }, h('span', { class: 'badge ' + (p.active ? 'ok' : '') }, p.active ? 'Actif' : 'Désactivé'), h('span', { class: 'badge partner' }, p.code)),
       h('dl', { class: 'kv' }, h('dt', {}, 'Type'), h('dd', {}, KINDS[p.kind] || p.kind), h('dt', {}, 'Contact'), h('dd', {}, p.contact_email || '—'),
-        h('dt', {}, 'Courses'), h('dd', {}, r.courses), h('dt', {}, 'Payé'), h('dd', {}, eur(r.paid)), h('dt', {}, 'Commission'), h('dd', {}, eur(r.commission) + ' (' + Number(p.commission_percent) + ' %)')),
+        h('dt', {}, 'Courses'), h('dd', {}, r.courses), h('dt', {}, 'Payé'), h('dd', {}, eur(r.paid)), h('dt', {}, 'Remise client'), h('dd', {}, Number(p.discount_percent || 0) ? Number(p.discount_percent) + ' % sur le tarif fixe' : 'Aucune'),
+        h('dt', {}, 'Commission'), h('dd', {}, eur(r.commission) + ' (' + Number(p.commission_percent) + ' %)')),
+      partnerDealForm(p),
       h('label', { class: 'field', style: 'margin-top:14px' }, h('span', {}, 'Lien de réservation du partenaire'), h('input', { value: link, readonly: true })),
       h('div', { class: 'btns two' },
         h('button', { class: 'btn quiet', onclick: async () => { try { await navigator.clipboard.writeText(link); toast('Lien copié.'); } catch { toast('Sélectionne le lien pour le copier.', true); } } }, 'Copier le lien'),
-        p.contact_email ? h('a', { class: 'btn quiet', href: 'mailto:' + p.contact_email + '?subject=' + encodeURIComponent('Votre lien de réservation Elite Prestige Services') + '&body=' + encodeURIComponent('Bonjour,\n\nVoici votre lien de réservation partenaire : ' + link + '\n\nVos clients y réservent au tarif fixe, sans majoration, et nous vous reversons ' + Number(p.commission_percent) + ' % sur chaque course payée.\n\nElite Prestige Services') }, 'Envoyer par e-mail') : h('span')),
+        p.contact_email ? h('a', { class: 'btn quiet', href: 'mailto:' + p.contact_email + '?subject=' + encodeURIComponent('Votre lien de réservation Elite Prestige Services') + '&body=' + encodeURIComponent('Bonjour,\n\nVoici votre lien de réservation partenaire : ' + link + '\n\n' + partnerDealText(p) + '\n\nElite Prestige Services') }, 'Envoyer par e-mail') : h('span')),
       h('div', { class: 'btns' }, h('button', { class: p.active ? 'btn danger' : 'btn ok', onclick: async () => {
         const x = await db.from('eps_partners').update({ active: !p.active }).eq('id', p.id);
         if (x.error) return toast(x.error.message, true); toast(p.active ? 'Partenaire désactivé : son lien ne donne plus le tarif fixe.' : 'Partenaire réactivé.'); closeSheet(); reload(); } }, p.active ? 'Désactiver ce partenaire' : 'Réactiver ce partenaire'))));
@@ -899,14 +914,16 @@ function openPartner(id) {
   code.addEventListener('input', () => { code.dataset.touched = '1'; code.value = code.value.toUpperCase().replace(/[^A-Z0-9-]/g, ''); });
   const f = h('form', { onsubmit: async e => {
     e.preventDefault(); const v = Object.fromEntries(new FormData(f));
-    const x = await db.from('eps_partners').insert({ name: v.name.trim(), code: v.code, kind: v.kind, contact_email: v.contact_email || null, commission_percent: Number(v.commission_percent) || 10 });
+    const x = await db.from('eps_partners').insert({ name: v.name.trim(), code: v.code, kind: v.kind, contact_email: v.contact_email || null, commission_percent: Number(v.commission_percent) || 0, discount_percent: Number(v.discount_percent) || 0 });
     if (x.error) return toast(x.error.code === '23505' ? 'Ce code existe déjà, choisis-en un autre.' : x.error.message, true);
     toast('Partenaire ajouté.'); closeSheet(); await reload();
   } },
     fld('Nom', name),
     fld('Type', h('select', { name: 'kind' }, Object.entries(KINDS).filter(([k]) => k !== 'test').map(([k, l]) => h('option', { value: k }, l)))),
     fld('E-mail du contact', h('input', { name: 'contact_email', type: 'email' })),
-    h('div', { class: 'grid2' }, fld('Code (lien)', code), fld('Commission (%)', h('input', { name: 'commission_percent', type: 'number', min: '0', max: '50', step: '0.5', value: '10' }))),
+    fld('Code (lien)', code),
+    h('div', { class: 'grid2' }, fld('Remise client (%)', h('input', { name: 'discount_percent', type: 'number', min: '0', max: '30', step: '1', value: '10' })), fld('Commission reversée (%)', h('input', { name: 'commission_percent', type: 'number', min: '0', max: '50', step: '0.5', value: '0' }))),
+    h('p', { class: 'hint' }, 'Remise : ses réservations sont moins chères (agences, hôtels qui réservent pour leurs clients). Commission : le client paie le tarif normal et tu reverses un pourcentage au partenaire. En général, on choisit l’un ou l’autre.'),
     h('p', { class: 'hint' }, 'Le code apparaît dans son lien : elite-prestige-services.fr/?partenaire=CODE'),
     h('button', { class: 'btn primary', type: 'submit' }, 'Ajouter le partenaire'));
   openSheet('Nouveau partenaire', f);

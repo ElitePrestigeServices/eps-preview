@@ -192,7 +192,7 @@ function renderReview() {
   addDetail('E-mail', currentRequest.customerEmail);
   addDetail('Téléphone', currentRequest.customerPhone);
   const eur = n => Number(n).toLocaleString('fr-FR', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 });
-  if (currentRequest.estimate) { const e = currentRequest.estimate; addDetail(e.partner ? 'Tarif partenaire TTC' : 'Prix fixe TTC', eur(e.amount) + (e.partner ? ' — ' + e.partner : '')); }
+  if (currentRequest.estimate) { const e = currentRequest.estimate; addDetail(e.partner ? 'Tarif partenaire TTC' : 'Prix fixe TTC', eur(e.amount) + (e.partner ? ' — ' + e.partner + (e.discount ? ' (remise ' + e.discount + ' % incluse)' : '') : '')); }
   else if (currentRequest.estimateOptions?.length) addDetail('Prix fixe TTC', currentRequest.estimateOptions.map(o => T(o.vehicle) + ' ' + eur(o.amount)).join(' · '));
   else addDetail('Tarif', T('Sur devis après étude du trajet'));
   if (currentRequest.notes) addDetail('Informations utiles', currentRequest.notes);

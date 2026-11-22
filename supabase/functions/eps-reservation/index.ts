@@ -1,5 +1,6 @@
 // EPS booking API — Supabase migration. No client-side database write access.
 // 04/11/2026 (v21) : le prix fixe affiché au client sur le site (calculé dans le navigateur) est repris dans l'alerte admin (à vérifier) et dans l'accusé de réception client.
+// 22/11/2026 : remise partenaire (eps_partners.discount_percent) indiquée dans l'alerte admin.
 // 03/11/2026 : code partenaire (agences) — vérifié côté serveur, enregistré dans eps_reservations.partner_code.
 const url=Deno.env.get('SUPABASE_URL')||'';
 const service=Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')||'';
@@ -48,12 +49,12 @@ Deno.serve(async req=>{
  &&d.notes.length<=1000;
  if(!valid)return response({error:'Vérifiez les informations de la demande.'},400,origin);
  // Code partenaire : facultatif ; un code inconnu ou inactif est simplement ignoré (la demande passe quand même).
- let partner_code:string|null=null,partner_name='';
+ let partner_code:string|null=null,partner_name='',partner_deal='';
  const pc=clean(input.partnerCode).toUpperCase();
  if(/^[A-Z0-9-]{3,24}$/.test(pc)){
   try{
-   const pr=await fetch(url+'/rest/v1/eps_partners?select=code,name&active=eq.true&code=eq.'+encodeURIComponent(pc)+'&limit=1',{headers:{apikey:service,Authorization:'Bearer '+service}});
-   if(pr.ok){const rows=await pr.json();if(rows[0]){partner_code=rows[0].code;partner_name=rows[0].name}}
+   const pr=await fetch(url+'/rest/v1/eps_partners?select=code,name,discount_percent,commission_percent&active=eq.true&code=eq.'+encodeURIComponent(pc)+'&limit=1',{headers:{apikey:service,Authorization:'Bearer '+service}});
+   if(pr.ok){const rows=await pr.json();if(rows[0]){partner_code=rows[0].code;partner_name=rows[0].name;const dp=Number(rows[0].discount_percent)||0,cp=Number(rows[0].commission_percent)||0;partner_deal=[dp?'remise '+dp+' % déjà appliquée au prix affiché':'tarif fixe sans majoration',cp?'commission '+cp+' % à reverser':''].filter(Boolean).join(', ')}}
   }catch(e){console.error('EPS reservation partner',String(e))}
  }
  // Prix affiché sur le site (calcul navigateur, non garanti) : informatif seulement.
@@ -68,7 +69,7 @@ Deno.serve(async req=>{
  const resend=Deno.env.get('RESEND_API_KEY'),from='Elite Prestige Services <reservation@elite-prestige-services.fr>',to=Deno.env.get('EPS_TO_EMAIL')||'contact@elite-prestige-services.fr';
  let receiptSent=false,adminAlertSent=false,emailError='';
  if(resend){
-  const text=['Nouvelle demande EPS '+reference,...(partner_code?['PARTENAIRE : '+partner_name+' ('+partner_code+') — tarif fixe, commission 10 %']:[]),'Client : '+d.customer_name,'E-mail : '+d.customer_email,'Téléphone : '+d.customer_phone,'Prestation : '+d.type,'Départ : '+d.departure,'Destination : '+d.destination,'Date : '+d.date.split('-').reverse().join('/')+' à '+d.time,'Véhicule : '+d.vehicle,'Passagers : '+d.passengers,...(shown?['Prix affiché sur le site : '+shown+' — à vérifier avant le devis']:['Prix : sur devis (trajet hors grille)']),'Notes : '+d.notes,'Aucun paiement effectué.'].join('\n');
+  const text=['Nouvelle demande EPS '+reference,...(partner_code?['PARTENAIRE : '+partner_name+' ('+partner_code+') — '+partner_deal]:[]),'Client : '+d.customer_name,'E-mail : '+d.customer_email,'Téléphone : '+d.customer_phone,'Prestation : '+d.type,'Départ : '+d.departure,'Destination : '+d.destination,'Date : '+d.date.split('-').reverse().join('/')+' à '+d.time,'Véhicule : '+d.vehicle,'Passagers : '+d.passengers,...(shown?['Prix affiché sur le site : '+shown+' — à vérifier avant le devis']:['Prix : sur devis (trajet hors grille)']),'Notes : '+d.notes,'Aucun paiement effectué.'].join('\n');
   try{
    const admin=await fetch('https://api.resend.com/emails',{method:'POST',headers:{Authorization:'Bearer '+resend,'Content-Type':'application/json','Idempotency-Key':'eps-supabase-reservation-admin-'+d.id},body:JSON.stringify({from,to:[to],reply_to:'contact@elite-prestige-services.fr',subject:(partner_code?'[Partenaire '+partner_code+'] ':'')+'Nouvelle réservation EPS — '+reference,text})});
    adminAlertSent=admin.ok;if(!admin.ok){emailError='Alerte admin Resend HTTP '+admin.status;console.error('EPS reservation admin email',admin.status)}

@@ -57,6 +57,7 @@
     ['Découvrir', 'Discover', 'Scopri', 'Descubrir'],
     // Véhicules
     ['Nos véhicules', 'Our vehicles', 'I nostri veicoli', 'Nuestros vehículos'],
+    ['À bord : eau, mouchoirs et chargeurs de téléphone.', 'On board: water, tissues and phone chargers.', 'A bordo: acqua, fazzoletti e caricatori per telefono.', 'A bordo: agua, pañuelos y cargadores de teléfono.'],
     ['Quatre catégories Mercedes, du trajet en duo au groupe de sept avec bagages.', 'Four Mercedes categories, from a couple to a group of seven with luggage.', 'Quattro categorie Mercedes, dalla coppia al gruppo di sette con bagagli.', 'Cuatro categorías Mercedes, de una pareja a un grupo de siete con equipaje.'],
     ['Mercedes Classe E, EQE ou équivalent', 'Mercedes E-Class, EQE or similar', 'Mercedes Classe E, EQE o equivalente', 'Mercedes Clase E, EQE o similar'],
     ['Mercedes Classe V Extra-Long ou équivalent', 'Mercedes V-Class Extra-Long or similar', 'Mercedes Classe V Extra-Long o equivalente', 'Mercedes Clase V Extralarga o similar'],

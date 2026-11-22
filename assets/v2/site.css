@@ -349,3 +349,13 @@ p{margin:0}
 .field-photos img{width:100%;height:auto;aspect-ratio:3/2;object-fit:cover;border-radius:14px;display:block}
 .field-photos figcaption{margin-top:6px;font-size:.8rem;color:rgba(237,230,214,.6)}
 @media(max-width:640px){.field-photos{grid-template-columns:1fr}}
+/* WhatsApp : privilégier les messages écrits pour le suivi (22/11/2026, demande d'Anthony) */
+.eps-cta-wa,.eps-wa-float{flex-wrap:wrap;row-gap:1px;line-height:1.15}
+.eps-cta-wa::after,.eps-wa-float::after{content:"Par message, pour un suivi écrit";flex-basis:100%;text-align:center;font-size:11px;font-weight:600;color:var(--ink-3)}
+.eps-wa-float:hover::after{color:inherit}
+html[lang|=en] .eps-cta-wa::after,html[lang|=en] .eps-wa-float::after{content:"By message, for a written record"}
+html[lang|=it] .eps-cta-wa::after,html[lang|=it] .eps-wa-float::after{content:"Per messaggio, con traccia scritta"}
+html[lang|=es] .eps-cta-wa::after,html[lang|=es] .eps-wa-float::after{content:"Por mensaje, con constancia escrita"}
+html[lang|=ru] .eps-cta-wa::after,html[lang|=ru] .eps-wa-float::after{content:"Пишите нам — ответ письменно"}
+html[lang|=zh] .eps-cta-wa::after,html[lang|=zh] .eps-wa-float::after{content:"请发消息，书面跟进"}
+.eps-cta-bar .eps-cta-wa{padding:4px 6px}.eps-cta-bar .eps-cta-wa::after{font-size:10.5px;letter-spacing:-.1px}

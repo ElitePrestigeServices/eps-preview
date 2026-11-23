@@ -91,12 +91,25 @@ def translate_chrome(s, lang):
     head_end = s.index('</head>')
     return s[:head_end] + tr(s[head_end:])
 
+WA_SVG = ''
+
 def main_html(lang, d):
     secs = ''.join(f'<section><h2>{h}</h2>{body}</section>' for h, body in d['sections'])
     faq = ''.join(f'<h3>{esc(q)}</h3><p>{esc(a)}</p>' for q, a in d['faq'])
     home = T[lang]['Home']
     crumbs = f'<nav class="crumbs" aria-label="{esc(home)}"><a href="{P[lang]["home"]["slug"]}">{esc(home)}</a><span aria-hidden="true"> › </span><span aria-current="page">{esc(d["h1"])}</span></nav>' if d['group'] != 'home' else ''
     others = ' · '.join(f'<a href="{P[lang][k]["slug"]}">{esc(P[lang][k]["h1"])}</a>' for k in P[lang] if k != d['group'] and k != 'home')
+    if d['group'] == 'home':
+        book = {'ru': 'Заказать шофёра', 'zh': '预订专车'}[lang]
+        hero = ('<section class="hero"><picture><source media="(max-width:1100px)" srcset="/assets/v2/hero-1100.webp">'
+                '<img class="hero-img" src="/assets/v2/hero.webp" alt="" width="1872" height="1056" fetchpriority="high"></picture>'
+                '<div class="hero-body"><img class="hero-logo" src="/assets/v2/logo-eps-256.webp?v=20261120logo" alt="Elite Prestige Services" width="120" height="120">'
+                f'<h1>Elite Prestige Services<span>{esc(d["h1"])}</span></h1><div class="hero-actions">'
+                f'<a class="btn btn-gold" href="/?lang=en#reservation">{esc(book)}</a>'
+                f'<a class="btn btn-line" href="https://wa.me/33745495321" target="_blank" rel="noopener">{WA_SVG}WhatsApp</a></div></div></section>')
+        return (f'<main class="page">{hero}<div class="wrap page-body"><p class="eyebrow">{esc(d["eyebrow"])}</p>'
+                f'<p class="intro">{esc(d["intro"])}</p><a class="cta" href="/?lang=en#reservation">{esc(d["cta"])}</a>{secs}'
+                f'<section><h2>{T[lang]["Frequently asked questions"]}</h2>{faq}</section><div class="related">{others}</div></div>')
     return (f'<main class="page"><div class="wrap page-body">{crumbs}<p class="eyebrow">{esc(d["eyebrow"])}</p><h1>{esc(d["h1"])}</h1>'
             f'<p class="intro">{esc(d["intro"])}</p><a class="cta" href="/?lang=en#reservation">{esc(d["cta"])}</a>{secs}'
             f'<section><h2>{T[lang]["Frequently asked questions"]}</h2>{faq}</section><div class="related">{others}</div></div>')
@@ -125,6 +138,7 @@ def build(lang, key, tpl):
 
 if __name__ == '__main__':
     tpl = open(f'{ROOT}/en/private-chauffeur-monaco/index.html', encoding='utf-8').read()
+    WA_SVG = re.search(r'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10[^"]*"/></svg>', tpl).group(0)
     for lang in ('ru', 'zh'):
         for key in P[lang]:
             out = build(lang, key, tpl)

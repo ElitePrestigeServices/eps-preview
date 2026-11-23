@@ -52,7 +52,8 @@ def process(path):
     m = re.search(r"<h1[^>]*>(.*?)</h1>", h, re.S)
     if not m:
         return None
-    name = text(m.group(1))
+    sm = re.search(r"<span>(.*?)</span>", m.group(1), re.S)  # titre de bandeau : « Marque<span>sous-titre</span> »
+    name = text(sm.group(1) if sm and 'class="hero' in h else m.group(1))
     url = f"{BASE}/{slug}/"
 
     # nettoyage des anciens ajouts
@@ -87,8 +88,8 @@ def process(path):
 
     h = h.replace("</head>", "".join(blocks) + "</head>", 1)
     # fil d'Ariane visible : juste avant le surtitre (ou le h1)
-    anchor = re.search(r'<p class="eyebrow">|<h1', h[h.find("<main"):])
-    if anchor:
+    anchor = re.search(r'<p class="eyebrow">', h[h.find("<main"):]) or re.search(r'<h1', h[h.find("<main"):])
+    if anchor and not (len(trail) == 1 and 'class="hero' in h):  # pas de fil visible sous un bandeau d'accueil
         pos = h.find("<main") + anchor.start()
         h = h[:pos] + nav + h[pos:]
     open(path, "w", encoding="utf-8").write(h)

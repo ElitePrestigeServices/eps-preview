@@ -362,3 +362,13 @@ html[lang|=zh] .eps-cta-wa::after,html[lang|=zh] .eps-wa-float::after{content:"�
 /* Pages en chinois : polices système avec idéogrammes (22/11/2026) */
 html[lang|=zh] body{font-family:"PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei",var(--sans),sans-serif}
 html[lang|=zh] h1,html[lang|=zh] h2,html[lang|=zh] h3{font-family:"Songti SC","Noto Serif SC","SimSun",var(--serif),serif;letter-spacing:0}
+
+/* Moyens de paiement acceptés (23/11/2026) */
+.pay-methods{margin:22px 0 0}
+.pay-methods .pm-title{font-size:13px;font-weight:600;color:var(--ink-3);margin:0 0 10px;letter-spacing:.02em}
+.pm-list{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:8px}
+.pm-list li{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink-2);font-size:12.5px;font-weight:600;line-height:1}
+.pm-list svg{width:16px;height:16px;flex:none}
+.pm-list .pm-visa{font:italic 800 14px/1 var(--sans);letter-spacing:.04em}
+/* Menu centré dans l'en-tête sur grand écran (23/11/2026) */
+@media (min-width:1280px){.site-head .wrap{position:relative}.site-head .main-nav{position:absolute;left:50%;transform:translateX(-50%)}}

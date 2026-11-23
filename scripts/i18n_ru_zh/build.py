@@ -93,6 +93,16 @@ def translate_chrome(s, lang):
 
 WA_SVG = ''
 
+def booking_section(lang):
+    # formulaire de réservation de l'accueil, traduit côté navigateur par assets/v2/i18n.js (dictionnaire RZ)
+    s = open(f'{ROOT}/index.html', encoding='utf-8').read()
+    i = s.index('id="reservation"'); a = s.rindex('<section', 0, i)
+    end = '</form>\n</div></section>'; b = s.index(end, i) + len(end)
+    sec = s[a:b]
+    code = {'ru': '+7', 'zh': '+86'}[lang]
+    sec = sec.replace(f'<option value="{code}">', f'<option value="{code}" selected>', 1)
+    return sec
+
 def main_html(lang, d):
     secs = ''.join(f'<section><h2>{h}</h2>{body}</section>' for h, body in d['sections'])
     faq = ''.join(f'<h3>{esc(q)}</h3><p>{esc(a)}</p>' for q, a in d['faq'])
@@ -108,7 +118,8 @@ def main_html(lang, d):
                 f'<a class="btn btn-gold" href="/?lang=en#reservation">{esc(book)}</a>'
                 f'<a class="btn btn-line" href="https://wa.me/33745495321" target="_blank" rel="noopener">{WA_SVG}WhatsApp</a></div></div></section>')
         return (f'<main class="page">{hero}<div class="wrap page-body"><p class="eyebrow">{esc(d["eyebrow"])}</p>'
-                f'<p class="intro">{esc(d["intro"])}</p><a class="cta" href="/?lang=en#reservation">{esc(d["cta"])}</a>{secs}'
+                f'<p class="intro">{esc(d["intro"])}</p><a class="cta" href="#reservation">{esc(d["cta"])}</a></div>'
+                f'{booking_section(lang)}<div class="wrap page-body">{secs}'
                 f'<section><h2>{T[lang]["Frequently asked questions"]}</h2>{faq}</section><div class="related">{others}</div></div>')
     return (f'<main class="page"><div class="wrap page-body">{crumbs}<p class="eyebrow">{esc(d["eyebrow"])}</p><h1>{esc(d["h1"])}</h1>'
             f'<p class="intro">{esc(d["intro"])}</p><a class="cta" href="/?lang=en#reservation">{esc(d["cta"])}</a>{secs}'
@@ -134,6 +145,10 @@ def build(lang, key, tpl):
     wa = 'https://wa.me/33745495321?text=' + quote(WA[lang] + d['h1'])
     s = re.sub(r'(href=")https://wa\.me/33745495321[^"]*', lambda m: m.group(1) + wa, s)
     s = translate_chrome(s, lang)
+    home = P[lang]['home']['slug']
+    s = s.replace('href="/?lang=en#reservation"', f'href="{home}#reservation"').replace('href="/#reservation"', f'href="{home}#reservation"')
+    if d['group'] == 'home':
+        s = s.replace('<script src="/assets/v2/site.js', '<script src="/assets/v2/i18n.js?v=20261123-rz" defer></script><script src="/pricing.js?v=20261122-remise" defer></script><script src="/script.js?v=20261122-remise" defer></script><script src="/assets/v2/site.js', 1)
     return s
 
 if __name__ == '__main__':

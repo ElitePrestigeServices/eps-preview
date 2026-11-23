@@ -18,7 +18,7 @@ function render(d){
  }
  btn.hidden=false;btn.textContent='Valider la garantie bancaire';
  if(d.payment_state==='annulé')notice.textContent='La garantie bancaire précédente a été libérée. Vous pouvez en valider une nouvelle.';
- else notice.textContent='Paiement sécurisé par Stripe. Votre carte est autorisée pour le montant du devis, mais EPS n’encaisse pas immédiatement. Le règlement est capturé après la course. Avec Alipay ou WeChat Pay, le montant est débité immédiatement ; en cas d’annulation, les frais de transaction peuvent rester dus (支付宝 / 微信支付：立即扣款；如取消，交易手续费可能不予退还).';
+ else notice.textContent='Paiement sécurisé par Stripe. Votre carte est autorisée pour le montant du devis, mais EPS n’encaisse pas immédiatement. Le règlement est capturé après la course. Avec Alipay ou WeChat Pay, le montant est débité immédiatement. Quel que soit le moyen de paiement (carte via Stripe, Alipay, WeChat Pay), en cas d’annulation après encaissement, les frais de transaction peuvent rester dus (支付宝 / 微信支付：立即扣款；付款后如取消，交易手续费可能不予退还).';
  const cnb=$('paycn');cnb.hidden=false;cnb.onclick=async()=>{cnb.disabled=true;msg.textContent='Ouverture du paiement Alipay / WeChat Pay… 正在打开支付页面…';try{const data=await post('alipay');if(!/^https:\/\/checkout\.stripe\.com\//.test(data.url||''))throw Error('Paiement indisponible');location.assign(data.url)}catch(e){msg.textContent=e.message||'Paiement indisponible';cnb.disabled=false}};
  btn.onclick=async()=>{btn.disabled=true;msg.textContent='Ouverture de la garantie bancaire sécurisée Stripe…';try{const data=await post();if(!/^https:\/\/checkout\.stripe\.com\//.test(data.url||''))throw Error('Paiement indisponible');location.assign(data.url)}catch(e){msg.textContent=e.message||'Paiement indisponible';btn.disabled=false}};
 }

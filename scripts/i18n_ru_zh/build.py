@@ -148,7 +148,7 @@ def build(lang, key, tpl):
     home = P[lang]['home']['slug']
     s = s.replace('href="/?lang=en#reservation"', f'href="{home}#reservation"').replace('href="/#reservation"', f'href="{home}#reservation"')
     if d['group'] == 'home':
-        s = s.replace('<script src="/assets/v2/site.js', '<script src="/assets/v2/i18n.js?v=20261123-rz" defer></script><script src="/pricing.js?v=20261122-remise" defer></script><script src="/script.js?v=20261122-remise" defer></script><script src="/assets/v2/site.js', 1)
+        s = s.replace('<script src="/assets/v2/site.js', '<script src="/assets/v2/i18n.js?v=20261123-pay" defer></script><script src="/pricing.js?v=20261122-remise" defer></script><script src="/script.js?v=20261122-remise" defer></script><script src="/assets/v2/site.js', 1)
     return s
 
 if __name__ == '__main__':

@@ -372,3 +372,6 @@ html[lang|=zh] h1,html[lang|=zh] h2,html[lang|=zh] h3{font-family:"Songti SC","N
 .pm-list .pm-visa{font:italic 800 14px/1 var(--sans);letter-spacing:.04em}
 /* Menu centré dans l'en-tête sur grand écran (23/11/2026) */
 @media (min-width:1280px){.site-head .wrap{position:relative}.site-head .main-nav{position:absolute;left:50%;transform:translateX(-50%)}}
+
+/* Chiffres 1-2-3 centrés dans les pastilles (23/11/2026) */
+.how li::before{font-variant-numeric:lining-nums tabular-nums;font-feature-settings:"lnum" 1,"tnum" 1;line-height:36px;text-align:center;padding:0;align-self:start}

@@ -1714,13 +1714,28 @@ function openDevisView(d) {
   const shareMsg = 'Bonjour ' + d.customer_name + ',\n\nVeuillez trouver ci-joint notre devis ' + d.number + '.\n\nPour confirmer, il suffit de répondre « OK » à ce message. Je reste à votre disposition pour toute question.\n\nBien cordialement,\nAnthony\nElite Prestige Services\ncontact@elite-prestige-services.fr · www.elite-prestige-services.fr';
   const shareBtn = h('button', { class: 'btn quiet', onclick: () => pdfAction(d.number, shareBtn, true, shareMsg) }, 'Partager le PDF (WhatsApp, mail…)');
   const msg = 'Bonjour ' + d.customer_name + ', voici notre devis :\n\n' + devisText(d) + '\n\nPour confirmer, il suffit de répondre « OK ».';
+  const mailBtn = h('button', { class: 'btn quiet', onclick: () => sendDevisMail(d, mailBtn, shareMsg) }, 'Envoyer par e-mail (PDF joint)');
   $('doc-actions').replaceChildren(...[pdfBtn, shareBtn,
     phone ? h('a', { class: 'btn quiet', href: 'https://wa.me/' + phone + '?text=' + encodeURIComponent(msg), target: '_blank', rel: 'noopener' }, 'Envoyer le texte (WhatsApp)') : null,
-    d.customer_email ? h('a', { class: 'btn quiet', href: 'mailto:' + d.customer_email + '?subject=' + encodeURIComponent('Devis ' + d.number + ' — Elite Prestige Services') + '&body=' + encodeURIComponent(msg) }, 'Envoyer par e-mail') : null,
+    d.customer_email ? mailBtn : null,
     d.status === 'accepté' ? (d.order_form_id ? h('button', { class: 'btn quiet', onclick: () => { const o = S.orders.find(x => x.id === d.order_form_id); if (o) { closeDoc(); openOrderView(o); } else toast('Bon introuvable.', true); } }, 'Voir le bon de commande')
       : h('button', { class: 'btn primary', onclick: () => { closeDoc(); devisToOrder(d); } }, 'Créer le bon de commande')) : null].filter(Boolean));
   $('doc-more').onclick = () => { closeDoc(); openDevisManage(d); };
   $('docview').classList.remove('hidden'); $('docview').scrollTop = 0; document.body.style.overflow = 'hidden';
+}
+/* 24/11/2026 : envoi du devis par e-mail avec le PDF joint, depuis contact@ (copie cachée à EPS), via eps-send-devis-pdf. */
+async function sendDevisMail(d, btn, message) {
+  if (!confirm('Envoyer le devis ' + d.number + ' avec le PDF à ' + d.customer_email + ' ?')) return;
+  const label = btn.textContent; btn.disabled = true; btn.textContent = 'Envoi en cours…';
+  try {
+    const blob = await orderPdfBlob(d.number);
+    const b64 = await new Promise((ok, ko) => { const r = new FileReader(); r.onload = () => ok(String(r.result).split(',')[1]); r.onerror = () => ko(Error('PDF illisible')); r.readAsDataURL(blob); });
+    const r = await fetch(SB + '/functions/v1/eps-send-devis-pdf', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + await token() }, body: JSON.stringify({ devis_id: d.id, pdf_base64: b64, message }) });
+    const x = await r.json().catch(() => ({}));
+    if (!r.ok || !x.ok) throw Error(x.error || 'Envoi impossible');
+    toast('Devis envoyé à ' + x.to + ' avec le PDF. Une copie arrive dans ta boîte contact@.');
+  } catch (e) { toast(e?.message || 'Envoi impossible', true); }
+  finally { btn.disabled = false; btn.textContent = label; }
 }
 async function setDevisStatus(d, status) {
   const x = await db.from('eps_devis').update({ status, updated_at: new Date().toISOString() }).eq('id', d.id).select().single();

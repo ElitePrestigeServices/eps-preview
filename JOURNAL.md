@@ -220,3 +220,4 @@
 - 24/11/2026 14 h 20 : premier envoi de devis par e-mail en échec (503 « Devis introuvable ») : le rôle service n'avait pas de droit SELECT sur eps_devis → grant select, update à service_role. À renvoyer par Anthony.
 - 24/11/2026 14 h 25 : admin devis → bouton « M'envoyer un essai (vérifier avant) » : le même e-mail + PDF part uniquement à contact@ avec la mention ESSAI ; eps-send-devis-pdf v2 (mode test).
 - 24/11/2026 14 h 35 : logo EPS ajouté en tête des e-mails de devis (assets/v2/logo-eps-email.png, 240 px) ; signature en double supprimée dans le pied ; eps-send-devis-pdf v3.
+- 24/11/2026 14 h 40 : eps-send-devis-pdf v4 — logo intégré à l'e-mail en pièce jointe en ligne (cid:eps-logo, fonction Resend « content_id ») car Gmail masquait l'image distante (« Afficher les images »).

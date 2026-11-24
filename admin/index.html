@@ -1715,8 +1715,10 @@ function openDevisView(d) {
   const shareBtn = h('button', { class: 'btn quiet', onclick: () => pdfAction(d.number, shareBtn, true, shareMsg) }, 'Partager le PDF (WhatsApp, mail…)');
   const msg = 'Bonjour ' + d.customer_name + ', voici notre devis :\n\n' + devisText(d) + '\n\nPour confirmer votre réservation, merci de nous retourner le devis signé avec la mention « Bon pour accord ».';
   const mailBtn = h('button', { class: 'btn quiet', onclick: () => sendDevisMail(d, mailBtn, shareMsg) }, 'Envoyer par e-mail (PDF joint)');
+  const testBtn = h('button', { class: 'btn quiet', onclick: () => sendDevisMail(d, testBtn, shareMsg, true) }, 'M’envoyer un essai (vérifier avant)');
   $('doc-actions').replaceChildren(...[pdfBtn, shareBtn,
     phone ? h('a', { class: 'btn quiet', href: 'https://wa.me/' + phone + '?text=' + encodeURIComponent(msg), target: '_blank', rel: 'noopener' }, 'Envoyer le texte (WhatsApp)') : null,
+    d.customer_email ? testBtn : null,
     d.customer_email ? mailBtn : null,
     d.status === 'accepté' ? (d.order_form_id ? h('button', { class: 'btn quiet', onclick: () => { const o = S.orders.find(x => x.id === d.order_form_id); if (o) { closeDoc(); openOrderView(o); } else toast('Bon introuvable.', true); } }, 'Voir le bon de commande')
       : h('button', { class: 'btn primary', onclick: () => { closeDoc(); devisToOrder(d); } }, 'Créer le bon de commande')) : null].filter(Boolean));
@@ -1724,16 +1726,16 @@ function openDevisView(d) {
   $('docview').classList.remove('hidden'); $('docview').scrollTop = 0; document.body.style.overflow = 'hidden';
 }
 /* 24/11/2026 : envoi du devis par e-mail avec le PDF joint, depuis contact@ (copie cachée à EPS), via eps-send-devis-pdf. */
-async function sendDevisMail(d, btn, message) {
-  if (!confirm('Envoyer le devis ' + d.number + ' avec le PDF à ' + d.customer_email + ' ?')) return;
+async function sendDevisMail(d, btn, message, test) {
+  if (!test && !confirm('Envoyer le devis ' + d.number + ' avec le PDF à ' + d.customer_email + ' ?')) return;
   const label = btn.textContent; btn.disabled = true; btn.textContent = 'Envoi en cours…';
   try {
     const blob = await orderPdfBlob(d.number);
     const b64 = await new Promise((ok, ko) => { const r = new FileReader(); r.onload = () => ok(String(r.result).split(',')[1]); r.onerror = () => ko(Error('PDF illisible')); r.readAsDataURL(blob); });
-    const r = await fetch(SB + '/functions/v1/eps-send-devis-pdf', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + await token() }, body: JSON.stringify({ devis_id: d.id, pdf_base64: b64, message }) });
+    const r = await fetch(SB + '/functions/v1/eps-send-devis-pdf', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + await token() }, body: JSON.stringify({ devis_id: d.id, pdf_base64: b64, message, test: !!test }) });
     const x = await r.json().catch(() => ({}));
     if (!r.ok || !x.ok) throw Error(x.error || 'Envoi impossible');
-    toast('Devis envoyé à ' + x.to + ' avec le PDF. Une copie arrive dans ta boîte contact@.');
+    toast(test ? 'Essai envoyé à ' + x.to + ' : vérifie ta boîte, puis envoie au client.' : 'Devis envoyé à ' + x.to + ' avec le PDF. Une copie arrive dans ta boîte contact@.');
   } catch (e) { toast(e?.message || 'Envoi impossible', true); }
   finally { btn.disabled = false; btn.textContent = label; }
 }

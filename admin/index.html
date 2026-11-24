@@ -1711,7 +1711,8 @@ function openDevisView(d) {
     h('div', { class: 'foot' }, 'Prix fixe par véhicule, toutes taxes comprises. Devis gratuit. Prestation soumise aux conditions générales de vente disponibles sur ' + EPS_CO.web + '/cgv/. Transport de personnes en voiture de transport avec chauffeur (VTC) sur réservation préalable. ' + EPS_CO.web)].flat().filter(Boolean));
   const phone = String(d.customer_phone || '').replace(/[^\d+]/g, '').replace(/^\+/, '').replace(/^0/, '33');
   const pdfBtn = h('button', { class: 'btn primary', onclick: () => pdfAction(d.number, pdfBtn, false) }, isMobile() ? 'PDF (imprimer, enregistrer)' : 'Télécharger le PDF');
-  const shareBtn = h('button', { class: 'btn quiet', onclick: () => pdfAction(d.number, shareBtn, true) }, 'Partager le PDF (WhatsApp, mail…)');
+  const shareMsg = 'Bonjour ' + d.customer_name + ',\n\nVeuillez trouver ci-joint notre devis ' + d.number + '.\n\nPour confirmer, il suffit de répondre « OK » à ce message. Je reste à votre disposition pour toute question.\n\nBien cordialement,\nAnthony\nElite Prestige Services\ncontact@elite-prestige-services.fr · www.elite-prestige-services.fr';
+  const shareBtn = h('button', { class: 'btn quiet', onclick: () => pdfAction(d.number, shareBtn, true, shareMsg) }, 'Partager le PDF (WhatsApp, mail…)');
   const msg = 'Bonjour ' + d.customer_name + ', voici notre devis :\n\n' + devisText(d) + '\n\nPour confirmer, il suffit de répondre « OK ».';
   $('doc-actions').replaceChildren(...[pdfBtn, shareBtn,
     phone ? h('a', { class: 'btn quiet', href: 'https://wa.me/' + phone + '?text=' + encodeURIComponent(msg), target: '_blank', rel: 'noopener' }, 'Envoyer le texte (WhatsApp)') : null,
@@ -2071,12 +2072,12 @@ async function orderPdfBlob(number) {
   } finally { holder.remove(); document.body.style.paddingLeft = pad; }
 }
 const isMobile = () => /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) || (navigator.maxTouchPoints > 1 && /Mac/.test(navigator.platform));
-async function pdfAction(number, btn, wantShare) {
+async function pdfAction(number, btn, wantShare, shareText) {
   const label = btn.textContent; btn.disabled = true; btn.textContent = 'Création du PDF…';
   try {
     const blob = await orderPdfBlob(number);
     const file = new File([blob], number + '.pdf', { type: 'application/pdf' });
-    if ((wantShare || isMobile()) && navigator.canShare?.({ files: [file] })) { await navigator.share({ files: [file] }); }
+    if ((wantShare || isMobile()) && navigator.canShare?.({ files: [file] })) { const data = { files: [file] }; if (wantShare && shareText) { data.title = number; data.text = shareText; } await navigator.share(navigator.canShare(data) ? data : { files: [file] }); }
     else { const u = URL.createObjectURL(blob); const a = h('a', { href: u, download: number + '.pdf' }); document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(u), 5000); if (wantShare) toast('PDF téléchargé : tu peux le joindre à un message.'); }
   } catch (e) { if (e?.name !== 'AbortError') toast(e?.message || 'Création du PDF impossible', true); }
   finally { btn.disabled = false; btn.textContent = label; }

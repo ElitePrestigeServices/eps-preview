@@ -2102,6 +2102,8 @@ async function pdfAction(number, btn, wantShare, shareText) {
 const standalone = () => window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
 
 /* ================= Démarrage ================= */
+/* 25/11/2026 : l'appareil qui ouvre l'administration n'est plus compté dans les statistiques du site (même clé que assets/v2/stats.js). */
+try { localStorage.setItem('eps_nostats', '1'); } catch {}
 $('refresh').onclick = async () => { await reload(); toast('À jour.'); };
 window.addEventListener('hashchange', () => { const t = location.hash.slice(1); if (titles[t] && t !== tab && !$('app').classList.contains('hidden')) go(t); });
 /* Déconnexion automatique après 8 h sans utilisation (téléphone perdu ou prêté). */

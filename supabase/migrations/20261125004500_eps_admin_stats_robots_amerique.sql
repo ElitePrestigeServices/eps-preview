@@ -1,0 +1,2 @@
+-- 25/11/2026 : eps_admin_stats écarte aussi les sessions robot typiques (fuseau America/*, une seule page vue, aucune provenance, aucune action).
+-- Définition complète appliquée via apply_migration (voir JOURNAL.md).

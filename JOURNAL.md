@@ -217,3 +217,4 @@
 - 24/11/2026 14 h : admin, devis → « Partager le PDF » joint maintenant un message prêt (Bonjour <client>, ci-joint notre devis <n°>, répondre « OK » pour confirmer, signature Anthony / EPS) avec le PDF (mail, WhatsApp…).
 - 24/11/2026 14 h 10 : admin, devis → bouton « Envoyer par e-mail (PDF joint) » : le PDF du devis est généré et envoyé directement au client depuis contact@elite-prestige-services.fr (copie cachée à contact@), message prêt ; nouvelle fonction eps-send-devis-pdf (admin uniquement, Resend). Remplace l'ancien lien mailto sans pièce jointe.
 - 24/11/2026 14 h 10 : message d'envoi des devis plus professionnel (« merci de nous retourner ce devis daté et signé, avec la mention Bon pour accord ») au lieu de « il suffit de répondre OK ».
+- 24/11/2026 14 h 20 : premier envoi de devis par e-mail en échec (503 « Devis introuvable ») : le rôle service n'avait pas de droit SELECT sur eps_devis → grant select, update à service_role. À renvoyer par Anthony.

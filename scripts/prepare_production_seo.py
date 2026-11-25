@@ -81,7 +81,7 @@ def prepare(root):
     xml = ET.tostring(sitemap, encoding="unicode", xml_declaration=True) + "\n"
     for name in ("sitemap.xml", "seo/sitemap-production.xml"):
         (root / name).write_text(xml, encoding="utf-8")
-    (root / "robots.txt").write_text(f"User-agent: *\nAllow: /\n\nSitemap: {ORIGIN}/sitemap.xml\n", encoding="utf-8")
+    (root / "robots.txt").write_text(f"User-agent: *\nAllow: /\nDisallow: /functions/\n\nSitemap: {ORIGIN}/sitemap.xml\n", encoding="utf-8")
     (root / "seo/deployment.json").write_text(json.dumps({"version": "2026-10-26-seo-v1", "public_pages": len(urls)}, indent=2) + "\n", encoding="utf-8")
     check(root)
 

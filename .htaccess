@@ -20,7 +20,7 @@ RewriteRule ^mise-a-disposition/?$ https://www.elite-prestige-services.fr/chauff
 RewriteRule ^port-de-croisiere/?$ https://www.elite-prestige-services.fr/chauffeur-prive-croisiere-villefranche-sur-mer/ [R=301,L]
 RewriteRule ^c-g-v/?$ https://www.elite-prestige-services.fr/cgv/ [R=301,L]
 RewriteRule ^(famille|nous-contacter|vehicules-2)/?$ https://www.elite-prestige-services.fr/ [R=301,L]
-RewriteRule ^(wp-admin|wp-content|wp-includes|wp-login\.php|xmlrpc\.php|cgi-bin)(/.*)?$ - [G,L]
+RewriteRule ^(wp-admin|wp-content|wp-includes|wp-login\.php|xmlrpc\.php|cgi-bin|functions)(/.*)?$ - [G,L]
 </IfModule>
 
 # 15/11/2026 (Claude) : photos réelles du véhicule lisibles depuis d'autres sites (annuaires : PagesJaunes, etc.)

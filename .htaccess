@@ -25,7 +25,7 @@ RewriteRule ^(wp-admin|wp-content|wp-includes|wp-login\.php|xmlrpc\.php|cgi-bin|
 
 # 15/11/2026 (Claude) : photos réelles du véhicule lisibles depuis d'autres sites (annuaires : PagesJaunes, etc.)
 <IfModule mod_headers.c>
-<FilesMatch "\.(jpg|jpeg|png|webp)$">
+<FilesMatch "\.(jpg|jpeg|png|webp|mp4)$">
 Header set Access-Control-Allow-Origin "*"
 </FilesMatch>
 </IfModule>

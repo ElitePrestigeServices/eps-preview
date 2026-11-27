@@ -231,3 +231,4 @@
 - 26/11/2026 (Claude, Search Console) : indexation demandée pour chauffeur-prive-antibes, transfert-nice-monaco, en/nice-airport-monaco-private-transfer, en/private-chauffeur-cannes (toutes déjà indexées).
 - 27/11/2026 (Claude, SEO) : Search Console 7 j = 12 clics, 726 impressions, position 39,5. Ajouts : Carnaval de Nice 2027 (dates, corso illuminé 13/02, Batailles de Fleurs) sur chauffeur-evenements-nice et en/private-chauffeur-nice ; Christmas in Cannes 2026 sur en/private-chauffeur-cannes. Audit OK, prod 104 URL.
 - 27/11/2026 (Claude) : vidéo pub (13 s, muette) ajoutée dans assets/v2/video/pub-eps-chauffeur.mp4, CORS ouvert aux .mp4, pour le post de la fiche Google.
+- 27/11/2026 (Claude) : vidéo retirée des assets (Anthony l'a jointe lui-même au post Google), règle CORS mp4 conservée.
